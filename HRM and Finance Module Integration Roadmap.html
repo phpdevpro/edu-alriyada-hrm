@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HRM and Finance Module Integration Roadmap</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 30px;
+      color: #222;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #1f4e79;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      margin-bottom: 25px;
+    }
+    th, td {
+      border: 1px solid #c8d3df;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #eaf2fb;
+    }
+    .note {
+      background: #f4f8fc;
+      border-left: 4px solid #1f4e79;
+      padding: 12px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>HRM and Finance Module Integration Roadmap</h1>
+
+  <h2>1. Overview</h2>
+  <p>
+    The Finance module is not yet fully developed. The HRM module will provide the employee and
+    payroll-related data required for Finance operations such as salary processing, allowances,
+    deductions, and payroll reporting.
+  </p>
+
+  <h2>2. Planned HRM to Finance Connection</h2>
+  <table>
+    <tr>
+      <th>HRM Data</th>
+      <th>Finance Usage</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td>Employee master data</td>
+      <td>Used as the base record for salary and payroll processing</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Employment status</td>
+      <td>Controls whether an employee should be included in payroll</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Department and designation</td>
+      <td>Supports payroll grouping, approvals, and reporting</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Attendance and leave</td>
+      <td>Used as payroll calculation inputs</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Overtime and allowances</td>
+      <td>Used to calculate additional earnings</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Deductions and benefits</td>
+      <td>Used in salary slips and payroll accounting</td>
+      <td>Planned</td>
+    </tr>
+  </table>
+
+  <h2>3. Finance Integration Roadmap</h2>
+  <table>
+    <tr>
+      <th>Phase</th>
+      <th>Planned Work</th>
+    </tr>
+    <tr>
+      <td>Phase 1</td>
+      <td>Use Employee records from HRM as the foundation for Finance payroll processing.</td>
+    </tr>
+    <tr>
+      <td>Phase 2</td>
+      <td>Connect attendance, leave, and overtime data from HRM to payroll calculations.</td>
+    </tr>
+    <tr>
+      <td>Phase 3</td>
+      <td>Map allowances, deductions, and salary components to finance transactions.</td>
+    </tr>
+    <tr>
+      <td>Phase 4</td>
+      <td>Generate salary slips, payroll entries, and accounting postings.</td>
+    </tr>
+    <tr>
+      <td>Phase 5</td>
+      <td>Build management reports by employee, department, and organizational structure.</td>
+    </tr>
+  </table>
+
+  <h2>4. Functional Responsibility</h2>
+  <table>
+    <tr>
+      <th>Area</th>
+      <th>Owned By</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>Employee lifecycle</td>
+      <td>HRM</td>
+      <td>HRM controls employee onboarding, employment status, and core HR data.</td>
+    </tr>
+    <tr>
+      <td>Payroll and accounting impact</td>
+      <td>Finance</td>
+      <td>Finance will use HRM data to process payroll and financial postings.</td>
+    </tr>
+    <tr>
+      <td>Payroll input data</td>
+      <td>Shared</td>
+      <td>HRM supplies the data, Finance processes the financial outcome.</td>
+    </tr>
+  </table>
+
+  <div class="note">
+    <strong>Current Status:</strong>
+    HRM to Finance is a planned integration. The connection should be developed using HRM as the
+    source of employee and payroll input data.
+  </div>
+
+  <h2>5. Client Summary</h2>
+  <p>
+    In simple terms, HRM will manage employee and payroll input data, while Finance will use that
+    data to process salaries and financial records. HRM will be the source of truth for people-related
+    information, and Finance will handle the accounting side.
+  </p>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HRM Connection Summary</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #222;
+      line-height: 1.5;
+      margin: 30px;
+    }
+    h1, h2 {
+      color: #1f4e79;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 24px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #b7c4d1;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #eaf2fb;
+    }
+    .note {
+      background: #f4f8fc;
+      border-left: 4px solid #1f4e79;
+      padding: 10px 12px;
+      margin: 14px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>HRM Connection with Education and Finance</h1>
+
+  <h2>1. Purpose</h2>
+  <p>
+    This document provides a short summary of how the HRM module connects with the Education module
+    and how it is planned to connect with the Finance module.
+  </p>
+
+  <h2>2. HRM Connection with Education Module</h2>
+  <p>
+    The Education module is already available in the system. Based on the current implementation,
+    the HRM module connects with Education through the relationship between <strong>Employee</strong>
+    and <strong>Instructor</strong>.
+  </p>
+
+  <table>
+    <tr>
+      <th>HRM Side</th>
+      <th>Education Side</th>
+      <th>Connection</th>
+    </tr>
+    <tr>
+      <td>Employee</td>
+      <td>Instructor</td>
+      <td>The Instructor record contains a direct link to Employee.</td>
+    </tr>
+    <tr>
+      <td>Employee Department</td>
+      <td>Instructor Department</td>
+      <td>Instructor department is fetched from the linked Employee record.</td>
+    </tr>
+    <tr>
+      <td>Employee Gender</td>
+      <td>Instructor Gender</td>
+      <td>Instructor gender is fetched from the linked Employee record.</td>
+    </tr>
+    <tr>
+      <td>HR faculty/staff identity</td>
+      <td>Academic teaching identity</td>
+      <td>HR manages employment data, while Education uses Instructor for teaching operations.</td>
+    </tr>
+  </table>
+
+  <div class="note">
+    <strong>Confirmed from current Education module:</strong>
+    The Education app already uses Instructor in academic workflows such as class scheduling,
+    course assignment, attendance-related structures, and instructor-based academic records.
+  </div>
+
+  <h2>3. HRM Connection with Finance Module</h2>
+  <p>
+    The Finance module connection is not yet fully developed. However, the HRM module will become
+    the source of employee and payroll-related data for Finance.
+  </p>
+
+  <table>
+    <tr>
+      <th>HRM Data</th>
+      <th>Finance Usage</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td>Employee master data</td>
+      <td>Payroll eligibility and employee financial records</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Employment status</td>
+      <td>Control whether salary should be processed</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Department and designation</td>
+      <td>Salary grouping, reporting, and approval structure</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Attendance, leave, and overtime</td>
+      <td>Payroll calculation inputs</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Allowances and deductions</td>
+      <td>Salary slip and accounting integration</td>
+      <td>Planned</td>
+    </tr>
+  </table>
+
+  <h2>4. Finance Integration Roadmap</h2>
+  <table>
+    <tr>
+      <th>Phase</th>
+      <th>Planned Work</th>
+    </tr>
+    <tr>
+      <td>Phase 1</td>
+      <td>Connect Employee master data with payroll-related finance records.</td>
+    </tr>
+    <tr>
+      <td>Phase 2</td>
+      <td>Use attendance, leave, and overtime from HRM as payroll inputs.</td>
+    </tr>
+    <tr>
+      <td>Phase 3</td>
+      <td>Map salary structures, allowances, and deductions to Finance processing.</td>
+    </tr>
+    <tr>
+      <td>Phase 4</td>
+      <td>Generate salary slips, payroll entries, and accounting postings.</td>
+    </tr>
+    <tr>
+      <td>Phase 5</td>
+      <td>Build reporting by employee, department, faculty, and cost center.</td>
+    </tr>
+  </table>
+
+  <h2>5. Summary</h2>
+  <p>
+    The HRM module is already connected with the Education module through the Employee and Instructor relationship.
+    HRM provides the employment identity, while Education uses Instructor for academic operations.
+  </p>
+  <p>
+    The Finance connection is planned next. HRM will provide the employee, status, attendance, leave,
+    overtime, and compensation-related data required for payroll and financial processing.
+  </p>
+
+</body>
+</html>

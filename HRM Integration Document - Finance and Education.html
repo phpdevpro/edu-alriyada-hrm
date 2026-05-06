@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HRM Integration Document - Finance and Education</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #222;
+      line-height: 1.5;
+      margin: 30px;
+    }
+    h1, h2, h3 {
+      color: #163a63;
+      margin-bottom: 8px;
+    }
+    h1 {
+      border-bottom: 2px solid #163a63;
+      padding-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 24px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #bfc7d1;
+      padding: 10px;
+      vertical-align: top;
+    }
+    th {
+      background: #eaf0f7;
+      text-align: left;
+    }
+    .section {
+      margin-bottom: 28px;
+    }
+    .note {
+      background: #f5f8fc;
+      border-left: 4px solid #163a63;
+      padding: 10px 12px;
+      margin: 10px 0 20px 0;
+    }
+    ul {
+      margin-top: 8px;
+    }
+    code {
+      background: #f3f3f3;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Medical College HRM Integration Document</h1>
+
+  <div class="section">
+    <h2>1. Purpose</h2>
+    <p>
+      This document explains how the Human Resource Management (HRM) module is connected with the
+      Finance and Education modules in the Medical College system built on Frappe/ERPNext/HRMS/Education.
+      It is intended for developers of other modules so they can continue implementation using the same
+      integration logic, ownership rules, and data flow assumptions.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>2. Scope</h2>
+    <p>The current HRM solution covers:</p>
+    <ul>
+      <li>Core employee master data</li>
+      <li>Faculty/instructor linkage</li>
+      <li>Saudi Ministry of Education (Jameah) compliance fields</li>
+      <li>Organizational placement structure</li>
+      <li>Facility assignment</li>
+      <li>Qualifications, experience, training, publications, and awards</li>
+    </ul>
+
+    <div class="note">
+      <strong>Important:</strong> The architectural rule is that customizations are stored in the custom app
+      <code>medical_hrms</code>, without modifying core <code>frappe</code>, <code>erpnext</code>,
+      <code>hrms</code>, or <code>education</code> logic directly.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>3. System Role Ownership</h2>
+    <table>
+      <tr>
+        <th>Area</th>
+        <th>Primary Module</th>
+        <th>System of Record</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td>Employee identity and employment lifecycle</td>
+        <td>HRM</td>
+        <td>Employee</td>
+        <td>HR owns hiring, status, assignment, personal and employment data.</td>
+      </tr>
+      <tr>
+        <td>Teaching/faculty academic profile</td>
+        <td>Education</td>
+        <td>Instructor</td>
+        <td>Academic operations use Instructor, but linked to Employee for HR consistency.</td>
+      </tr>
+      <tr>
+        <td>Payroll and salary accounting</td>
+        <td>Finance + HRM</td>
+        <td>Payroll Entry / Salary Slip / Journal Entry</td>
+        <td>HR calculates payroll inputs; Finance validates accounting impact.</td>
+      </tr>
+      <tr>
+        <td>Jameah ministry master codes</td>
+        <td>Custom HRM</td>
+        <td>Jameah Ministry Code</td>
+        <td>Used by HR and Education as lookup reference data.</td>
+      </tr>
+      <tr>
+        <td>Academic placement hierarchy</td>
+        <td>Custom HRM + Education</td>
+        <td>Custom Jameah hierarchy doctypes</td>
+        <td>Used to position employees and instructors inside the university structure.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>4. Main HRM Components</h2>
+    <table>
+      <tr>
+        <th>Component</th>
+        <th>Doctype / Structure</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td>Employee Core</td>
+        <td><code>Employee</code></td>
+        <td>Main HR record for staff and faculty employment.</td>
+      </tr>
+      <tr>
+        <td>Faculty Link</td>
+        <td><code>Employee.custom_instructor</code> or linked Instructor relationship</td>
+        <td>Connects HR employee to academic instructor profile.</td>
+      </tr>
+      <tr>
+        <td>Ministry Lookup Master</td>
+        <td><code>Jameah Ministry Code</code></td>
+        <td>Stores controlled lists such as nationality, identity type, city, degree, specialization, etc.</td>
+      </tr>
+      <tr>
+        <td>Institute Hierarchy</td>
+        <td><code>Jameah Branch</code>, <code>Jameah Agency</code>, <code>Jameah Deanery</code>, <code>Jameah College</code>, <code>Jameah Academic Department</code></td>
+        <td>Represents formal Jameah organizational structure.</td>
+      </tr>
+      <tr>
+        <td>Facility</td>
+        <td><code>Jameah Facility</code></td>
+        <td>Represents hospital, clinic, lab, research center, or teaching facility assignment.</td>
+      </tr>
+      <tr>
+        <td>Faculty Profile Details</td>
+        <td>Child tables on Employee and Instructor</td>
+        <td>Stores qualifications, work experience, training, publications, and awards.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>5. HRM to Education Module Integration</h2>
+    <h3>5.1 Why the integration exists</h3>
+    <p>
+      In a Medical College environment, many employees are also faculty members. HR must manage them as employees,
+      while the Education module must manage them as instructors for academic scheduling, teaching, and reporting.
+    </p>
+
+    <h3>5.2 Integration model</h3>
+    <table>
+      <tr>
+        <th>HRM Side</th>
+        <th>Education Side</th>
+        <th>Integration Purpose</th>
+      </tr>
+      <tr>
+        <td><code>Employee</code></td>
+        <td><code>Instructor</code></td>
+        <td>One faculty member may exist as both an employee and an instructor.</td>
+      </tr>
+      <tr>
+        <td>Jameah demographic fields</td>
+        <td>Mirrored on Instructor</td>
+        <td>Ensures ministry-required faculty reporting can be done from academic records.</td>
+      </tr>
+      <tr>
+        <td>Jameah institute placement</td>
+        <td>Mirrored on Instructor</td>
+        <td>Keeps faculty organizational placement visible in Education workflows.</td>
+      </tr>
+      <tr>
+        <td>Facility assignment</td>
+        <td>Visible for Instructor</td>
+        <td>Supports academic and clinical assignment visibility.</td>
+      </tr>
+      <tr>
+        <td>Qualifications/training/publications</td>
+        <td>Mirrored child tables</td>
+        <td>Supports faculty accreditation, promotion, and academic reporting.</td>
+      </tr>
+    </table>
+
+    <h3>5.3 Data flow principles</h3>
+    <ul>
+      <li><strong>HRM owns employment identity</strong>: employee lifecycle, joining, payroll relevance, and core employment data.</li>
+      <li><strong>Education owns teaching operations</strong>: academic usage of faculty profile inside class, exam, or instructor workflows.</li>
+      <li><strong>Shared ministry fields must remain aligned</strong>: demographic and ministry-compliance fields should not diverge between Employee and Instructor.</li>
+      <li><strong>Lookup values must stay controlled</strong>: any lookup must come from predefined master data, not free text.</li>
+    </ul>
+
+    <h3>5.4 Developer handoff guidance for Education team</h3>
+    <ul>
+      <li>Use the linked Employee record as the employment source of truth.</li>
+      <li>Do not create parallel free-text academic demographic fields when a mapped Jameah field already exists.</li>
+      <li>If new academic forms need nationality, specialization, rank, or faculty status, link to existing masters.</li>
+      <li>If a faculty workflow changes organizational placement, confirm whether Employee must also be updated.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>6. HRM to Finance Module Integration</h2>
+    <h3>6.1 Why the integration exists</h3>
+    <p>
+      HRM produces the people, status, attendance, leave, and employment context that Finance needs to process payroll,
+      allowances, deductions, and accounting entries.
+    </p>
+
+    <h3>6.2 Integration model</h3>
+    <table>
+      <tr>
+        <th>HRM Component</th>
+        <th>Finance Component</th>
+        <th>Integration Purpose</th>
+      </tr>
+      <tr>
+        <td><code>Employee</code></td>
+        <td><code>Salary Structure Assignment</code></td>
+        <td>Finance uses employee master and employment status to determine payroll eligibility.</td>
+      </tr>
+      <tr>
+        <td>Attendance / Leave / Shift data</td>
+        <td><code>Salary Slip</code></td>
+        <td>Affects payable days, leave deductions, and overtime calculations.</td>
+      </tr>
+      <tr>
+        <td>HR allowances and requests</td>
+        <td><code>Additional Salary</code> / payroll components</td>
+        <td>Approved HR benefits may become payroll earnings or deductions.</td>
+      </tr>
+      <tr>
+        <td>Employee department / designation / company</td>
+        <td><code>Payroll Entry</code>, costing, reporting</td>
+        <td>Used for grouping, approvals, budget checks, and reporting.</td>
+      </tr>
+      <tr>
+        <td>Employment status changes</td>
+        <td>Salary generation controls</td>
+        <td>Inactive or separated employees should not continue into payroll.</td>
+      </tr>
+    </table>
+
+    <h3>6.3 Expected Finance touchpoints</h3>
+    <ul>
+      <li>Monthly payroll processing</li>
+      <li>Allowances and benefits</li>
+      <li>Overtime and special compensation</li>
+      <li>End-of-service settlement inputs</li>
+      <li>Department-wise salary reporting</li>
+      <li>Budget and cost-center level staffing analysis</li>
+    </ul>
+
+    <h3>6.4 Developer handoff guidance for Finance team</h3>
+    <ul>
+      <li>Treat HR employee status as a controlling input for payroll eligibility.</li>
+      <li>Reuse HRM assignment fields like department, designation, and facility when reporting requires organizational breakdown.</li>
+      <li>If a new finance workflow depends on faculty role, use the Employee-to-Instructor link instead of duplicating faculty logic.</li>
+      <li>Where ministry reporting affects compensation classification, rely on controlled masters rather than text fields.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>7. Shared Master Data Used Across Modules</h2>
+    <table>
+      <tr>
+        <th>Master Data</th>
+        <th>Used By</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td><code>Jameah Ministry Code</code></td>
+        <td>HRM, Education</td>
+        <td>Controlled ministry values such as nationality, city, degree, specialization, identity type.</td>
+      </tr>
+      <tr>
+        <td><code>Jameah Branch</code></td>
+        <td>HRM, Education, reporting</td>
+        <td>Formal university branch placement.</td>
+      </tr>
+      <tr>
+        <td><code>Jameah College</code></td>
+        <td>HRM, Education</td>
+        <td>College placement for faculty and staff.</td>
+      </tr>
+      <tr>
+        <td><code>Jameah Academic Department</code></td>
+        <td>HRM, Education</td>
+        <td>Academic departmental assignment.</td>
+      </tr>
+      <tr>
+        <td><code>Jameah Facility</code></td>
+        <td>HRM, Education, possible operations</td>
+        <td>Hospital/clinic/lab/classroom assignment and reporting.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>8. Recommended Integration Rules for Developers</h2>
+    <ol>
+      <li>Do not duplicate employee identity logic in Finance or Education.</li>
+      <li>Use Employee as the primary HR record.</li>
+      <li>Use Instructor as the academic operational profile for faculty.</li>
+      <li>Use linked masters for all controlled values.</li>
+      <li>Do not introduce free-text lookups for ministry-mapped fields.</li>
+      <li>Keep organization and facility references consistent across HR and Education.</li>
+      <li>When new modules need staff/faculty data, integrate through existing doctypes before creating new structures.</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <h2>9. Current Custom Structures Relevant to Other Teams</h2>
+    <table>
+      <tr>
+        <th>Custom Structure</th>
+        <th>Purpose</th>
+        <th>Potential Consumers</th>
+      </tr>
+      <tr>
+        <td><code>Jameah Ministry Code</code></td>
+        <td>Central lookup dictionary</td>
+        <td>Education, Finance, Reporting, Integrations</td>
+      </tr>
+      <tr>
+        <td><code>Jameah Facility</code></td>
+        <td>Assignment of staff/faculty to hospitals, clinics, labs, etc.</td>
+        <td>Education, Healthcare, Scheduling, Reporting</td>
+      </tr>
+      <tr>
+        <td>Jameah demographic fields on Employee/Instructor</td>
+        <td>Ministry compliance</td>
+        <td>Education, Reporting, External integration</td>
+      </tr>
+      <tr>
+        <td>Child tables for qualifications, experience, training, publications, awards</td>
+        <td>Faculty profile completeness</td>
+        <td>Education, Promotion workflows, Accreditation reports</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>10. Next Development Recommendations</h2>
+    <ul>
+      <li>Create formal synchronization rules between Employee and Instructor for shared fields.</li>
+      <li>Publish a field mapping sheet showing which module owns each field.</li>
+      <li>Standardize API/service methods for reading faculty identity and placement.</li>
+      <li>Introduce validation so Finance and Education cannot use invalid free-text ministry values.</li>
+      <li>Document event triggers for onboarding, faculty creation, transfer, and separation.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>11. Conclusion</h2>
+    <p>
+      The HRM module is the employment and compliance foundation of the Medical College system.
+      The Education module depends on HRM for faculty identity and institutional placement,
+      while the Finance module depends on HRM for payroll eligibility, organizational assignment,
+      and compensation context.
+    </p>
+    <p>
+      For future development, all module teams should integrate with the existing Employee, Instructor,
+      and Jameah master structures instead of creating parallel data models.
+    </p>
+  </div>
+
+</body>
+</html>

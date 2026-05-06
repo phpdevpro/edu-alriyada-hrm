@@ -1,0 +1,133 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SCR-{YY}-{MM}-{#####}",
+ "creation": "2026-04-09 12:16:52.447273",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "purpose",
+  "language_preference",
+  "addressee",
+  "include_salary_breakdown",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Employee Name"
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Purpose",
+   "options": "Bank Loan\nVisa Application\nRental Agreement\nEmbassy\nOther",
+   "reqd": 1
+  },
+  {
+   "default": "English",
+   "fieldname": "language_preference",
+   "fieldtype": "Select",
+   "label": "Language",
+   "options": "English\nArabic\nBilingual"
+  },
+  {
+   "default": "To Whom It May Concern",
+   "fieldname": "addressee",
+   "fieldtype": "Data",
+   "label": "Addressee (To Whom)",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "description": "Checked = include basic + allowances. Unchecked = grand total only.",
+   "fieldname": "include_salary_breakdown",
+   "fieldtype": "Check",
+   "label": "Include Salary Breakdown?"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nPending Manager\nPending HR\nIssued\nRejected"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-27 14:52:15.074949",
+ "modified_by": "Administrator",
+ "module": "Medical HRMS",
+ "name": "Salary Certificate Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

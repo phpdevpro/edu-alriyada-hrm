@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HRM and Education Module Integration</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 30px;
+      color: #222;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #1f4e79;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      margin-bottom: 25px;
+    }
+    th, td {
+      border: 1px solid #c8d3df;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #eaf2fb;
+    }
+    .note {
+      background: #f4f8fc;
+      border-left: 4px solid #1f4e79;
+      padding: 12px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>HRM and Education Module Integration</h1>
+
+  <h2>1. Overview</h2>
+  <p>
+    The HRM module and the Education module are connected so that faculty members can be managed
+    both as employees and as academic instructors. HRM manages the employment side, while Education
+    manages the teaching and academic side.
+  </p>
+
+  <h2>2. How the Connection Works</h2>
+  <table>
+    <tr>
+      <th>HRM Module</th>
+      <th>Education Module</th>
+      <th>Integration Purpose</th>
+    </tr>
+    <tr>
+      <td>Employee</td>
+      <td>Instructor</td>
+      <td>A faculty member can exist as both an employee and an instructor.</td>
+    </tr>
+    <tr>
+      <td>Employee department</td>
+      <td>Instructor department</td>
+      <td>The Education module can use the employee's department data.</td>
+    </tr>
+    <tr>
+      <td>Employee gender and identity details</td>
+      <td>Instructor profile</td>
+      <td>Basic HR information is available for academic records and reporting.</td>
+    </tr>
+    <tr>
+      <td>Jameah demographic and compliance fields</td>
+      <td>Instructor profile</td>
+      <td>Faculty records can support ministry and academic reporting requirements.</td>
+    </tr>
+    <tr>
+      <td>Institute placement and facility assignment</td>
+      <td>Instructor profile</td>
+      <td>Education can identify where the faculty member belongs academically and physically.</td>
+    </tr>
+  </table>
+
+  <h2>3. Functional Responsibility</h2>
+  <table>
+    <tr>
+      <th>Area</th>
+      <th>Owned By</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>Employment record</td>
+      <td>HRM</td>
+      <td>Joining date, employment status, employee record, and HR master information.</td>
+    </tr>
+    <tr>
+      <td>Teaching profile</td>
+      <td>Education</td>
+      <td>Instructor usage in scheduling, course assignment, attendance, and academic workflows.</td>
+    </tr>
+    <tr>
+      <td>Faculty identity consistency</td>
+      <td>Shared</td>
+      <td>Both modules should use the same linked employee and instructor data.</td>
+    </tr>
+  </table>
+
+  <div class="note">
+    <strong>Current Status:</strong>
+    The Education module already contains a direct Instructor-to-Employee relationship.
+    This confirms that HRM and Education are already structurally connected.
+  </div>
+
+  <h2>4. Client Summary</h2>
+  <p>
+    In simple terms, HRM manages the person as an employee, and Education manages the same person
+    as an instructor. This avoids duplicate records and keeps faculty information aligned across
+    administrative and academic operations.
+  </p>
+
+</body>
+</html>

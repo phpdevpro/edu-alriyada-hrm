@@ -1,0 +1,168 @@
+{
+  "ministry_codes": [
+    {"code_category": "Gender", "ministry_code": "G-MALE", "name_english": "Male", "name_arabic": "ذكر"},
+    {"code_category": "Gender", "ministry_code": "G-FEMALE", "name_english": "Female", "name_arabic": "أنثى"},
+    {"code_category": "Nationality", "ministry_code": "N-SA", "name_english": "Saudi Arabian", "name_arabic": "سعودي"},
+    {"code_category": "Nationality", "ministry_code": "N-EG", "name_english": "Egyptian", "name_arabic": "مصري"},
+    {"code_category": "Identity Type", "ministry_code": "ID-NID", "name_english": "National ID", "name_arabic": "الهوية الوطنية"},
+    {"code_category": "Identity Type", "ministry_code": "ID-IQ", "name_english": "Iqama", "name_arabic": "الإقامة"},
+    {"code_category": "City", "ministry_code": "CITY-RIYADH", "name_english": "Riyadh", "name_arabic": "الرياض"},
+    {"code_category": "City", "ministry_code": "CITY-JEDDAH", "name_english": "Jeddah", "name_arabic": "جدة"},
+    {"code_category": "Degree", "ministry_code": "DEG-BSC", "name_english": "Bachelor", "name_arabic": "بكالوريوس"},
+    {"code_category": "Degree", "ministry_code": "DEG-MSC", "name_english": "Master", "name_arabic": "ماجستير"},
+    {"code_category": "Degree", "ministry_code": "DEG-PHD", "name_english": "Doctorate", "name_arabic": "دكتوراه"},
+    {"code_category": "Specialization", "ministry_code": "SPEC-IT", "name_english": "Information Technology", "name_arabic": "تقنية المعلومات"},
+    {"code_category": "Specialization", "ministry_code": "SPEC-MED", "name_english": "Medicine", "name_arabic": "الطب"},
+    {"code_category": "Faculty Status", "ministry_code": "FS-ACT", "name_english": "Active", "name_arabic": "نشط"},
+    {"code_category": "Faculty Contract Type", "ministry_code": "FCT-FULL", "name_english": "Full Time", "name_arabic": "دوام كامل"},
+    {"code_category": "Faculty Ranking", "ministry_code": "FR-ASST", "name_english": "Assistant Professor", "name_arabic": "أستاذ مساعد"}
+  ],
+  "branches": [
+    {"branch_name_en": "Main Riyadh Campus Branch", "branch_name_ar": "فرع الرياض الرئيسي", "ministry_code": "CITY-RIYADH"}
+  ],
+  "agencies": [
+    {"agency_name_en": "Medical College Agency", "agency_name_ar": "وكالة الكلية الطبية", "branch": "Main Riyadh Campus Branch", "ministry_code": "CITY-RIYADH"}
+  ],
+  "deaneries": [
+    {"deanery_name_en": "Faculty of Medicine Deanery", "deanery_name_ar": "عمادة كلية الطب", "agency": "Medical College Agency", "ministry_code": "CITY-RIYADH"}
+  ],
+  "colleges": [
+    {"college_name_en": "College of Medicine", "college_name_ar": "كلية الطب", "branch": "Main Riyadh Campus Branch", "ministry_code": "CITY-RIYADH"}
+  ],
+  "departments": [
+    {"department_name_en": "Department of Internal Medicine", "department_name_ar": "قسم الطب الباطني", "college": "College of Medicine", "ministry_code": "CITY-RIYADH"}
+  ],
+  "facilities": [
+    {"facility_name_en": "Main Teaching Hospital", "facility_name_ar": "المستشفى التعليمي الرئيسي", "facility_type": "Hospital", "branch": "Main Riyadh Campus Branch", "college": "College of Medicine", "ministry_code": "CITY-RIYADH"}
+  ],
+  "standard_masters": {
+    "company": {"company_name": "Medical College", "abbr": "MC", "default_currency": "SAR", "country": "Saudi Arabia", "is_group": 0},
+    "designation": {"designation_name": "Assistant Professor", "description": "Dummy designation for faculty seed data"},
+    "branch": {"branch": "Main Riyadh Campus Branch"},
+    "department": {"department_name": "Internal Medicine"},
+    "location_edu": {"location_name_edu": "Main Teaching Hospital", "location_code_edu": "LOC-001"},
+    "campus": {"campus_name": "Main Riyadh Campus", "campus_name_ar": "الحرم الرئيسي بالرياض", "campus_code": "CMP-001"},
+    "college": {"college_name": "College of Medicine", "college_name_ar": "كلية الطب", "college_code": "COL-MED"},
+    "department_edu": {"department_name": "Internal Medicine", "department_name_ar": "الطب الباطني", "department_code": "DEP-IM"},
+    "faculty_status": {"faculty_status_name": "Active", "faculty_status_code": "FS-ACT"},
+    "faculty_contract_type": {"faculty_contract_type_name": "Full Time", "faculty_contract_type_code": "FCT-FULL"},
+    "faculty_ranking": {"faculty_ranking_name": "Assistant Professor", "faculty_ranking_code": 1},
+    "major": {"major_name": "Medicine", "major_name_ar": "الطب", "major_code": "MAJ-MED", "major_active": 1},
+    "education_level": {"education_level_name": "Doctorate", "education_level_name_ar": "دكتوراه", "education_level_code": "EDU-PHD"}
+  },
+  "employee": {
+    "naming_series": "EMP-",
+    "first_name": "Ahmed",
+    "middle_name": "Hassan",
+    "last_name": "Alqahtani",
+    "gender": "Male",
+    "date_of_birth": "1988-05-12",
+    "date_of_joining": "2024-01-01",
+    "status": "Active",
+    "company": "Medical College",
+    "cell_number": "+966500000001",
+    "personal_email": "ahmed.alqahtani@example.com",
+    "current_address": "Riyadh",
+    "permanent_address": "Riyadh",
+    "branch": "Main Riyadh Campus Branch",
+    "department": "Internal Medicine",
+    "designation": "Assistant Professor",
+    "company_email": "ahmed.alqahtani@medicalcollege.edu",
+    "employee_number": "EMP-0001",
+    "custom_first_name_en": "Ahmed",
+    "custom_second_name_en": "Hassan",
+    "custom_third_name_en": "Salem",
+    "custom_last_name_en": "Alqahtani",
+    "custom_first_name_ar": "أحمد",
+    "custom_second_name_ar": "حسن",
+    "custom_third_name_ar": "سالم",
+    "custom_last_name_ar": "القحطاني",
+    "custom_identity_type": "ID-NID",
+    "custom_identity_number": "1010101010",
+    "custom_identity_issue_date": "2018-02-15",
+    "custom_identity_issue_place": "CITY-RIYADH",
+    "custom_jameah_nationality": "N-SA",
+    "custom_jameah_branch": "Main Riyadh Campus Branch",
+    "custom_jameah_agency": "Medical College Agency",
+    "custom_jameah_deanery": "Faculty of Medicine Deanery",
+    "custom_jameah_college": "College of Medicine",
+    "custom_jameah_academic_department": "Department of Internal Medicine",
+    "custom_jameah_facility": "Main Teaching Hospital",
+    "custom_jameah_qualifications": [
+      {"degree": "DEG-BSC", "specialization": "SPEC-MED", "institute": "King Saud University", "country": "N-SA", "graduation_year": "2010"},
+      {"degree": "DEG-MSC", "specialization": "SPEC-MED", "institute": "King Abdulaziz University", "country": "N-SA", "graduation_year": "2014"}
+    ],
+    "custom_jameah_experience": [
+      {"company": "King Fahad Hospital", "designation": "Resident", "start_date": "2014-01-01", "end_date": "2016-12-31"},
+      {"company": "Medical City", "designation": "Specialist", "start_date": "2017-01-01", "end_date": "2023-12-31"}
+    ],
+    "custom_jameah_training": [
+      {"course_name": "Advanced Life Support", "provider": "Saudi Health Academy", "duration": "5", "date": "2023-06-01"}
+    ],
+    "custom_jameah_publications": [
+      {"title": "Clinical Outcomes in Cardiology", "journal": "Saudi Medical Journal", "publication_date": "2022-08-15", "link": "https://example.com/pub-001"}
+    ],
+    "custom_jameah_awards": [
+      {"award_name": "Best Faculty Award", "organization": "Medical College", "date": "2023-12-01"}
+    ]
+  },
+  "instructor": {
+    "instructor_id": "INS-0001",
+    "email": "ahmed.alqahtani@medicalcollege.edu",
+    "personal_email_id": "ahmed.alqahtani@example.com",
+    "instructor_name": "Ahmed Hassan Alqahtani",
+    "arabic_name": "أحمد حسن القحطاني",
+    "instructor_id_type": "Saudi National ID",
+    "instructor_unique_id": "1010101010",
+    "employee_no": "EMP-0001",
+    "mobile_no": "+966500000001",
+    "status": "Active",
+    "gender": "Male",
+    "department": "Internal Medicine",
+    "instructor_college": "College of Medicine",
+    "instructor_campus": "Main Riyadh Campus",
+    "instructor_major": "Medicine",
+    "instructor_qualification": "Doctorate",
+    "instructor_faculty_status": "Active",
+    "instructor_faculty_contract_type": "Full Time",
+    "instructor_faculty_ranking": "Assistant Professor",
+    "instructor_start_date": "2024-01-01",
+    "instructor_appoinment_date": "2023-12-15",
+    "instructor_location": "Main Teaching Hospital",
+    "custom_first_name_en": "Ahmed",
+    "custom_second_name_en": "Hassan",
+    "custom_third_name_en": "Salem",
+    "custom_last_name_en": "Alqahtani",
+    "custom_first_name_ar": "أحمد",
+    "custom_second_name_ar": "حسن",
+    "custom_third_name_ar": "سالم",
+    "custom_last_name_ar": "القحطاني",
+    "custom_identity_type": "ID-NID",
+    "custom_identity_number": "1010101010",
+    "custom_identity_issue_date": "2018-02-15",
+    "custom_identity_issue_place": "CITY-RIYADH",
+    "custom_jameah_nationality": "N-SA",
+    "custom_jameah_branch": "Main Riyadh Campus Branch",
+    "custom_jameah_agency": "Medical College Agency",
+    "custom_jameah_deanery": "Faculty of Medicine Deanery",
+    "custom_jameah_college": "College of Medicine",
+    "custom_jameah_academic_department": "Department of Internal Medicine",
+    "custom_jameah_facility": "Main Teaching Hospital",
+    "custom_jameah_qualifications": [
+      {"degree": "DEG-BSC", "specialization": "SPEC-MED", "institute": "King Saud University", "country": "N-SA", "graduation_year": "2010"},
+      {"degree": "DEG-PHD", "specialization": "SPEC-MED", "institute": "Imam Muhammad ibn Saud Islamic University", "country": "N-SA", "graduation_year": "2019"}
+    ],
+    "custom_jameah_experience": [
+      {"company": "King Fahad Hospital", "designation": "Resident", "start_date": "2014-01-01", "end_date": "2016-12-31"}
+    ],
+    "custom_jameah_training": [
+      {"course_name": "Medical Teaching Skills", "provider": "Faculty Development Center", "duration": "3", "date": "2023-09-01"}
+    ],
+    "custom_jameah_publications": [
+      {"title": "Evidence-Based Teaching in Medicine", "journal": "Medical Education Review", "publication_date": "2021-05-10", "link": "https://example.com/pub-002"}
+    ],
+    "custom_jameah_awards": [
+      {"award_name": "Excellence in Teaching", "organization": "Medical College", "date": "2024-02-15"}
+    ]
+  }
+}
