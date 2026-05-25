@@ -1,0 +1,281 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ _("Job Application") }}{% endblock %}
+
+{% block head_include %}
+<link rel="stylesheet" href="/assets/medical_hrms/css/job_application.css?v={{ frappe.utils.now_datetime() }}">
+{% endblock %}
+
+{% block page_content %}
+<div class="ja-shell">
+  {% if not is_valid %}
+    <div class="ja-card ja-invalid">
+      <h2>{{ _("Job Application Unavailable") }}</h2>
+      <p>{{ _(invalid_message) }}</p>
+    </div>
+  {% else %}
+    <div class="ja-hero">
+      <h1>{{ _("Join Our Team") }}</h1>
+      <p>{{ _("Complete the application form below. Required fields are marked.") }}</p>
+      <div class="ja-badge">{{ _("Category") }}: <span id="application-category-badge"></span></div>
+      {% if is_admin_preview %}
+        <div class="ja-badge">{{ _("Admin Preview Mode") }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ja-card">
+      <div id="job-application-alert" class="ja-alert"></div>
+      <form id="job-application-form" enctype="multipart/form-data">
+        <div class="ja-section">
+          <h2>{{ _("Applicant Details") }}</h2>
+          <p>{{ _("Tell us about yourself and the role you are applying for.") }}</p>
+          <div class="ja-grid">
+            <div class="ja-field">
+              <label>{{ _("Full Name") }}<span class="ja-required">*</span></label>
+              <input type="text" data-field="full_name" required>
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Email Address") }}<span class="ja-required">*</span></label>
+              <input type="email" data-field="email" required>
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Phone Number") }}<span class="ja-required">*</span></label>
+              <input type="text" data-field="phone" required>
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Gender") }}</label>
+              <select data-field="gender">
+                <option value="">--</option>
+                <option value="Male">{{ _("Male") }}</option>
+                <option value="Female">{{ _("Female") }}</option>
+                <option value="Other">{{ _("Other") }}</option>
+              </select>
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Date of Birth") }}</label>
+              <input type="date" data-field="date_of_birth">
+            </div>
+            <div class="ja-field">
+              <label>{{ _("NIC / Passport") }}</label>
+              <input type="text" data-field="nic_passport">
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Designation Applying For") }}<span class="ja-required">*</span></label>
+              <select data-field="designation" required>
+                <option value="">--</option>
+                {% for designation in designations %}
+                  <option value="{{ designation.name }}">{{ designation.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Department") }}<span class="ja-required">*</span></label>
+              <select data-field="department" required>
+                <option value="">--</option>
+                {% for department in departments %}
+                  <option value="{{ department.name }}">{{ department.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Expected Salary") }}</label>
+              <input type="number" data-field="expected_salary" min="0" step="0.01">
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Salary Currency") }}</label>
+              <input type="text" data-field="expected_salary_currency" placeholder="{{ _("e.g. USD") }}">
+            </div>
+          </div>
+        </div>
+
+        <div class="ja-section">
+          <h2>{{ _("Contact Details") }}</h2>
+          <p>{{ _("Provide your address and emergency contact information.") }}</p>
+          <div class="ja-grid">
+            <div class="ja-field">
+              <label>{{ _("Address") }}</label>
+              <textarea data-field="address"></textarea>
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Emergency Contact Name") }}</label>
+              <input type="text" data-field="emergency_contact_name">
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Emergency Contact Phone") }}</label>
+              <input type="text" data-field="emergency_contact_phone">
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Emergency Contact Relation") }}</label>
+              <input type="text" data-field="emergency_contact_relation">
+            </div>
+          </div>
+        </div>
+
+        <div class="ja-section">
+          <h2>{{ _("Application Category") }}</h2>
+          <p>{{ _("The category is set by the application link.") }}</p>
+          <div class="ja-grid">
+            <div class="ja-field">
+              <label>{{ _("Category") }}</label>
+              <select id="application-category">
+                <option value="Academic Staff">{{ _("Academic Staff") }}</option>
+                <option value="Non-Academic / Other Staff">{{ _("Non-Academic / Other Staff") }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="ja-section">
+          <h2>{{ _("Resume and Cover Letter") }}</h2>
+          <div class="ja-grid">
+            <div class="ja-field">
+              <label>{{ _("Resume / CV Upload") }}</label>
+              <input type="file" id="resume_file" accept=".pdf,.doc,.docx">
+            </div>
+            <div class="ja-field">
+              <label>{{ _("Resume Link") }}</label>
+              <input type="text" data-field="resume_link">
+            </div>
+            <div class="ja-field" style="grid-column: span 2;">
+              <label>{{ _("Cover Letter") }}</label>
+              <textarea data-field="cover_letter"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="ja-section">
+          <h2>{{ _("Professional Profile") }}</h2>
+          <p>{{ _("Add your qualifications, experience, and professional details.") }}</p>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Education Qualifications") }}</h3>
+              <button class="ja-add-row" type="button" data-table="education">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="education">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Work Experience") }}</h3>
+              <button class="ja-add-row" type="button" data-table="work_experience">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="work_experience">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Skills") }}</h3>
+              <button class="ja-add-row" type="button" data-table="skills">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="skills">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Training Courses") }}</h3>
+              <button class="ja-add-row" type="button" data-table="training_courses">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="training_courses">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Academic Certifications") }}</h3>
+              <button class="ja-add-row" type="button" data-table="academic_certifications">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="academic_certifications">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Teaching Experience") }}</h3>
+              <button class="ja-add-row" type="button" data-table="teaching_experience">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="teaching_experience">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Research Publications") }}</h3>
+              <button class="ja-add-row" type="button" data-table="research_publications">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="research_publications">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Professional Memberships") }}</h3>
+              <button class="ja-add-row" type="button" data-table="professional_memberships">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="professional_memberships">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ja-table">
+            <div class="ja-table-head">
+              <h3>{{ _("Awards") }}</h3>
+              <button class="ja-add-row" type="button" data-table="awards">{{ _("Add Row") }}</button>
+            </div>
+            <div class="ja-table-scroll">
+              <table data-table="awards">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="ja-actions">
+          <button class="ja-submit" type="submit" id="job-application-submit">{{ _("Submit Application") }}</button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  window.jobApplicationConfig = {{ job_application_config | tojson }};
+  window.jobAppVersion = "{{ frappe.utils.now_datetime() }}";
+</script>
+<script src="/assets/medical_hrms/js/job_application.js?v={{ frappe.utils.now_datetime() }}"></script>
+{% endblock %}

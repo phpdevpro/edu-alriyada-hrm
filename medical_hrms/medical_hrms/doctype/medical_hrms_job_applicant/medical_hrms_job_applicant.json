@@ -1,0 +1,309 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:MHR-APP-.YYYY.-.#####",
+ "creation": "2026-05-20 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "applicant_name",
+  "email_id",
+  "phone_number",
+  "status",
+  "column_break_1",
+  "designation",
+  "department",
+  "application_category",
+  "application_token",
+  "section_break_2",
+  "date_of_birth",
+  "gender",
+  "nic_passport",
+  "address",
+  "section_break_3",
+  "emergency_contact_name",
+  "emergency_contact_phone",
+  "emergency_contact_relation",
+  "section_break_4",
+  "expected_salary",
+  "currency",
+  "section_break_5",
+  "cover_letter",
+  "resume_attachment",
+  "resume_link",
+  "section_break_6",
+  "education",
+  "work_experience",
+  "skills",
+  "training_courses",
+  "academic_certifications",
+  "teaching_experience",
+  "research_publications",
+  "professional_memberships",
+  "awards"
+ ],
+ "fields": [
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Applicant Details"
+  },
+  {
+   "fieldname": "applicant_name",
+   "fieldtype": "Data",
+   "label": "Applicant Name",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "email_id",
+   "fieldtype": "Data",
+   "label": "Email Address",
+   "options": "Email",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "options": "Phone",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nAccepted\nRejected",
+   "default": "Pending",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "application_category",
+   "fieldtype": "Select",
+   "label": "Application Category",
+   "options": "Academic Staff\nNon-Academic / Other Staff"
+  },
+  {
+   "fieldname": "application_token",
+   "fieldtype": "Data",
+   "label": "Application Token",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break",
+   "label": "Personal Details"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Male\nFemale\nOther"
+  },
+  {
+   "fieldname": "nic_passport",
+   "fieldtype": "Data",
+   "label": "NIC/Passport"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break",
+   "label": "Emergency Contact"
+  },
+  {
+   "fieldname": "emergency_contact_name",
+   "fieldtype": "Data",
+   "label": "Contact Name"
+  },
+  {
+   "fieldname": "emergency_contact_phone",
+   "fieldtype": "Data",
+   "label": "Contact Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "emergency_contact_relation",
+   "fieldtype": "Data",
+   "label": "Relation"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Compensation"
+  },
+  {
+   "fieldname": "expected_salary",
+   "fieldtype": "Currency",
+   "label": "Expected Salary",
+   "options": "currency"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break",
+   "label": "Resume"
+  },
+  {
+   "fieldname": "cover_letter",
+   "fieldtype": "Text",
+   "label": "Cover Letter"
+  },
+  {
+   "fieldname": "resume_attachment",
+   "fieldtype": "Attach",
+   "label": "Resume Attachment"
+  },
+  {
+   "fieldname": "resume_link",
+   "fieldtype": "Data",
+   "label": "Resume Link"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break",
+   "label": "Professional Profile"
+  },
+  {
+   "fieldname": "education",
+   "fieldtype": "Table",
+   "label": "Education Qualifications",
+   "options": "Employee Education"
+  },
+  {
+   "fieldname": "work_experience",
+   "fieldtype": "Table",
+   "label": "Work Experience",
+   "options": "Employee External Work History"
+  },
+  {
+   "fieldname": "skills",
+   "fieldtype": "Table",
+   "label": "Skills",
+   "options": "Medical HRMS Applicant Skill"
+  },
+  {
+   "fieldname": "training_courses",
+   "fieldtype": "Table",
+   "label": "Training Courses",
+   "options": "Medical HRMS Training Course"
+  },
+  {
+   "fieldname": "academic_certifications",
+   "fieldtype": "Table",
+   "label": "Academic Certifications",
+   "options": "Medical HRMS Academic Certification"
+  },
+  {
+   "fieldname": "teaching_experience",
+   "fieldtype": "Table",
+   "label": "Teaching Experience",
+   "options": "Medical HRMS Teaching Experience"
+  },
+  {
+   "fieldname": "research_publications",
+   "fieldtype": "Table",
+   "label": "Research Publications",
+   "options": "Medical HRMS Research Publication"
+  },
+  {
+   "fieldname": "professional_memberships",
+   "fieldtype": "Table",
+   "label": "Professional Memberships",
+   "options": "Medical HRMS Professional Membership"
+  },
+  {
+   "fieldname": "awards",
+   "fieldtype": "Table",
+   "label": "Awards",
+   "options": "Medical HRMS Award"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-05-20 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Medical HRMS",
+ "name": "Medical HRMS Job Applicant",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

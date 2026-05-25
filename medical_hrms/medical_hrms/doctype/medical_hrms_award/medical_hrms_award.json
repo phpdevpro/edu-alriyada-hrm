@@ -1,0 +1,35 @@
+{
+ "allow_rename": 1,
+ "creation": "2026-05-19 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "award_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Award Name"
+  },
+  {
+   "fieldname": "organization",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Organization"
+  },
+  {
+   "fieldname": "award_date",
+   "fieldtype": "Date",
+   "label": "Award Date"
+  },
+  {
+   "fieldname": "details",
+   "fieldtype": "Data",
+   "label": "Details"
+  }
+ ],
+ "istable": 1,
+ "module": "Medical HRMS",
+ "name": "Medical HRMS Award",
+ "owner": "Administrator",
+ "permissions": []
+}

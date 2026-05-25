@@ -1,0 +1,40 @@
+{
+ "allow_rename": 1,
+ "creation": "2026-05-19 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "certification_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Certification Name"
+  },
+  {
+   "fieldname": "issuing_body",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Issuing Body"
+  },
+  {
+   "fieldname": "issue_date",
+   "fieldtype": "Date",
+   "label": "Issue Date"
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "label": "Expiry Date"
+  },
+  {
+   "fieldname": "certificate_id",
+   "fieldtype": "Data",
+   "label": "Certificate ID"
+  }
+ ],
+ "istable": 1,
+ "module": "Medical HRMS",
+ "name": "Medical HRMS Academic Certification",
+ "owner": "Administrator",
+ "permissions": []
+}

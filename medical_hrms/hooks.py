@@ -44,6 +44,7 @@ app_license = "mit"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Medical HRMS Job Applicant": "public/js/job_applicant.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -74,6 +75,10 @@ on_session_creation = [
 
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
+website_route_rules = [
+	{"from_route": "/job-application", "to_route": "medical-job-application"},
+	{"from_route": "/job-application/<path:token>", "to_route": "medical-job-application"},
+]
 
 # Jinja
 # ----------

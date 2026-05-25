@@ -1,0 +1,35 @@
+{
+ "allow_rename": 1,
+ "creation": "2026-05-19 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title"
+  },
+  {
+   "fieldname": "journal",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Journal / Conference"
+  },
+  {
+   "fieldname": "publication_date",
+   "fieldtype": "Date",
+   "label": "Publication Date"
+  },
+  {
+   "fieldname": "link",
+   "fieldtype": "Data",
+   "label": "Link / DOI"
+  }
+ ],
+ "istable": 1,
+ "module": "Medical HRMS",
+ "name": "Medical HRMS Research Publication",
+ "owner": "Administrator",
+ "permissions": []
+}

@@ -1,0 +1,40 @@
+{
+ "allow_rename": 1,
+ "creation": "2026-05-19 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "organization",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Organization"
+  },
+  {
+   "fieldname": "membership_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Membership ID"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "label": "Status"
+  }
+ ],
+ "istable": 1,
+ "module": "Medical HRMS",
+ "name": "Medical HRMS Professional Membership",
+ "owner": "Administrator",
+ "permissions": []
+}

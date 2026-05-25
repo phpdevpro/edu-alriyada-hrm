@@ -4,3 +4,4 @@
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+medical_hrms.patches.post_model_sync.add_job_application_fields
