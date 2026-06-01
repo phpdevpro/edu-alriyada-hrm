@@ -34,7 +34,7 @@ def execute():
             {"label": "Financial & Admin", "type": "Card Break"},
             {"label": "Pre Approved Overtime Request", "type": "Link", "link_type": "DocType", "link_to": "Pre Approved Overtime Request"},
             {"label": "Salary Certificate Request", "type": "Link", "link_type": "DocType", "link_to": "Salary Certificate Request"},
-            {"label": "Children Education Allowance Request", "type": "Link", "link_type": "DocType", "link_to": "Children Education Allowance Request"},
+            {"label": "Children Medical Allowance Request", "type": "Link", "link_type": "DocType", "link_to": "Children Medical Allowance Request"},
             {"label": "Company Car Request", "type": "Link", "link_type": "DocType", "link_to": "Company Car Request"},
             
             {"label": "Career & Updates", "type": "Card Break"},

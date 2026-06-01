@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ChildrenEducationAllowanceRequest(Document):
+class ChildrenMedicalAllowanceRequest(Document):
 	pass

@@ -5,7 +5,7 @@ def validate_education_allowance(doc, method):
     # 1. Check max 3 children
     # Count how many distinct children have claims for this academic year
     existing_claims = frappe.get_all(
-        "Children Education Allowance Request",
+        "Children Medical Allowance Request",
         filters={
             "employee": doc.employee,
             "academic_year": doc.academic_year,

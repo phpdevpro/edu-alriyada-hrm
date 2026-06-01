@@ -58,8 +58,13 @@ def execute():
         doc.append("links", {"label": item, "type": "Link", "link_type": "DocType", "link_to": item})
 
     doc.append("links", {"label": "Financial & Admin", "type": "Card Break"})
-    for item in ["Expense Claim", "Travel Request", "Children Education Allowance Request", "Company Car Request"]:
-        doc.append("links", {"label": item, "type": "Link", "link_type": "DocType", "link_to": item})
+    for label, link_to in [
+        ("Expense Claim", "Expense Claim"),
+        ("Travel Request", "Travel Request"),
+        ("Children Medical Allowance Request", "Children Medical Allowance Request"),
+        ("Company Car Request", "Company Car Request"),
+    ]:
+        doc.append("links", {"label": label, "type": "Link", "link_type": "DocType", "link_to": link_to})
 
     doc.append("links", {"label": "Career & Compliance", "type": "Card Break"})
     for item in [
@@ -69,6 +74,7 @@ def execute():
         "Full and Final Statement",
         "Employee Data Update Request",
         "Employee Medical License",
+        "Employee",
     ]:
         doc.append("links", {"label": item, "type": "Link", "link_type": "DocType", "link_to": item})
 

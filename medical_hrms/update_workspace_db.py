@@ -57,7 +57,7 @@ def execute():
         {
             "id": "block11",
             "type": "shortcut",
-            "data": {"shortcut_name": "Children Education Allowance Request", "col": 3}
+            "data": {"shortcut_name": "Children Medical Allowance Request", "col": 3}
         },
         {
             "id": "block12",

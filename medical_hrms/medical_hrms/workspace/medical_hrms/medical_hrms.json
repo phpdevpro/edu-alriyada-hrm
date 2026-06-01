@@ -162,9 +162,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Children Education Allowance Request",
+   "label": "Children Medical Allowance Request",
    "link_count": 0,
-   "link_to": "Children Education Allowance Request",
+   "link_to": "Children Medical Allowance Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -247,9 +247,19 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee",
+   "link_count": 0,
+   "link_to": "Employee",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-05-05 11:57:40.404555",
+ "modified": "2026-05-15 13:34:37.614743",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
  "name": "Medical HRMS",
