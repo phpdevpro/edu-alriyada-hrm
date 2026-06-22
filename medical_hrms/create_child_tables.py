@@ -17,18 +17,26 @@ def create_child_doctypes():
             "name": "Jameah Work Experience",
             "fields": [
                 {"fieldname": "company", "fieldtype": "Data", "label": "Company/Organization", "in_list_view": 1},
+                {"fieldname": "city", "fieldtype": "Link", "options": "Jameah Ministry Code", "label": "City"},
+                {"fieldname": "country", "fieldtype": "Link", "options": "Jameah Ministry Code", "label": "Country"},
+                {"fieldname": "college_administration", "fieldtype": "Data", "label": "College / Administration"},
+                {"fieldname": "section", "fieldtype": "Data", "label": "Section"},
                 {"fieldname": "designation", "fieldtype": "Data", "label": "Designation", "in_list_view": 1},
                 {"fieldname": "start_date", "fieldtype": "Date", "label": "Start Date", "in_list_view": 1},
-                {"fieldname": "end_date", "fieldtype": "Date", "label": "End Date", "in_list_view": 1}
+                {"fieldname": "end_date", "fieldtype": "Date", "label": "End Date", "in_list_view": 1},
+                {"fieldname": "job_duties", "fieldtype": "Small Text", "label": "Job Duties"}
             ]
         },
         {
             "name": "Jameah Training Course",
             "fields": [
                 {"fieldname": "course_name", "fieldtype": "Data", "label": "Course Name", "in_list_view": 1},
+                {"fieldname": "course_type", "fieldtype": "Data", "label": "Type"},
                 {"fieldname": "provider", "fieldtype": "Data", "label": "Provider", "in_list_view": 1},
                 {"fieldname": "duration", "fieldtype": "Data", "label": "Duration (Days)", "in_list_view": 1},
-                {"fieldname": "date", "fieldtype": "Date", "label": "Date"}
+                {"fieldname": "date", "fieldtype": "Date", "label": "Date"},
+                {"fieldname": "city", "fieldtype": "Link", "options": "Jameah Ministry Code", "label": "City"},
+                {"fieldname": "country", "fieldtype": "Link", "options": "Jameah Ministry Code", "label": "Country"}
             ]
         },
         {
@@ -70,7 +78,7 @@ def link_tables_to_parents():
             "label": "Qualifications",
             "fieldtype": "Table",
             "options": "Jameah Academic Qualification",
-            "insert_after": "custom_jameah_nationality"
+            "insert_after": "custom_job_duties"
         },
         {
             "fieldname": "custom_jameah_experience",

@@ -43,7 +43,9 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Employee": "public/js/employee_ministry_lookup.js",
+}
 doctype_list_js = {
 	"Children Medical Allowance Request": "public/js/children_medical_allowance_request_list.js",
 }
@@ -145,6 +147,12 @@ on_session_creation = [
 # Hook on document methods and events
 
 doc_events = {
+	"Employee": {
+		"validate": "medical_hrms.ministry_lookup_validation.validate_employee_ministry_lookups",
+	},
+	"Employee Education": {
+		"validate": "medical_hrms.ministry_lookup_validation.validate_employee_education_ministry_lookups",
+	},
 	"Expense Claim": {
 		"validate": "medical_hrms.medical_hrms.overrides.expense_claim.validate_expense_claim",
 		"before_submit": "medical_hrms.medical_hrms.overrides.expense_claim.validate_expense_claim"
