@@ -61,12 +61,24 @@ def execute():
 			print(f"Skipped missing doctype: {doctype_name}")
 			continue
 
-		dt = frappe.get_doc("DocType", doctype_name)
-		dt.set("permissions", [])
+		frappe.db.delete("Custom DocPerm", {"parent": doctype_name})
 		for row in PERMISSIONS:
-			dt.append("permissions", row)
-		dt.save(ignore_permissions=True)
+			_insert_custom_permission(doctype_name, row)
+		frappe.clear_cache(doctype=doctype_name)
 		print(f"Updated permissions: {doctype_name}")
 
 	frappe.db.commit()
 	print("Jameah master permissions applied.")
+
+
+def _insert_custom_permission(doctype_name: str, permission: dict):
+	doc = frappe.get_doc(
+		{
+			"doctype": "Custom DocPerm",
+			"parent": doctype_name,
+			"parenttype": "DocType",
+			"parentfield": "permissions",
+			**permission,
+		}
+	)
+	doc.insert(ignore_permissions=True)
