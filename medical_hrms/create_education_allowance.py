@@ -1,7 +1,7 @@
 import frappe
 
 def execute():
-    doctype_name = "Children Education Allowance Request"
+    doctype_name = "Children Medical Allowance Request"
     
     if frappe.db.exists("DocType", doctype_name):
         return

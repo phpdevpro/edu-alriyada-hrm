@@ -103,7 +103,7 @@ def execute():
             {
                 "id": "block_fa_3",
                 "type": "shortcut",
-                "data": {"shortcut_name": "Children Education Allowance Request", "col": 3}
+                "data": {"shortcut_name": "Children Medical Allowance Request", "col": 3}
             },
             {
                 "id": "block_fa_4",
@@ -200,7 +200,7 @@ def execute():
             {"label": "Travel Request", "type": "DocType", "link_to": "Travel Request"},
             {"label": "Pre Approved Overtime Request", "type": "DocType", "link_to": "Pre Approved Overtime Request"},
             {"label": "Salary Certificate Request", "type": "DocType", "link_to": "Salary Certificate Request"},
-            {"label": "Children Education Allowance Request", "type": "DocType", "link_to": "Children Education Allowance Request"},
+            {"label": "Children Medical Allowance Request", "type": "DocType", "link_to": "Children Medical Allowance Request"},
             {"label": "Company Car Request", "type": "DocType", "link_to": "Company Car Request"},
             
             {"label": "Employee Separation", "type": "DocType", "link_to": "Employee Separation"},

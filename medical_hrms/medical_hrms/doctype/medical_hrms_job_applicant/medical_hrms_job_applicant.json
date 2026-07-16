@@ -34,6 +34,7 @@
   "cover_letter",
   "resume_attachment",
   "resume_link",
+  "application_details_json",
   "section_break_6",
   "education",
   "work_experience",
@@ -197,6 +198,13 @@
    "fieldtype": "Data",
    "label": "Resume Link"
   },
+    {
+     "fieldname": "application_details_json",
+     "fieldtype": "Long Text",
+     "hidden": 1,
+     "label": "Application Details JSON",
+     "read_only": 1
+    },
   {
    "fieldname": "section_break_6",
    "fieldtype": "Section Break",

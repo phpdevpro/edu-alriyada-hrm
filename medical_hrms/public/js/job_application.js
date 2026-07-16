@@ -127,6 +127,69 @@
 				{ name: "details", label: "Details", type: "text" },
 			],
 		},
+		academic_qualifications: {
+			label: "Employee Academic Qualifications",
+			columns: [
+				{ name: "latest_record", label: "Latest Record", type: "checkbox" },
+				{ name: "academic_qualification", label: "Academic Qualification", type: "text" },
+				{ name: "general_specialization_main", label: "General Specialization (Main)", type: "text" },
+				{ name: "subspecialty", label: "Subspecialty", type: "text" },
+				{ name: "appreciation", label: "Appreciation", type: "text" },
+				{ name: "graduation_rate", label: "Graduation Rate", type: "text" },
+				{ name: "rate_type", label: "Rate Type", type: "text" },
+				{ name: "study_system", label: "Study System", type: "text" },
+				{ name: "graduation_place", label: "Graduation Place", type: "text" },
+				{ name: "college", label: "College", type: "text" },
+				{ name: "qualification_date", label: "Date of Obtaining the Qualification", type: "date" },
+				{ name: "graduation_year_ad", label: "Graduation Year AD", type: "number" },
+				{ name: "city", label: "City", type: "text" },
+				{ name: "country", label: "Country", type: "text" },
+			],
+		},
+		academic_experience: {
+			label: "Employee Academic Experience",
+			columns: [
+				{ name: "school_year_history", label: "School Year History", type: "text" },
+				{ name: "employee_job_status", label: "Employee Job Status", type: "text" },
+				{ name: "job_title", label: "Job Title", type: "text" },
+				{ name: "educational_entity", label: "Educational Entity", type: "text" },
+				{ name: "geographical_work_location", label: "Geographical Work Location", type: "text" },
+				{ name: "academic_department", label: "Academic Department", type: "text" },
+				{ name: "job_number", label: "Job Number", type: "text" },
+				{ name: "job_rank", label: "Job Rank", type: "text" },
+				{ name: "date_of_appointment_to_the_rank", label: "Date of Appointment to the Rank", type: "date" },
+				{ name: "start_date", label: "Start Date", type: "date" },
+				{ name: "end_of_work_date", label: "End of Work Date", type: "date" },
+				{ name: "job_duties", label: "Job Duties", type: "textarea" },
+				{ name: "housing", label: "Housing", type: "text" },
+			],
+		},
+		previous_experience: {
+			label: "Employee Previous Experience",
+			columns: [
+				{ name: "job_title", label: "Job Title", type: "text" },
+				{ name: "institution_or_company", label: "Name of Educational Institution / Company", type: "text" },
+				{ name: "city", label: "City", type: "text" },
+				{ name: "country", label: "Country", type: "text" },
+				{ name: "college_administration", label: "College / Administration", type: "text" },
+				{ name: "section", label: "Section", type: "text" },
+				{ name: "start_date", label: "Start Date", type: "date" },
+				{ name: "end_of_work_date", label: "End of Work Date", type: "date" },
+				{ name: "job_duties", label: "Job Duties", type: "textarea" },
+			],
+		},
+		professional_certificates_training: {
+			label: "Employee Professional Certificates & Training Courses",
+			columns: [
+				{ name: "course_name", label: "Course Name", type: "text" },
+				{ name: "certificate_type", label: "Type", type: "text" },
+				{ name: "issuing_authority", label: "Issuing Authority", type: "text" },
+				{ name: "course_history", label: "Course History", type: "text" },
+				{ name: "course_duration", label: "Course Duration", type: "text" },
+				{ name: "city", label: "City", type: "text" },
+				{ name: "country", label: "Country", type: "text" },
+			],
+		},
 	};
 
 	function renderTables() {
@@ -151,8 +214,8 @@
 				thead.appendChild(th);
 			}
 
-			// Only auto-add row for Education (the only required table)
-			if (tableName === "education" && tbody && tbody.children.length === 0) {
+			// Only auto-add row for Academic Qualifications (the only required new table)
+			if (tableName === "academic_qualifications" && tbody && tbody.children.length === 0) {
 				addRow(tableName);
 			}
 		});
@@ -216,8 +279,12 @@
 				input.appendChild(opt);
 			});
 		} else {
-			input = document.createElement("input");
-			input.type = column.type === "number" ? "number" : column.type === "date" ? "date" : "text";
+			if (column.type === "textarea") {
+				input = document.createElement("textarea");
+			} else {
+				input = document.createElement("input");
+				input.type = column.type === "number" ? "number" : column.type === "date" ? "date" : column.type === "checkbox" ? "checkbox" : "text";
+			}
 		}
 		input.dataset.field = column.name;
 		return input;
@@ -233,8 +300,8 @@
 		table.querySelectorAll("tbody tr").forEach((row) => {
 			const rowData = {};
 			row.querySelectorAll("[data-field]").forEach((input) => {
-				const value = input.value ? input.value.trim() : "";
-				if (value) {
+				const value = input.type === "checkbox" ? input.checked : input.value ? input.value.trim() : "";
+				if (value !== "" && value !== false && value !== null && value !== undefined) {
 					rowData[input.dataset.field] = value;
 				}
 			});
@@ -278,9 +345,9 @@
 			return "Please fill all required fields before submitting.";
 		}
 
-		// Only Education Qualifications is required
-		if ((tables.education || []).length === 0) {
-			return "Please add at least one education qualification.";
+		// Only Academic Qualifications is required
+		if ((tables.academic_qualifications || []).length === 0) {
+			return "Please add at least one academic qualification.";
 		}
 
 		return "";
@@ -316,6 +383,10 @@
 			research_publications: collectTableRows("research_publications"),
 			professional_memberships: collectTableRows("professional_memberships"),
 			awards: collectTableRows("awards"),
+			academic_qualifications: collectTableRows("academic_qualifications"),
+			academic_experience: collectTableRows("academic_experience"),
+			previous_experience: collectTableRows("previous_experience"),
+			professional_certificates_training: collectTableRows("professional_certificates_training"),
 		};
 
 		Object.assign(payload, tables);

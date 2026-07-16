@@ -45,13 +45,13 @@
   {
    "fieldname": "school_name",
    "fieldtype": "Data",
-   "label": "School/Institution",
+   "label": "Hospital/Clinic",
    "reqd": 1
   },
   {
    "fieldname": "academic_year",
    "fieldtype": "Select",
-   "label": "Academic Year",
+   "label": "Service Period",
    "options": "2025-2026\n2026-2027\n2027-2028",
    "reqd": 1
   },
@@ -59,11 +59,11 @@
    "fieldname": "fee_amount_requested",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Total Fee Amount on Invoice",
+   "label": "Total Medical Amount on Invoice",
    "reqd": 1
   },
   {
-   "description": "HR calculates based on Grade cap.",
+   "description": "HR calculates based on policy cap.",
    "fieldname": "approved_amount",
    "fieldtype": "Currency",
    "label": "Approved Amount (Subject to Cap)",
@@ -79,7 +79,7 @@
   {
    "fieldname": "invoice_attachment",
    "fieldtype": "Attach",
-   "label": "Upload Fee Invoice",
+   "label": "Upload Medical Invoice",
    "reqd": 1
   },
   {
@@ -99,10 +99,10 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-27 14:52:14.792793",
+ "modified": "2026-07-16 12:36:37.421753",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
- "name": "Children Education Allowance Request",
+ "name": "Children Medical Allowance Request",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

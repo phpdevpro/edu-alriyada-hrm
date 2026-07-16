@@ -161,7 +161,7 @@ function render_doctype_cards() {
     ["Salary Certificate Request", "salary-certificate-request"],
     ["Pre Approved Overtime Request", "pre-approved-overtime-request"],
     ["Employee Training Request", "employee-training-request"],
-    ["Children Education Allowance Request", "children-education-allowance-request"],
+    ["Children Medical Allowance Request", "children-medical-allowance-request"],
     ["Company Car Request", "company-car-request"],
     ["Contract Renewal Request", "contract-renewal-request"],
     ["Employee Data Update Request", "employee-data-update-request"],
@@ -187,11 +187,11 @@ function render_doctype_cards() {
 }
 
 function fillGrid(selector, items) {
-  const html = items.map(([title, route]) => `
-    <div class="hrd-module-card" data-dt="${frappe.utils.escape_html(title)}">
+  const html = items.map(([title, route, doctypeKey]) => `
+    <div class="hrd-module-card" data-dt="${frappe.utils.escape_html(doctypeKey || title)}">
       <div class="hrd-module-title">${frappe.utils.escape_html(title)}</div>
       <div class="hrd-module-meta">
-        <span class="hrd-count" data-count-for="${frappe.utils.escape_html(title)}">0</span>
+        <span class="hrd-count" data-count-for="${frappe.utils.escape_html(doctypeKey || title)}">0</span>
         <a class="hrd-link" href="/app/${route}">Open</a>
       </div>
     </div>

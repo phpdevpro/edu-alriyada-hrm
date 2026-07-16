@@ -133,6 +133,7 @@ def submit_application(data, token=None):
 	doc.expected_salary = payload.get("expected_salary")
 	doc.cover_letter = payload.get("cover_letter")
 	doc.resume_link = payload.get("resume_link")
+	doc.application_details_json = frappe.as_json(payload)
 
 	currency = payload.get("expected_salary_currency") or frappe.db.get_default("currency")
 	if currency:
@@ -249,10 +250,10 @@ def validate_payload(payload, application_category):
 		validate_email_address(payload.get("email"), True)
 
 	if application_category == ACADEMIC_CATEGORY:
-		# Only Education Qualifications is required
-		rows = payload.get("education") or []
+		# Only Academic Qualifications is required
+		rows = payload.get("academic_qualifications") or []
 		if not rows:
-			frappe.throw(_("Education Qualifications is required."))
+			frappe.throw(_("Academic Qualifications are required."))
 
 
 def append_child_rows(doc, payload):

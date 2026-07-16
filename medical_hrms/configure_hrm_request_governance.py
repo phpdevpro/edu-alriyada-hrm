@@ -7,7 +7,7 @@ REQUEST_DOCTYPES = [
     "Leave Plan Request",
     "Employee Training Request",
     "Company Car Request",
-    "Children Education Allowance Request",
+    "Children Medical Allowance Request",
     "Salary Certificate Request",
     "Pre Approved Overtime Request",
     "Return From Leave Request",
@@ -106,7 +106,7 @@ FINANCE_PERMISSION = {
 FINANCE_DOCTYPES = {
     "Employee Training Request",
     "Company Car Request",
-    "Children Education Allowance Request",
+    "Children Medical Allowance Request",
     "Pre Approved Overtime Request",
 }
 

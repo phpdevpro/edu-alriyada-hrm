@@ -54,7 +54,7 @@ TARGET_DOCTYPES = [
 	"Salary Certificate Request",
 	"Pre Approved Overtime Request",
 	"Employee Training Request",
-	"Children Education Allowance Request",
+	"Children Medical Allowance Request",
 	"Company Car Request",
 	"Contract Renewal Request",
 	"Employee Data Update Request",

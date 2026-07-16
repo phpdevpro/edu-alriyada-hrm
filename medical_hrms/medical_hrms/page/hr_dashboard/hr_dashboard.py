@@ -29,7 +29,7 @@ def get_hr_dashboard_stats():
                     "Employee Training Request", {"status": ["like", "Pending%"]}
                 ),
                 "pending_allowance_requests": frappe.db.count(
-                    "Children Education Allowance Request", {"status": ["like", "Pending%"]}
+                    "Children Medical Allowance Request", {"status": ["like", "Pending%"]}
                 ),
                 "expiring_medical_licenses": frappe.db.count(
                     "Employee Medical License", {"status": "Active"}
@@ -59,7 +59,7 @@ def get_hr_doctype_counts():
         "Salary Certificate Request",
         "Pre Approved Overtime Request",
         "Employee Training Request",
-        "Children Education Allowance Request",
+        "Children Medical Allowance Request",
         "Company Car Request",
         "Contract Renewal Request",
         "Employee Data Update Request",

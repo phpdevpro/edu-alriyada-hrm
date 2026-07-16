@@ -152,7 +152,7 @@ doc_events = {
 		"validate": "medical_hrms.medical_hrms.overrides.expense_claim.validate_expense_claim",
 		"before_submit": "medical_hrms.medical_hrms.overrides.expense_claim.validate_expense_claim"
 	},
-	"Children Education Allowance Request": {
+	"Children Medical Allowance Request": {
 		"validate": "medical_hrms.medical_hrms.overrides.education_allowance.validate_education_allowance"
 	},
 	"Employee Separation": {
