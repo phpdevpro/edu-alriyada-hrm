@@ -13,6 +13,97 @@ def _insert_if_missing(doctype, values, name):
     return doc
 
 
+def _exists_by_field(doctype, values, fieldname):
+    return frappe.db.exists(doctype, {fieldname: values[fieldname]})
+
+
+def _insert_ministry_code_if_missing(values):
+    filters = {
+        "code_category": values["code_category"],
+        "ministry_code": values["ministry_code"],
+    }
+    name = frappe.db.get_value("Jameah Ministry Code", filters, "name")
+    if name:
+        return frappe.get_doc("Jameah Ministry Code", name)
+
+    doc = frappe.get_doc({"doctype": "Jameah Ministry Code", **values})
+    doc.insert(ignore_permissions=True)
+    return doc
+
+
+def _resolve_ministry_code(category, ministry_code):
+    if not ministry_code:
+        return ministry_code
+
+    name = frappe.db.get_value(
+        "Jameah Ministry Code",
+        {"code_category": category, "ministry_code": ministry_code},
+        "name",
+    )
+    if not name:
+        raise frappe.LinkValidationError(
+            f"Could not resolve Jameah Ministry Code {category}: {ministry_code}"
+        )
+    return name
+
+
+def _resolve_ministry_name(category, name_english):
+    if not name_english:
+        return name_english
+
+    name = frappe.db.get_value(
+        "Jameah Ministry Code",
+        {"code_category": category, "name_english": name_english},
+        "name",
+    )
+    if not name:
+        raise frappe.LinkValidationError(
+            f"Could not resolve Jameah Ministry Code {category}: {name_english}"
+        )
+    return name
+
+
+def _resolve_fields(values, field_categories):
+    resolved = dict(values)
+    for fieldname, category in field_categories.items():
+        if resolved.get(fieldname):
+            resolved[fieldname] = _resolve_ministry_code(category, resolved[fieldname])
+    return resolved
+
+
+def _resolve_person_ministry_links(values):
+    resolved = _resolve_fields(
+        values,
+        {
+            "custom_identity_type": "Identity type",
+            "custom_identity_issue_place": "Coding cities and governora",
+            "custom_jameah_nationality": "Nationality",
+        },
+    )
+
+    child_field_categories = {
+        "custom_jameah_qualifications": {
+            "degree": "Degree",
+            "specialization": "Specialization",
+            "country": "Nationality",
+        },
+        "custom_jameah_experience": {
+            "city": "Coding cities and governora",
+            "country": "Nationality",
+        },
+        "custom_jameah_training": {
+            "city": "Coding cities and governora",
+            "country": "Nationality",
+        },
+    }
+    for table_field, field_categories in child_field_categories.items():
+        resolved[table_field] = [
+            _resolve_fields(row, field_categories) for row in resolved.get(table_field, [])
+        ]
+
+    return resolved
+
+
 def _set_rows(doc, fieldname, rows):
     if not rows:
         return
@@ -37,50 +128,50 @@ def execute():
         data = json.load(f)
 
     for item in data.get("ministry_codes", []):
-        _insert_if_missing("Jameah Ministry Code", item, item["ministry_code"])
+        _insert_ministry_code_if_missing(item)
 
     standard = data.get("standard_masters", {})
-    if standard.get("company") and not frappe.db.exists("Company", standard["company"]["company_name"]):
+    if standard.get("company") and not _exists_by_field("Company", standard["company"], "company_name"):
         frappe.get_doc({"doctype": "Company", **standard["company"]}).insert(ignore_permissions=True)
 
-    if standard.get("designation") and not frappe.db.exists("Designation", standard["designation"]["designation_name"]):
+    if standard.get("designation") and not _exists_by_field("Designation", standard["designation"], "designation_name"):
         frappe.get_doc({"doctype": "Designation", **standard["designation"]}).insert(ignore_permissions=True)
 
-    if standard.get("branch") and not frappe.db.exists("Branch", standard["branch"]["branch"]):
+    if standard.get("branch") and not _exists_by_field("Branch", standard["branch"], "branch"):
         frappe.get_doc({"doctype": "Branch", **standard["branch"]}).insert(ignore_permissions=True)
 
-    if standard.get("department") and not frappe.db.exists("Department", standard["department"]["department_name"]):
+    if standard.get("department") and not _exists_by_field("Department", standard["department"], "department_name"):
         frappe.get_doc({"doctype": "Department", **standard["department"]}).insert(ignore_permissions=True)
 
-    if standard.get("location_edu") and not frappe.db.exists("Location Edu", standard["location_edu"]["location_name_edu"]):
+    if standard.get("location_edu") and not _exists_by_field("Location Edu", standard["location_edu"], "location_name_edu"):
         frappe.get_doc({"doctype": "Location Edu", **standard["location_edu"]}).insert(ignore_permissions=True)
 
-    if standard.get("campus") and not frappe.db.exists("Campus", standard["campus"]["campus_name"]):
+    if standard.get("campus") and not _exists_by_field("Campus", standard["campus"], "campus_name"):
         frappe.get_doc({"doctype": "Campus", **standard["campus"], "campus_location": standard["location_edu"]["location_name_edu"]}).insert(ignore_permissions=True)
 
-    if standard.get("college") and not frappe.db.exists("College", standard["college"]["college_name"]):
+    if standard.get("college") and not _exists_by_field("College", standard["college"], "college_name"):
         college_doc = frappe.get_doc({"doctype": "College", **standard["college"]})
         college_doc.append("college_campus_list", {"college_campus_name": standard["campus"]["campus_name"]})
         college_doc.insert(ignore_permissions=True)
 
-    if standard.get("department_edu") and not frappe.db.exists("Department Edu", standard["department_edu"]["department_name"]):
+    if standard.get("department_edu") and not _exists_by_field("Department Edu", standard["department_edu"], "department_name"):
         dept_doc = frappe.get_doc({"doctype": "Department Edu", **standard["department_edu"]})
         dept_doc.append("department_table_college", {"ins_college_name": standard["college"]["college_name"], "ins_college_campus": standard["campus"]["campus_name"]})
         dept_doc.insert(ignore_permissions=True)
 
-    if standard.get("faculty_status") and not frappe.db.exists("Faculty Status", standard["faculty_status"]["faculty_status_name"]):
+    if standard.get("faculty_status") and not _exists_by_field("Faculty Status", standard["faculty_status"], "faculty_status_name"):
         frappe.get_doc({"doctype": "Faculty Status", **standard["faculty_status"]}).insert(ignore_permissions=True)
 
-    if standard.get("faculty_contract_type") and not frappe.db.exists("Faculty Contract Type", standard["faculty_contract_type"]["faculty_contract_type_name"]):
+    if standard.get("faculty_contract_type") and not _exists_by_field("Faculty Contract Type", standard["faculty_contract_type"], "faculty_contract_type_name"):
         frappe.get_doc({"doctype": "Faculty Contract Type", **standard["faculty_contract_type"]}).insert(ignore_permissions=True)
 
-    if standard.get("faculty_ranking") and not frappe.db.exists("Faculty Ranking", standard["faculty_ranking"]["faculty_ranking_name"]):
+    if standard.get("faculty_ranking") and not _exists_by_field("Faculty Ranking", standard["faculty_ranking"], "faculty_ranking_name"):
         frappe.get_doc({"doctype": "Faculty Ranking", **standard["faculty_ranking"]}).insert(ignore_permissions=True)
 
-    if standard.get("major") and not frappe.db.exists("Major", standard["major"]["major_name"]):
+    if standard.get("major") and not _exists_by_field("Major", standard["major"], "major_name"):
         frappe.get_doc({"doctype": "Major", **standard["major"]}).insert(ignore_permissions=True)
 
-    if standard.get("education_level") and not frappe.db.exists("Education Level", standard["education_level"]["education_level_name"]):
+    if standard.get("education_level") and not _exists_by_field("Education Level", standard["education_level"], "education_level_name"):
         frappe.get_doc({"doctype": "Education Level", **standard["education_level"]}).insert(ignore_permissions=True)
 
     for section, doctype, key in (
@@ -92,6 +183,7 @@ def execute():
         ("facilities", "Jameah Facility", "facility_name_en"),
     ):
         for item in data.get(section, []):
+            item = _resolve_fields(item, {"ministry_code": "Coding cities and governora"})
             _insert_if_missing(doctype, item, item[key])
 
     company = frappe.db.get_value("Company", {}, "name")
@@ -100,7 +192,10 @@ def execute():
 
     _ensure_genders()
 
-    employee_data = dict(data["employee"])
+    employee_data = _resolve_person_ministry_links(data["employee"])
+    employee_gender_field = frappe.get_meta("Employee").get_field("gender")
+    if employee_gender_field.options == "Jameah Ministry Code":
+        employee_data["gender"] = _resolve_ministry_name("Gender", employee_data["gender"])
     employee_data["company"] = company
     employee_data.setdefault("employee_name", f"{employee_data['first_name']} {employee_data['middle_name']} {employee_data['last_name']}")
     employee_data.setdefault("employee", employee_data.get("employee_number") or "EMP-0001")
@@ -118,7 +213,7 @@ def execute():
         _set_rows(employee_doc, "custom_jameah_awards", employee_data.get("custom_jameah_awards", []))
         employee_doc.insert(ignore_permissions=True)
 
-    instructor_data = dict(data["instructor"])
+    instructor_data = _resolve_person_ministry_links(data["instructor"])
     instructor_data["employee"] = employee_doc.name
     instructor_data.setdefault("employee_no", employee_doc.employee_number or employee_doc.name)
     instructor_data["department"] = standard.get("department_edu", {}).get("department_name", instructor_data.get("department"))
@@ -132,6 +227,8 @@ def execute():
     instructor_data["instructor_major"] = standard.get("major", {}).get("major_name", instructor_data.get("instructor_major"))
 
     instructor = frappe.db.exists("Instructor", {"instructor_id": instructor_data["instructor_id"]})
+    if not instructor:
+        instructor = frappe.db.exists("Instructor", {"employee": employee_doc.name})
     if instructor:
         instructor_doc = frappe.get_doc("Instructor", instructor)
     else:

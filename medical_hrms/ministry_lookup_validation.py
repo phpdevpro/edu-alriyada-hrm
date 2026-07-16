@@ -7,6 +7,10 @@ DOCTYPE = "Jameah Ministry Code"
 
 
 def _validate_field(doc, fieldname: str, expected_category: str):
+	field = doc.meta.get_field(fieldname)
+	if not field or field.fieldtype != "Link" or field.options != DOCTYPE:
+		return
+
 	value = doc.get(fieldname)
 	if not value:
 		return
@@ -46,11 +50,17 @@ def _validate_identity_number_by_nationality(doc):
 	if not nationality:
 		frappe.throw("Nationality is required.")
 
-	ministry_code = frappe.db.get_value(DOCTYPE, nationality, "ministry_code")
-	if ministry_code == "101" and not doc.get("custom_identity_number"):
+	nationality_values = frappe.db.get_value(
+		DOCTYPE, nationality, ["ministry_code", "name_english"], as_dict=True
+	)
+	ministry_code = nationality_values.ministry_code if nationality_values else None
+	nationality_name = nationality_values.name_english if nationality_values else None
+	is_saudi = ministry_code in {"101", "N-SA"} or (nationality_name or "").lower().startswith("saudi")
+
+	if is_saudi and not doc.get("custom_identity_number"):
 		frappe.throw("Identity Number is required for Saudi employees.")
 
-	if ministry_code != "101" and not doc.get("custom_original_home_id_number"):
+	if not is_saudi and not doc.get("custom_original_home_id_number"):
 		frappe.throw("ID Number in Country of Origin for Non-Saudis is required.")
 
 
