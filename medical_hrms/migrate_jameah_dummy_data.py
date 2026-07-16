@@ -3,6 +3,11 @@ import os
 
 import frappe
 from education.education.doctype.instructor import instructor as instructor_module
+from frappe.utils.password import update_password
+
+
+DEFAULT_HR_EMAIL = "hr.manager.demo@medicalcollege.local"
+DEFAULT_HR_PASSWORD = "MedicalHR@2026"
 
 
 def _insert_if_missing(doctype, values, name):
@@ -121,7 +126,62 @@ def _ensure_genders():
                 pass
 
 
-def execute():
+def _ensure_hr_login(email, password):
+    if frappe.db.exists("User", email):
+        user = frappe.get_doc("User", email)
+    else:
+        new_ref_id = None
+        values = {
+            "doctype": "User",
+            "email": email,
+            "first_name": "HR",
+            "last_name": "Manager Demo",
+            "enabled": 1,
+            "user_type": "System User",
+            "send_welcome_email": 0,
+        }
+        if frappe.db.has_column("User", "ref_id"):
+            max_ref_id = frappe.db.sql(
+                """
+                select coalesce(max(cast(ref_id as unsigned)), 0)
+                from `tabUser`
+                where ref_id is not null and ref_id != '' and ref_id != '0'
+                """
+            )[0][0]
+            next_ref_id = int(max_ref_id or 0) + 1
+
+            zero_ref_user = frappe.db.sql(
+                "select name from `tabUser` where ref_id = '0' limit 1"
+            )
+            if zero_ref_user:
+                frappe.db.set_value(
+                    "User", zero_ref_user[0][0], "ref_id", str(next_ref_id).zfill(5)
+                )
+                next_ref_id += 1
+
+            new_ref_id = str(next_ref_id).zfill(5)
+            if frappe.get_meta("User").has_field("ref_id"):
+                values["ref_id"] = new_ref_id
+
+        user = frappe.get_doc(values)
+        user.insert(ignore_permissions=True)
+        if new_ref_id:
+            frappe.db.set_value(
+                "User", user.name, "ref_id", new_ref_id, update_modified=False
+            )
+
+    existing_roles = {row.role for row in user.roles}
+    for role in ("HR User", "HR Manager"):
+        if role not in existing_roles:
+            user.append("roles", {"role": role})
+
+    user.enabled = 1
+    user.user_type = "System User"
+    user.save(ignore_permissions=True)
+    update_password(user=email, pwd=password, logout_all_sessions=True)
+
+
+def execute(hr_email=DEFAULT_HR_EMAIL, hr_password=DEFAULT_HR_PASSWORD):
     app_path = frappe.get_app_path("medical_hrms")
     data_file = os.path.join(app_path, "seed_data", "jameah_dummy_data.json")
     with open(data_file, "r", encoding="utf-8") as f:
@@ -246,5 +306,8 @@ def execute():
             if original_after_insert is not None:
                 instructor_module.Instructor.after_insert = original_after_insert
 
+    _ensure_hr_login(hr_email, hr_password)
+
     frappe.db.commit()
     print("Seed migration complete")
+    print(f"HR login: {hr_email}")
