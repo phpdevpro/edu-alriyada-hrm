@@ -38,7 +38,10 @@ def validate_employee_ministry_lookups(doc, method=None):
 		validate_jameah_academic_qualification_ministry_lookups(row)
 
 	for row in doc.get("custom_jameah_experience") or []:
-		validate_jameah_work_experience_ministry_lookups(row)
+		validate_jameah_academic_work_experience_ministry_lookups(row)
+
+	for row in doc.get("custom_jameah_previous_experience") or []:
+		validate_jameah_previous_work_experience_ministry_lookups(row)
 
 	for row in doc.get("custom_jameah_training") or []:
 		validate_jameah_training_course_ministry_lookups(row)
@@ -73,11 +76,16 @@ def _validate_identity_number_by_nationality(doc):
 		frappe.throw("ID Number in Country of Origin for Non-Saudis is required.")
 
 
-def validate_jameah_work_experience_ministry_lookups(doc, method=None):
-	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Work Experience"]:
+def validate_jameah_academic_work_experience_ministry_lookups(doc, method=None):
+	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Academic Work Experience"]:
+		_validate_field(doc, field["fieldname"], field["category"])
+
+
+def validate_jameah_previous_work_experience_ministry_lookups(doc, method=None):
+	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Previous Work Experience"]:
 		_validate_field(doc, field["fieldname"], field["category"])
 
 
 def validate_jameah_training_course_ministry_lookups(doc, method=None):
-	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Training Course"]:
+	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Professional Certificates and Training Courses"]:
 		_validate_field(doc, field["fieldname"], field["category"])

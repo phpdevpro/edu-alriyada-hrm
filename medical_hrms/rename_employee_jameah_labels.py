@@ -12,9 +12,9 @@ def execute():
 		"custom_jameah_deanery": "Deanery",
 		"custom_jameah_college": "College",
 		"custom_jameah_academic_department": "Academic Department",
-		"custom_jameah_qualifications": "Qualifications",
+		"custom_jameah_qualifications": "Academic Qualifications",
 		"custom_jameah_experience": "Work Experience",
-		"custom_jameah_training": "Training Courses",
+		"custom_jameah_training": "Professional Certificates & Training Courses",
 		"custom_jameah_publications": "Research Publications",
 		"custom_jameah_awards": "Awards",
 	}

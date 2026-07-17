@@ -116,6 +116,54 @@ JAMEAH_ACADEMIC_QUALIFICATION_MINISTRY_FIELDS = [
 ]
 
 
+JAMEAH_ACADEMIC_WORK_EXPERIENCE_MINISTRY_FIELDS = [
+	{
+		"fieldname": "employment_status_code",
+		"label": "Employee's job status",
+		"category": "Job status",
+	},
+	{
+		"fieldname": "institute_code",
+		"label": "Educational entity",
+		"category": "Coding of educational insti",
+	},
+	{
+		"fieldname": "location_code",
+		"label": "Geographical work location",
+		"category": "Coding cities and governora",
+	},
+	{
+		"fieldname": "section_code",
+		"label": "Academic Department",
+		"category": "Coding academic departments",
+	},
+	{
+		"fieldname": "profession_rank_code",
+		"label": "Job rank",
+		"category": "Job ranks",
+	},
+	{
+		"fieldname": "accommodation_code",
+		"label": "Housing",
+		"category": "Residential status coding",
+	},
+]
+
+
+JAMEAH_PREVIOUS_WORK_EXPERIENCE_MINISTRY_FIELDS = [
+	{
+		"fieldname": "city",
+		"label": "The city",
+		"category": "Coding cities and governora",
+	},
+	{
+		"fieldname": "country",
+		"label": "Country",
+		"category": "Nationality",
+	},
+]
+
+
 EMPLOYEE_EDUCATION_MINISTRY_FIELDS = [
 	{
 		"fieldname": "custom_ministry_scientific_degree",
@@ -194,14 +242,14 @@ JAMEAH_WORK_EXPERIENCE_MINISTRY_FIELDS = [
 ]
 
 
-JAMEAH_TRAINING_COURSE_MINISTRY_FIELDS = [
+JAMEAH_PROFESSIONAL_CERTIFICATES_TRAINING_COURSES_MINISTRY_FIELDS = [
 	{
-		"fieldname": "city",
+		"fieldname": "course_city",
 		"label": "City",
 		"category": "Coding cities and governora",
 	},
 	{
-		"fieldname": "country",
+		"fieldname": "course_country",
 		"label": "Country",
 		"category": "Nationality",
 	},
@@ -212,8 +260,9 @@ MINISTRY_LOOKUP_FIELD_MAP = {
 	"Employee": EMPLOYEE_EXISTING_MINISTRY_FIELDS + EMPLOYEE_MINISTRY_FIELDS,
 	"Employee Education": EMPLOYEE_EDUCATION_MINISTRY_FIELDS,
 	"Jameah Academic Qualification": JAMEAH_ACADEMIC_QUALIFICATION_MINISTRY_FIELDS,
-	"Jameah Work Experience": JAMEAH_WORK_EXPERIENCE_MINISTRY_FIELDS,
-	"Jameah Training Course": JAMEAH_TRAINING_COURSE_MINISTRY_FIELDS,
+	"Jameah Academic Work Experience": JAMEAH_ACADEMIC_WORK_EXPERIENCE_MINISTRY_FIELDS,
+	"Jameah Previous Work Experience": JAMEAH_PREVIOUS_WORK_EXPERIENCE_MINISTRY_FIELDS,
+	"Jameah Professional Certificates and Training Courses": JAMEAH_PROFESSIONAL_CERTIFICATES_TRAINING_COURSES_MINISTRY_FIELDS,
 }
 
 

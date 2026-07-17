@@ -97,7 +97,7 @@
       {"company": "Medical City", "designation": "Specialist", "start_date": "2017-01-01", "end_date": "2023-12-31"}
     ],
     "custom_jameah_training": [
-      {"course_name": "Advanced Life Support", "provider": "Saudi Health Academy", "duration": "5", "date": "2023-06-01"}
+      {"course_name": "Advanced Life Support", "issuer": "Saudi Health Academy", "course_period": "5", "course_date": "2023-06-01"}
     ],
     "custom_jameah_publications": [
       {"title": "Clinical Outcomes in Cardiology", "journal": "Saudi Medical Journal", "publication_date": "2022-08-15", "link": "https://example.com/pub-001"}
@@ -156,7 +156,7 @@
       {"company": "King Fahad Hospital", "designation": "Resident", "start_date": "2014-01-01", "end_date": "2016-12-31"}
     ],
     "custom_jameah_training": [
-      {"course_name": "Medical Teaching Skills", "provider": "Faculty Development Center", "duration": "3", "date": "2023-09-01"}
+      {"course_name": "Medical Teaching Skills", "issuer": "Faculty Development Center", "course_period": "3", "course_date": "2023-09-01"}
     ],
     "custom_jameah_publications": [
       {"title": "Evidence-Based Teaching in Medicine", "journal": "Medical Education Review", "publication_date": "2021-05-10", "link": "https://example.com/pub-002"}

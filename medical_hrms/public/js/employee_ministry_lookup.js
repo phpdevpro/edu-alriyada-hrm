@@ -65,12 +65,27 @@ frappe.ui.form.on("Employee", {
 		}
 
 		const work_experience_fields = {
-			city: "Coding cities and governora",
-			country: "Nationality",
+			is_latest_work_experience_record: "",
+			current_academic_year_date: "",
+			employment_status_code: "Job status",
+			profession: "",
+			institute_code: "Coding of educational insti",
+			location_code: "Coding cities and governora",
+			section_code: "Coding academic departments",
+			employee_number: "",
+			profession_rank_code: "Job ranks",
+			hiring_date: "",
+			start_working_date: "",
+			end_working_date: "",
+			functional_tasks: "",
+			accommodation_code: "Residential status coding",
 		};
 
 		if (frm.fields_dict.custom_jameah_experience?.grid) {
 			Object.entries(work_experience_fields).forEach(([fieldname, category]) => {
+				if (!category) {
+					return;
+				}
 				const grid_field = frm.fields_dict.custom_jameah_experience.grid.get_field(fieldname);
 				if (grid_field) {
 					grid_field.get_query = () => ministry_code_query(category);
@@ -78,9 +93,23 @@ frappe.ui.form.on("Employee", {
 			});
 		}
 
-		const training_fields = {
+		const previous_work_experience_fields = {
 			city: "Coding cities and governora",
 			country: "Nationality",
+		};
+
+		if (frm.fields_dict.custom_jameah_previous_experience?.grid) {
+			Object.entries(previous_work_experience_fields).forEach(([fieldname, category]) => {
+				const grid_field = frm.fields_dict.custom_jameah_previous_experience.grid.get_field(fieldname);
+				if (grid_field) {
+					grid_field.get_query = () => ministry_code_query(category);
+				}
+			});
+		}
+
+		const training_fields = {
+			course_city: "Coding cities and governora",
+			course_country: "Nationality",
 		};
 
 		if (frm.fields_dict.custom_jameah_training?.grid) {
