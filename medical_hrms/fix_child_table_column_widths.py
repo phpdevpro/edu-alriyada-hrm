@@ -1,3 +1,4 @@
+
 import frappe
 
 
@@ -20,8 +21,17 @@ def execute():
 		"Jameah Academic Qualification": {
 			"degree": 3,
 			"specialization": 3,
-			"institute": 2,
+			"minor": 2,
+			"assessment_type": 2,
+			"gpa": 2,
+			"gpa_type": 2,
+			"study_type": 2,
+			"institute": 3,
+			"faculty": 2,
+			"qualification_date": 2,
 			"graduation_year": 2,
+			"city": 2,
+			"country": 2,
 		},
 		"Jameah Work Experience": {
 			"company": 3,
