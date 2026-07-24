@@ -43,18 +43,15 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-<<<<<<< HEAD
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-doctype_js = {"Employee Job Applicant": "public/js/job_applicant.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
-=======
 doctype_js = {
+	"Employee Job Applicant": "public/js/job_applicant.js",
 	"Employee": "public/js/employee_ministry_lookup.js",
 }
+# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 doctype_list_js = {
 	"Children Medical Allowance Request": "public/js/children_medical_allowance_request_list.js",
 }
->>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 

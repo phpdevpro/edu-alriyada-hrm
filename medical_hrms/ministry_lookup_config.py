@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 EMPLOYEE_EXISTING_MINISTRY_FIELDS = [
 	{
 		"fieldname": "gender",
@@ -65,111 +61,6 @@ EMPLOYEE_MINISTRY_FIELDS = [
 ]
 
 
-<<<<<<< HEAD
-JAMEAH_ACADEMIC_QUALIFICATION_MINISTRY_FIELDS = [
-	{
-		"fieldname": "degree",
-		"label": "Academic qualification",
-		"category": "Coding of academic degrees",
-	},
-	{
-		"fieldname": "specialization",
-		"label": "General Specialization (Main)",
-		"category": "Specialization Coding Guide",
-	},
-	{
-		"fieldname": "minor",
-		"label": "Subspecialty",
-		"category": "Specialization Coding Guide",
-	},
-	{
-		"fieldname": "assessment_type",
-		"label": "Appreciation",
-		"category": "Cumulative GPA",
-	},
-	{
-		"fieldname": "gpa_type",
-		"label": "Rate type",
-		"category": "Cumulative GPA",
-	},
-	{
-		"fieldname": "study_type",
-		"label": "Study system",
-		"category": "Study type coding",
-	},
-	{
-		"fieldname": "institute",
-		"label": "Graduation Place",
-		"category": "Coding of educational insti",
-	},
-	{
-		"fieldname": "faculty",
-		"label": "College",
-		"category": "College Coding Guide",
-	},
-	{
-		"fieldname": "city",
-		"label": "The city",
-		"category": "Coding cities and governora",
-	},
-	{
-		"fieldname": "country",
-		"label": "Country (Graduation Country)",
-		"category": "Nationality",
-	},
-]
-
-
-JAMEAH_ACADEMIC_WORK_EXPERIENCE_MINISTRY_FIELDS = [
-	{
-		"fieldname": "employment_status_code",
-		"label": "Employee's job status",
-		"category": "Job status",
-	},
-	{
-		"fieldname": "institute_code",
-		"label": "Educational entity",
-		"category": "Coding of educational insti",
-	},
-	{
-		"fieldname": "location_code",
-		"label": "Geographical work location",
-		"category": "Coding cities and governora",
-	},
-	{
-		"fieldname": "section_code",
-		"label": "Academic Department",
-		"category": "Coding academic departments",
-	},
-	{
-		"fieldname": "profession_rank_code",
-		"label": "Job rank",
-		"category": "Job ranks",
-	},
-	{
-		"fieldname": "accommodation_code",
-		"label": "Housing",
-		"category": "Residential status coding",
-	},
-]
-
-
-JAMEAH_PREVIOUS_WORK_EXPERIENCE_MINISTRY_FIELDS = [
-	{
-		"fieldname": "city",
-		"label": "The city",
-		"category": "Coding cities and governora",
-	},
-	{
-		"fieldname": "country",
-		"label": "Country",
-		"category": "Nationality",
-	},
-]
-
-
-=======
->>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 EMPLOYEE_EDUCATION_MINISTRY_FIELDS = [
 	{
 		"fieldname": "custom_ministry_scientific_degree",
@@ -248,24 +139,14 @@ JAMEAH_WORK_EXPERIENCE_MINISTRY_FIELDS = [
 ]
 
 
-<<<<<<< HEAD
-JAMEAH_PROFESSIONAL_CERTIFICATES_TRAINING_COURSES_MINISTRY_FIELDS = [
-	{
-		"fieldname": "course_city",
-=======
 JAMEAH_TRAINING_COURSE_MINISTRY_FIELDS = [
 	{
 		"fieldname": "city",
->>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 		"label": "City",
 		"category": "Coding cities and governora",
 	},
 	{
-<<<<<<< HEAD
-		"fieldname": "course_country",
-=======
 		"fieldname": "country",
->>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 		"label": "Country",
 		"category": "Nationality",
 	},
@@ -275,15 +156,8 @@ JAMEAH_TRAINING_COURSE_MINISTRY_FIELDS = [
 MINISTRY_LOOKUP_FIELD_MAP = {
 	"Employee": EMPLOYEE_EXISTING_MINISTRY_FIELDS + EMPLOYEE_MINISTRY_FIELDS,
 	"Employee Education": EMPLOYEE_EDUCATION_MINISTRY_FIELDS,
-<<<<<<< HEAD
-	"Jameah Academic Qualification": JAMEAH_ACADEMIC_QUALIFICATION_MINISTRY_FIELDS,
-	"Jameah Academic Work Experience": JAMEAH_ACADEMIC_WORK_EXPERIENCE_MINISTRY_FIELDS,
-	"Jameah Previous Work Experience": JAMEAH_PREVIOUS_WORK_EXPERIENCE_MINISTRY_FIELDS,
-	"Jameah Professional Certificates and Training Courses": JAMEAH_PROFESSIONAL_CERTIFICATES_TRAINING_COURSES_MINISTRY_FIELDS,
-=======
 	"Jameah Work Experience": JAMEAH_WORK_EXPERIENCE_MINISTRY_FIELDS,
 	"Jameah Training Course": JAMEAH_TRAINING_COURSE_MINISTRY_FIELDS,
->>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 }
 
 
