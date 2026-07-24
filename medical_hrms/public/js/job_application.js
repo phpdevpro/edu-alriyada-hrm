@@ -1,482 +1,326 @@
 (function () {
-	console.log("job_application.js loaded");
 	const config = window.jobApplicationConfig || {};
 	const form = document.getElementById("job-application-form");
-	if (!form) {
-		console.error("Job application form not found");
-		return;
-	}
-	console.log("Job application form found");
+	if (!form) return;
 
 	const alertBox = document.getElementById("job-application-alert");
 	const categorySelect = document.getElementById("application-category");
 	const categoryBadge = document.getElementById("application-category-badge");
 	const submitButton = document.getElementById("job-application-submit");
+	const prevButton = document.getElementById("ja-prev");
+	const nextButton = document.getElementById("ja-next");
+	const steps = Array.from(document.querySelectorAll(".ja-step"));
+	const panels = Array.from(document.querySelectorAll(".ja-panel"));
 	const isAdminPreview = Boolean(config.allow_category_override);
-
+	const linkFields = new Set(["custom_identity_type", "custom_jameah_nationality", "academic_qualification", "general_specialization_main", "subspecialty", "appreciation", "rate_type", "study_system", "college", "city", "country", "employee_job_status", "educational_entity", "geographical_work_location", "academic_department", "job_rank", "housing"]);
 	let currentCategory = config.application_category || "Academic Staff";
+	let currentStep = 0;
+
 	if (categorySelect) {
 		categorySelect.value = currentCategory;
 		categorySelect.disabled = !isAdminPreview;
 		categorySelect.addEventListener("change", (event) => {
 			currentCategory = event.target.value || currentCategory;
-			applyCategoryRules();
+			updateCategoryBadge();
 		});
 	}
 
-	if (categoryBadge) {
-		categoryBadge.textContent = currentCategory;
-	}
-
-	const tableDefinitions = {
-		education: {
-			label: "Education Qualifications",
-			columns: [
-				{ name: "school_univ", label: "School/University", type: "text" },
-				{ name: "qualification", label: "Qualification", type: "text" },
-				{
-					name: "level",
-					label: "Level",
-					type: "select",
-					options: ["Graduate", "Post Graduate", "Under Graduate"],
-				},
-				{ name: "year_of_passing", label: "Year", type: "number" },
-				{ name: "class_per", label: "Class / %", type: "text" },
-				{ name: "maj_opt_subj", label: "Major / Optional", type: "text" },
-			],
-		},
-		work_experience: {
-			label: "Work Experience",
-			columns: [
-				{ name: "company_name", label: "Company", type: "text" },
-				{ name: "designation", label: "Designation", type: "text" },
-				{ name: "total_experience", label: "Total Experience", type: "text" },
-				{ name: "salary", label: "Salary", type: "number" },
-				{ name: "address", label: "Address", type: "text" },
-				{ name: "contact", label: "Contact", type: "text" },
-			],
-		},
-		skills: {
-			label: "Skills",
-			columns: [
-				{ name: "skill_name", label: "Skill", type: "text" },
-				{
-					name: "proficiency",
-					label: "Proficiency",
-					type: "select",
-					options: ["Beginner", "Intermediate", "Advanced", "Expert"],
-				},
-				{ name: "years_of_experience", label: "Years", type: "number" },
-			],
-		},
-		training_courses: {
-			label: "Training Courses",
-			columns: [
-				{ name: "course_name", label: "Course Name", type: "text" },
-				{ name: "provider", label: "Provider", type: "text" },
-				{ name: "completion_date", label: "Completion Date", type: "date" },
-				{ name: "duration", label: "Duration", type: "text" },
-			],
-		},
-		academic_certifications: {
-			label: "Academic Certifications",
-			columns: [
-				{ name: "certification_name", label: "Certification", type: "text" },
-				{ name: "issuing_body", label: "Issuing Body", type: "text" },
-				{ name: "issue_date", label: "Issue Date", type: "date" },
-				{ name: "expiry_date", label: "Expiry Date", type: "date" },
-				{ name: "certificate_id", label: "Certificate ID", type: "text" },
-			],
-		},
-		teaching_experience: {
-			label: "Teaching Experience",
-			columns: [
-				{ name: "institution", label: "Institution", type: "text" },
-				{ name: "designation", label: "Designation", type: "text" },
-				{ name: "subject_area", label: "Subject Area", type: "text" },
-				{ name: "start_date", label: "Start Date", type: "date" },
-				{ name: "end_date", label: "End Date", type: "date" },
-				{ name: "years", label: "Years", type: "number" },
-			],
-		},
-		research_publications: {
-			label: "Research Publications",
-			columns: [
-				{ name: "title", label: "Title", type: "text" },
-				{ name: "journal", label: "Journal", type: "text" },
-				{ name: "publication_date", label: "Publication Date", type: "date" },
-				{ name: "link", label: "Link / DOI", type: "text" },
-			],
-		},
-		professional_memberships: {
-			label: "Professional Memberships",
-			columns: [
-				{ name: "organization", label: "Organization", type: "text" },
-				{ name: "membership_id", label: "Membership ID", type: "text" },
-				{ name: "start_date", label: "Start Date", type: "date" },
-				{ name: "end_date", label: "End Date", type: "date" },
-				{ name: "status", label: "Status", type: "text" },
-			],
-		},
-		awards: {
-			label: "Awards",
-			columns: [
-				{ name: "award_name", label: "Award Name", type: "text" },
-				{ name: "organization", label: "Organization", type: "text" },
-				{ name: "award_date", label: "Award Date", type: "date" },
-				{ name: "details", label: "Details", type: "text" },
-			],
-		},
-		academic_qualifications: {
-			label: "Employee Academic Qualifications",
-			columns: [
-				{ name: "latest_record", label: "Latest Record", type: "checkbox" },
-				{ name: "academic_qualification", label: "Academic Qualification", type: "text" },
-				{ name: "general_specialization_main", label: "General Specialization (Main)", type: "text" },
-				{ name: "subspecialty", label: "Subspecialty", type: "text" },
-				{ name: "appreciation", label: "Appreciation", type: "text" },
-				{ name: "graduation_rate", label: "Graduation Rate", type: "text" },
-				{ name: "rate_type", label: "Rate Type", type: "text" },
-				{ name: "study_system", label: "Study System", type: "text" },
-				{ name: "graduation_place", label: "Graduation Place", type: "text" },
-				{ name: "college", label: "College", type: "text" },
-				{ name: "qualification_date", label: "Date of Obtaining the Qualification", type: "date" },
-				{ name: "graduation_year_ad", label: "Graduation Year AD", type: "number" },
-				{ name: "city", label: "City", type: "text" },
-				{ name: "country", label: "Country", type: "text" },
-			],
-		},
-		academic_experience: {
-			label: "Employee Academic Experience",
-			columns: [
-				{ name: "school_year_history", label: "School Year History", type: "text" },
-				{ name: "employee_job_status", label: "Employee Job Status", type: "text" },
-				{ name: "job_title", label: "Job Title", type: "text" },
-				{ name: "educational_entity", label: "Educational Entity", type: "text" },
-				{ name: "geographical_work_location", label: "Geographical Work Location", type: "text" },
-				{ name: "academic_department", label: "Academic Department", type: "text" },
-				{ name: "job_number", label: "Job Number", type: "text" },
-				{ name: "job_rank", label: "Job Rank", type: "text" },
-				{ name: "date_of_appointment_to_the_rank", label: "Date of Appointment to the Rank", type: "date" },
-				{ name: "start_date", label: "Start Date", type: "date" },
-				{ name: "end_of_work_date", label: "End of Work Date", type: "date" },
-				{ name: "job_duties", label: "Job Duties", type: "textarea" },
-				{ name: "housing", label: "Housing", type: "text" },
-			],
-		},
-		previous_experience: {
-			label: "Employee Previous Experience",
-			columns: [
-				{ name: "job_title", label: "Job Title", type: "text" },
-				{ name: "institution_or_company", label: "Name of Educational Institution / Company", type: "text" },
-				{ name: "city", label: "City", type: "text" },
-				{ name: "country", label: "Country", type: "text" },
-				{ name: "college_administration", label: "College / Administration", type: "text" },
-				{ name: "section", label: "Section", type: "text" },
-				{ name: "start_date", label: "Start Date", type: "date" },
-				{ name: "end_of_work_date", label: "End of Work Date", type: "date" },
-				{ name: "job_duties", label: "Job Duties", type: "textarea" },
-			],
-		},
-		professional_certificates_training: {
-			label: "Employee Professional Certificates & Training Courses",
-			columns: [
-				{ name: "course_name", label: "Course Name", type: "text" },
-				{ name: "certificate_type", label: "Type", type: "text" },
-				{ name: "issuing_authority", label: "Issuing Authority", type: "text" },
-				{ name: "course_history", label: "Course History", type: "text" },
-				{ name: "course_duration", label: "Course Duration", type: "text" },
-				{ name: "city", label: "City", type: "text" },
-				{ name: "country", label: "Country", type: "text" },
-			],
-		},
+	const defs = {
+		academic_qualifications: [
+			["academic_qualification", "Academic Qualification", "text", true],
+			["general_specialization_main", "General Specialization", "text", true],
+			["subspecialty", "Subspecialty"],
+			["appreciation", "Appreciation", "text", true],
+			["graduation_rate", "Graduation Rate", "number", true],
+			["rate_type", "Rate Type", "text", true],
+			["study_system", "Study System", "text", true],
+			["graduation_place", "Graduation Place", "text", true],
+			["college", "College", "text", true],
+			["qualification_date", "Qualification Date", "date", true],
+			["graduation_year_ad", "Graduation Year", "number", true],
+			["city", "City", "text", true],
+			["country", "Country", "text", true],
+		],
+		academic_work_experience: [
+			["school_year_history", "School Year History", "date", true],
+			["employee_job_status", "Job Status", "text", true],
+			["job_title", "Job Title", "text", true],
+			["educational_entity", "Educational Entity", "text", true],
+			["geographical_work_location", "Work Location", "text", true],
+			["academic_department", "Academic Department", "text", true],
+			["job_number", "Job Number"],
+			["job_rank", "Job Rank", "text", true],
+			["date_of_appointment_to_the_rank", "Appointment Date", "date"],
+			["start_date", "Start Date", "date"],
+			["end_of_work_date", "End Date", "date"],
+			["job_duties", "Job Duties", "textarea"],
+			["housing", "Housing"],
+		],
+		previous_work_experience: [
+			["job_title", "Job Title"],
+			["institution_or_company", "Institution / Company"],
+			["city", "City"],
+			["country", "Country"],
+			["college_administration", "College / Administration"],
+			["section", "Section"],
+			["start_date", "Start Date", "date"],
+			["end_of_work_date", "End Date", "date"],
+			["job_duties", "Job Duties", "textarea"],
+		],
+		professional_certificates_training: [
+			["course_name", "Course Name"],
+			["certificate_type", "Certificate Type"],
+			["issuing_authority", "Issuing Authority"],
+			["course_history", "Course History", "date"],
+			["course_duration", "Course Duration"],
+			["city", "City"],
+			["country", "Country"],
+		],
+		awards: [
+			["award_name", "Award Name"],
+			["organization", "Organization"],
+			["award_date", "Award Date", "date"],
+			["details", "Details"],
+		],
+		research_publications: [
+			["title", "Title"],
+			["journal", "Journal / Conference"],
+			["publication_date", "Publication Date", "date"],
+			["link", "Link / DOI"],
+		],
 	};
 
-	function renderTables() {
-		Object.keys(tableDefinitions).forEach((tableName) => {
-			const table = document.querySelector(`table[data-table='${tableName}']`);
-			if (!table) {
-				return;
-			}
-
-			const thead = table.querySelector("thead tr");
-			const tbody = table.querySelector("tbody");
-			const defn = tableDefinitions[tableName];
-
-			if (thead && thead.children.length === 0) {
-				defn.columns.forEach((column) => {
-					const th = document.createElement("th");
-					th.textContent = column.label;
-					thead.appendChild(th);
-				});
-				const th = document.createElement("th");
-				th.textContent = "";
-				thead.appendChild(th);
-			}
-
-			// Only auto-add row for Academic Qualifications (the only required new table)
-			if (tableName === "academic_qualifications" && tbody && tbody.children.length === 0) {
-				addRow(tableName);
-			}
-		});
+	function updateCategoryBadge() {
+		if (categoryBadge) categoryBadge.textContent = currentCategory;
 	}
 
-	function addRow(tableName) {
-		console.log("addRow function called for:", tableName);
-		const table = document.querySelector(`table[data-table='${tableName}']`);
-		console.log("Table query result:", table);
-		if (!table) {
-			console.error("Table element not found for:", tableName);
-			return;
-		}
-		console.log("Table element found, tagName:", table.tagName);
-
-		const defn = tableDefinitions[tableName];
-		let tbody = table.querySelector("tbody");
-		
-		// If tbody doesn't exist, create it
-		if (!tbody) {
-			console.log("Tbody not found, creating one...");
-			tbody = document.createElement("tbody");
-			table.appendChild(tbody);
-		}
-		console.log("Tbody ready");
-
-		const row = document.createElement("tr");
-		console.log("Creating row for:", tableName);
-
-		defn.columns.forEach((column) => {
-			const cell = document.createElement("td");
-			const input = buildInput(column);
-			cell.appendChild(input);
-			row.appendChild(cell);
-		});
-
-		const actionCell = document.createElement("td");
-		const removeButton = document.createElement("button");
-		removeButton.type = "button";
-		removeButton.className = "ja-remove-row";
-		removeButton.textContent = "Remove";
-		actionCell.appendChild(removeButton);
-		row.appendChild(actionCell);
-
-		tbody.appendChild(row);
-		console.log("Row added successfully to:", tableName);
+	function showStep(step) {
+		currentStep = Math.max(0, Math.min(step, panels.length - 1));
+		panels.forEach((p, i) => p.classList.toggle("is-active", i === currentStep));
+		steps.forEach((s, i) => s.classList.toggle("is-active", i === currentStep));
+		if (prevButton) prevButton.disabled = currentStep === 0;
+		if (nextButton) nextButton.style.display = currentStep === panels.length - 1 ? "none" : "inline-flex";
+		submitButton.style.display = currentStep === panels.length - 1 ? "inline-flex" : "none";
+		window.scrollTo({ top: 0, behavior: "smooth" });
 	}
 
-	function buildInput(column) {
-		let input;
-		if (column.type === "select") {
-			input = document.createElement("select");
-			const blankOption = document.createElement("option");
-			blankOption.value = "";
-			blankOption.textContent = "--";
-			input.appendChild(blankOption);
-			(column.options || []).forEach((option) => {
-				const opt = document.createElement("option");
-				opt.value = option;
-				opt.textContent = option;
-				input.appendChild(opt);
+	function buildInput(field, type = "text") {
+		const input = document.createElement(type === "textarea" ? "textarea" : "input");
+		if (type !== "textarea") input.type = type;
+		input.dataset.field = field;
+		if (linkFields.has(field)) {
+			const listId = `ministry-code-${field}-${Math.random().toString(36).slice(2)}`;
+			input.setAttribute("list", listId);
+			const list = document.createElement("datalist");
+			list.id = listId;
+			(config.ministry_codes || []).forEach((code) => {
+				const option = document.createElement("option");
+				option.value = code.name;
+				option.label = code.name_english || code.name;
+				list.appendChild(option);
 			});
-		} else {
-			if (column.type === "textarea") {
-				input = document.createElement("textarea");
-			} else {
-				input = document.createElement("input");
-				input.type = column.type === "number" ? "number" : column.type === "date" ? "date" : column.type === "checkbox" ? "checkbox" : "text";
-			}
+			document.body.appendChild(list);
+			input.dataset.displaySource = "Jameah Ministry Code / name_english";
 		}
-		input.dataset.field = column.name;
 		return input;
 	}
 
-	function collectTableRows(tableName) {
-		const table = document.querySelector(`table[data-table='${tableName}']`);
-		if (!table) {
-			return [];
-		}
-
-		const rows = [];
-		table.querySelectorAll("tbody tr").forEach((row) => {
-			const rowData = {};
-			row.querySelectorAll("[data-field]").forEach((input) => {
-				const value = input.type === "checkbox" ? input.checked : input.value ? input.value.trim() : "";
-				if (value !== "" && value !== false && value !== null && value !== undefined) {
-					rowData[input.dataset.field] = value;
-				}
-			});
-			if (Object.keys(rowData).length) {
-				rows.push(rowData);
+	function addRow(tableName) {
+		const table = document.querySelector(`.ja-rowlist[data-table='${tableName}']`);
+		if (!table) return;
+		const tmpl = defs[tableName] || [];
+		const row = document.createElement("div");
+		row.className = "ja-row-card";
+		const fields = document.createElement("div");
+		fields.className = "ja-row-fields";
+		tmpl.forEach(([field, label, type = "text", required = false]) => {
+			const wrap = document.createElement("div");
+			wrap.className = "ja-row-field";
+			const lab = document.createElement("label");
+			lab.textContent = label;
+			if (required) {
+				const star = document.createElement("span");
+				star.className = "ja-required";
+				star.textContent = "*";
+				lab.appendChild(star);
 			}
+			const input = buildInput(field, type);
+			if (required) input.required = true;
+			wrap.appendChild(lab);
+			wrap.appendChild(input);
+			fields.appendChild(wrap);
 		});
+		const actions = document.createElement("div");
+		actions.className = "ja-row-actions";
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.className = "ja-remove-row";
+		btn.textContent = "Remove";
+		actions.appendChild(btn);
+		row.appendChild(fields);
+		row.appendChild(actions);
+		table.appendChild(row);
+	}
 
+	function renderTables() {
+		Object.keys(defs).forEach((name) => {
+			const table = document.querySelector(`.ja-rowlist[data-table='${name}']`);
+			if (!table) return;
+			if (!table.querySelector(".ja-row-card")) addRow(name);
+		});
+	}
+
+	function attachMinistryDatalists() {
+		form.querySelectorAll("[data-field]").forEach((input) => {
+			const field = input.dataset.field;
+			if (!linkFields.has(field) || input.closest(".ja-rowlist")) return;
+			const listId = `ministry-code-${field}`;
+			input.setAttribute("list", listId);
+			const list = document.createElement("datalist");
+			list.id = listId;
+			(config.ministry_codes || []).forEach((code) => {
+				const option = document.createElement("option");
+				option.value = code.name;
+				option.label = code.name_english || code.name;
+				list.appendChild(option);
+			});
+			document.body.appendChild(list);
+		});
+	}
+
+	function collectRows(name) {
+		const table = document.querySelector(`.ja-rowlist[data-table='${name}']`);
+		if (!table) return [];
+		const rows = [];
+		table.querySelectorAll(".ja-row-card").forEach((card) => {
+			const row = {};
+			card.querySelectorAll("[data-field]").forEach((input) => {
+				const val = input.value ? input.value.trim() : "";
+				if (val) row[input.dataset.field] = val;
+			});
+			if (Object.keys(row).length) rows.push(row);
+		});
 		return rows;
 	}
 
-	function applyCategoryRules() {
-		if (categoryBadge) {
-			categoryBadge.textContent = currentCategory;
-		}
-
-		renderTables();
+	function normalizeMinistryLinks(payload) {
+		const codes = config.ministry_codes || [];
+		const byTitle = new Map(codes.map((code) => [String(code.name_english || "").trim().toLowerCase(), code.name]));
+		const normalize = (value) => {
+			if (!value) return value;
+			return byTitle.get(String(value).trim().toLowerCase()) || value;
+		};
+		Object.keys(payload).forEach((key) => {
+			if (linkFields.has(key) && typeof payload[key] === "string") payload[key] = normalize(payload[key]);
+			if (Array.isArray(payload[key])) payload[key].forEach((row) => Object.keys(row).forEach((field) => {
+				if (linkFields.has(field)) row[field] = normalize(row[field]);
+			}));
+		});
+		return payload;
 	}
 
-	function showError(message) {
-		if (!alertBox) {
-			return;
+	function validateRows() {
+		for (const [name, fields] of Object.entries(defs)) {
+			const table = document.querySelector(`.ja-rowlist[data-table='${name}']`);
+			if (!table) continue;
+			const requiredFields = fields.filter((f) => f[3]);
+			for (const card of table.querySelectorAll(".ja-row-card")) {
+				for (const [field] of requiredFields) {
+					const input = card.querySelector(`[data-field='${field}']`);
+					if (!input || !String(input.value || "").trim()) return false;
+				}
+			}
 		}
-		alertBox.textContent = message;
-		alertBox.style.display = "block";
-		alertBox.scrollIntoView({ behavior: "smooth", block: "center" });
+		return true;
 	}
 
-	function clearError() {
-		if (!alertBox) {
-			return;
-		}
-		alertBox.textContent = "";
-		alertBox.style.display = "none";
-	}
-
-	function validateForm(payload, tables) {
-		const requiredFields = ["full_name", "email", "phone", "designation", "department"];
-		const missing = requiredFields.filter((field) => !payload[field]);
+	function validate(payload) {
+		const required = ["personal_email", "custom_first_name_en", "custom_second_name_en", "custom_last_name_en", "custom_first_name_ar", "custom_second_name_ar", "custom_last_name_ar", "custom_identity_type", "custom_jameah_nationality"];
+		const missing = required.filter((k) => !payload[k]);
 		if (missing.length) {
-			return "Please fill all required fields before submitting.";
+			const labels = missing.map((field) => {
+				const input = form.querySelector(`[data-field='${field}']`);
+				return input?.closest(".ja-field")?.querySelector("label")?.textContent?.replace("*", "").trim() || field;
+			});
+			return `Please complete: ${labels.join(", ")}.`;
 		}
-
-		// Only Academic Qualifications is required
-		if ((tables.academic_qualifications || []).length === 0) {
-			return "Please add at least one academic qualification.";
-		}
-
+		const arabicFields = ["custom_first_name_ar", "custom_second_name_ar", "custom_third_name_ar", "custom_last_name_ar"];
+		const arabicPattern = /^[\u0600-\u06ff\u0750-\u077f\u08a0-\u08ff\s'’-]+$/;
+		const invalidArabic = arabicFields.filter((field) => payload[field] && !arabicPattern.test(payload[field]));
+		if (invalidArabic.length) return `Arabic fields must contain Arabic letters only: ${invalidArabic.join(", ")}.`;
 		return "";
 	}
 
 	async function submitForm(event) {
 		event.preventDefault();
-		clearError();
-		submitButton.disabled = true;
-
-		const payload = {};
-		// Only collect fields that are NOT inside table rows
-		form.querySelectorAll("[data-field]").forEach((input) => {
-			// Skip inputs that are inside table cells
-			if (input.closest("table")) {
-				return;
-			}
-			const value = input.value ? input.value.trim() : "";
-			if (value) {
-				payload[input.dataset.field] = value;
-			}
-		});
-
-		payload.application_category = currentCategory;
-
-		const tables = {
-			education: collectTableRows("education"),
-			work_experience: collectTableRows("work_experience"),
-			skills: collectTableRows("skills"),
-			training_courses: collectTableRows("training_courses"),
-			academic_certifications: collectTableRows("academic_certifications"),
-			teaching_experience: collectTableRows("teaching_experience"),
-			research_publications: collectTableRows("research_publications"),
-			professional_memberships: collectTableRows("professional_memberships"),
-			awards: collectTableRows("awards"),
-			academic_qualifications: collectTableRows("academic_qualifications"),
-			academic_experience: collectTableRows("academic_experience"),
-			previous_experience: collectTableRows("previous_experience"),
-			professional_certificates_training: collectTableRows("professional_certificates_training"),
-		};
-
-		Object.assign(payload, tables);
-
-		const error = validateForm(payload, tables);
-		if (error) {
-			submitButton.disabled = false;
-			showError(error);
+		const invalidInput = Array.from(form.querySelectorAll("[required]")).find((input) => !String(input.value || "").trim());
+		if (invalidInput) {
+			const panel = invalidInput.closest(".ja-panel");
+			if (panel) showStep(panels.indexOf(panel));
+			const label = invalidInput.closest(".ja-field")?.querySelector("label")?.textContent?.replace("*", "").trim() || invalidInput.dataset.field;
+			alertBox.textContent = `Please complete: ${label}.`;
+			invalidInput.focus();
 			return;
 		}
-
-		const formData = new FormData();
-		formData.append("data", JSON.stringify(payload));
-
-		if (config.token) {
-			formData.append("token", config.token);
-		}
-
-		const resumeInput = document.getElementById("resume_file");
-		if (resumeInput && resumeInput.files && resumeInput.files[0]) {
-			formData.append("resume_file", resumeInput.files[0]);
-		}
-
+		submitButton.disabled = true;
+		const payload = {};
+		form.querySelectorAll("[data-field]").forEach((input) => {
+			if (input.closest(".ja-rowlist")) return;
+			const val = input.value ? input.value.trim() : "";
+			if (val) payload[input.dataset.field] = val;
+		});
+		payload.application_category = currentCategory;
+		payload.academic_qualifications = collectRows("academic_qualifications");
+		payload.academic_work_experience = collectRows("academic_work_experience");
+		payload.previous_work_experience = collectRows("previous_work_experience");
+		payload.professional_certificates_training = collectRows("professional_certificates_training");
+		payload.awards = collectRows("awards");
+		payload.research_publications = collectRows("research_publications");
+		normalizeMinistryLinks(payload);
+		const error = validate(payload);
+		if (error) { alertBox.textContent = error; submitButton.disabled = false; return; }
+		if (!validateRows()) { alertBox.textContent = "Please fill all required child table fields before submitting."; submitButton.disabled = false; return; }
+		const fd = new FormData();
+		fd.append("data", JSON.stringify(payload));
+		if (config.token) fd.append("token", config.token);
+		const resume = document.getElementById("resume_file");
+		if (resume && resume.files && resume.files[0]) fd.append("resume_file", resume.files[0]);
+		const image = document.getElementById("profile_image");
+		if (image && image.files && image.files[0]) fd.append("profile_image", image.files[0]);
 		try {
-			const headers = {};
-			if (window.frappe && frappe.csrf_token) {
-				headers["X-Frappe-CSRF-Token"] = frappe.csrf_token;
-			}
-
-			const response = await fetch(
-				"/api/method/medical_hrms.medical_hrms.recruitment.job_application.submit_application",
-				{
-					method: "POST",
-					headers,
-					body: formData,
-				}
-			);
-
-			const result = await response.json();
+			const response = await fetch("/api/method/medical_hrms.medical_hrms.recruitment.job_application.submit_application", { method: "POST", body: fd, headers: window.frappe && frappe.csrf_token ? { "X-Frappe-CSRF-Token": frappe.csrf_token } : {} });
+			const responseText = await response.text();
+			let result;
+			try { result = JSON.parse(responseText); } catch (_) { result = {}; }
 			if (!response.ok || result.exc) {
-				const message = (result._server_messages && JSON.parse(result._server_messages)[0]) ||
-					result.message ||
-					"Submission failed. Please try again.";
+				let message = result.message || result.exc_type || `Submission failed (HTTP ${response.status}).`;
+				if (result._server_messages) {
+					try {
+						const messages = JSON.parse(result._server_messages);
+						message = messages.map((item) => JSON.parse(item.message || item).message || item.message || item).join("; ");
+					} catch (_) { message = result._server_messages; }
+				}
 				throw new Error(message);
 			}
-
-			form.innerHTML = `
-				<div class="ja-success">
-					<h3>Application submitted successfully</h3>
-					<p>Your application has been received. Our HR team will review it shortly.</p>
-				</div>
-			`;
+			form.innerHTML = '<div class="ja-success"><h3>Application submitted successfully</h3><p>Your application has been received.</p></div>';
 		} catch (error) {
-			showError(error.message || "Submission failed. Please try again.");
-		} finally {
+			const message = String(error.message || error).replace(/[\[\]{}"]+/g, "").replace(/\\n/g, " ");
+			alertBox.textContent = `Application was not submitted: ${message}`;
+			alertBox.scrollIntoView({ behavior: "smooth", block: "center" });
 			submitButton.disabled = false;
 		}
 	}
 
 	document.addEventListener("click", (event) => {
-		const button = event.target.closest(".ja-add-row");
-		if (!button) {
-			return;
-		}
-
-		console.log("Add Row button clicked");
-		const tableName = button.dataset.table;
-		console.log("Table name from data attribute:", tableName);
-
-		const defn = tableDefinitions[tableName];
-		if (!defn) {
-			console.error("Table definition not found for:", tableName);
-			return;
-		}
-
-		console.log("Calling addRow for:", tableName);
-		addRow(tableName);
+		const add = event.target.closest(".ja-add-row"); if (add) addRow(add.dataset.table);
+		const remove = event.target.closest(".ja-remove-row"); if (remove) { const row = remove.closest(".ja-row-card"); if (row) row.remove(); }
 	});
-
-	document.addEventListener("click", (event) => {
-		const button = event.target.closest(".ja-remove-row");
-		if (!button) {
-			return;
-		}
-		const row = button.closest("tr");
-		if (row) {
-			row.remove();
-		}
-	});
-
+	prevButton?.addEventListener("click", () => showStep(currentStep - 1));
+	nextButton?.addEventListener("click", () => showStep(currentStep + 1));
+	steps.forEach((stepEl) => stepEl.addEventListener("click", () => showStep(Number(stepEl.dataset.step || 0))));
 	form.addEventListener("submit", submitForm);
-	applyCategoryRules();
+	updateCategoryBadge();
+	attachMinistryDatalists();
+	renderTables();
+	showStep(0);
 })();

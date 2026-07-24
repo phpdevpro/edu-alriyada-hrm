@@ -1,5 +1,5 @@
 from frappe.model.document import Document
 
 
-class MedicalHRMSJobApplicant(Document):
+class EmployeeJobApplicant(Document):
 	pass

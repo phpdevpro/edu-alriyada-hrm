@@ -1,6 +1,7 @@
 
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 from frappe.model.utils.rename_field import rename_field
 from frappe.model.rename_doc import rename_doc
 
@@ -178,7 +179,7 @@ def link_tables_to_parents():
 			"label": "Academic Qualifications",
 			"fieldtype": "Table",
 			"options": "Jameah Academic Qualification",
-			"insert_after": "custom_job_duties"
+			"insert_after": "profile_tab"
 		},
 		{
 			"fieldname": "custom_jameah_experience",
@@ -261,12 +262,36 @@ def link_tables_to_parents():
 	print("Linked Child Tables to Employee and Instructor Doctypes.")
 
 
+def hide_legacy_employee_profile_sections():
+	legacy_fields = [
+		"educational_qualification",
+		"education",
+		"previous_work_experience",
+		"external_work_history",
+		"history_in_company",
+		"internal_work_history",
+	]
+
+	for fieldname in legacy_fields:
+		make_property_setter(
+			"Employee",
+			fieldname,
+			"hidden",
+			1,
+			"Check",
+			validate_fields_for_doctype=False,
+		)
+
+	frappe.clear_cache(doctype="Employee")
+
+
 def execute():
 	_rename_legacy_work_experience_doctype()
 	_rename_legacy_training_doctype()
 	_rename_legacy_training_fields()
 	create_child_doctypes()
 	link_tables_to_parents()
+	hide_legacy_employee_profile_sections()
 	frappe.clear_cache(doctype="Jameah Academic Qualification")
 	frappe.clear_cache(doctype=NEW_WORK_EXPERIENCE_DOCTYPE)
 	frappe.clear_cache(doctype=NEW_PREVIOUS_WORK_EXPERIENCE_DOCTYPE)

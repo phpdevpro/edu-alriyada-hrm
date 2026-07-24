@@ -80,8 +80,8 @@ function render_layout(page) {
 				</div>
 				<div class="ja-admin-card">
 					<h3>Review Applications</h3>
-					<p>Approve, reject, and convert Job Applicant records into Employee profiles.</p>
-					<a class="ja-admin-btn secondary" href="/app/medical-hrms-job-applicant">Open Job Applicants</a>
+					<p>Approve, reject, and convert Employee Job Application records into Employee profiles.</p>
+					<a class="ja-admin-btn secondary" href="/app/employee-job-applicant">Open Employee Job Applications</a>
 				</div>
 				<div class="ja-admin-card">
 					<h3>Preview Public Form</h3>

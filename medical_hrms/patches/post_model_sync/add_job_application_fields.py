@@ -1,5 +1,6 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 
 def _filter_new_fields(custom_fields):
@@ -27,6 +28,77 @@ def _filter_new_fields(custom_fields):
 		if new_fields:
 			filtered[doctype] = new_fields
 	return filtered
+
+
+def _move_employee_profile_tables():
+	table_fields = [
+		{
+			"fieldname": "custom_jameah_qualifications",
+			"label": "Academic Qualifications",
+			"fieldtype": "Table",
+			"options": "Jameah Academic Qualification",
+			"insert_after": "profile_tab",
+		},
+		{
+			"fieldname": "custom_jameah_experience",
+			"label": "Academic Work Experience",
+			"fieldtype": "Table",
+			"options": "Jameah Academic Work Experience",
+			"insert_after": "custom_jameah_qualifications",
+		},
+		{
+			"fieldname": "custom_jameah_previous_experience",
+			"label": "Previous Work Experience",
+			"fieldtype": "Table",
+			"options": "Jameah Previous Work Experience",
+			"insert_after": "custom_jameah_experience",
+		},
+		{
+			"fieldname": "custom_jameah_training",
+			"label": "Professional Certificates & Training Courses",
+			"fieldtype": "Table",
+			"options": "Jameah Professional Certificates and Training Courses",
+			"insert_after": "custom_jameah_previous_experience",
+		},
+		{
+			"fieldname": "custom_jameah_awards",
+			"label": "Awards",
+			"fieldtype": "Table",
+			"options": "Jameah Award",
+			"insert_after": "custom_jameah_training",
+		},
+		{
+			"fieldname": "custom_jameah_publications",
+			"label": "Research Publications",
+			"fieldtype": "Table",
+			"options": "Jameah Research Publication",
+			"insert_after": "custom_jameah_awards",
+		},
+	]
+
+	create_custom_fields({"Employee": table_fields}, update=True)
+
+	legacy_fields = [
+		"educational_qualification",
+		"education",
+		"previous_work_experience",
+		"external_work_history",
+		"history_in_company",
+		"internal_work_history",
+	]
+	for fieldname in legacy_fields:
+		make_property_setter(
+			"Employee",
+			fieldname,
+			"hidden",
+			1,
+			"Check",
+			validate_fields_for_doctype=False,
+		)
+
+	frappe.clear_cache(doctype="Employee")
+
+
 def execute():
 	custom_fields = {
 		"Employee": [
@@ -66,7 +138,7 @@ def execute():
 				"fieldname": "custom_job_applicant",
 				"fieldtype": "Link",
 				"label": "Job Applicant",
-				"options": "Medical HRMS Job Applicant",
+				"options": "Employee Job Applicant",
 				"insert_after": "custom_resume_attachment",
 			},
 			{
@@ -130,4 +202,4 @@ def execute():
 	filtered_fields = _filter_new_fields(custom_fields)
 	if filtered_fields:
 		create_custom_fields(filtered_fields, update=False)
-
+	_move_employee_profile_tables()

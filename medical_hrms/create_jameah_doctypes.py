@@ -9,6 +9,7 @@ def create_jameah_ministry_code():
             "module": "Medical Hrms",
             "custom": 1,
             "autoname": "format:{code_category}::{ministry_code}",
+            "title_field": "name_english",
             "fields": [
                 {
                     "fieldname": "code_category",

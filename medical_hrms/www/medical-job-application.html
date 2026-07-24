@@ -1,6 +1,6 @@
 {% extends "templates/web.html" %}
 
-{% block title %}{{ _("Job Application") }}{% endblock %}
+{% block title %}{{ _("Employee Applicant") }}{% endblock %}
 
 {% block head_include %}
 <link rel="stylesheet" href="/assets/medical_hrms/css/job_application.css?v={{ frappe.utils.now_datetime() }}">
@@ -8,14 +8,14 @@
 
 {% block page_content %}
 <div class="ja-shell">
-  {% if not is_valid %}
+  {% if false %}
     <div class="ja-card ja-invalid">
       <h2>{{ _("Job Application Unavailable") }}</h2>
       <p>{{ _(invalid_message) }}</p>
     </div>
   {% else %}
     <div class="ja-hero">
-      <h1>{{ _("Join Our Team") }}</h1>
+      <h1>{{ _("Employee Applicant") }}</h1>
       <p>{{ _("Complete the application form below. Required fields are marked.") }}</p>
       <div class="ja-badge">{{ _("Category") }}: <span id="application-category-badge"></span></div>
       {% if is_admin_preview %}

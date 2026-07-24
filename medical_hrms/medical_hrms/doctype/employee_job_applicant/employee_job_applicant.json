@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:MHR-APP-.YYYY.-.#####",
+ "autoname": "format:MHR-APP-{YYYY}-{#####}",
  "creation": "2026-05-20 00:00:00.000000",
  "doctype": "DocType",
  "document_type": "Document",
@@ -36,14 +36,11 @@
   "resume_link",
   "application_details_json",
   "section_break_6",
-  "education",
-  "work_experience",
-  "skills",
-  "training_courses",
-  "academic_certifications",
-  "teaching_experience",
+  "academic_qualifications",
+  "academic_work_experience",
+  "previous_work_experience",
+  "professional_certificates_training",
   "research_publications",
-  "professional_memberships",
   "awards"
  ],
  "fields": [
@@ -211,40 +208,28 @@
    "label": "Professional Profile"
   },
   {
-   "fieldname": "education",
+   "fieldname": "academic_qualifications",
    "fieldtype": "Table",
    "label": "Education Qualifications",
-   "options": "Employee Education"
+   "options": "Jameah Academic Qualification"
   },
   {
-   "fieldname": "work_experience",
+   "fieldname": "academic_work_experience",
    "fieldtype": "Table",
    "label": "Work Experience",
-   "options": "Employee External Work History"
+   "options": "Jameah Academic Work Experience"
   },
   {
-   "fieldname": "skills",
+   "fieldname": "previous_work_experience",
    "fieldtype": "Table",
-   "label": "Skills",
-   "options": "Medical HRMS Applicant Skill"
+   "label": "Previous Work Experience",
+   "options": "Jameah Previous Work Experience"
   },
   {
-   "fieldname": "training_courses",
+   "fieldname": "professional_certificates_training",
    "fieldtype": "Table",
-   "label": "Training Courses",
-   "options": "Medical HRMS Training Course"
-  },
-  {
-   "fieldname": "academic_certifications",
-   "fieldtype": "Table",
-   "label": "Academic Certifications",
-   "options": "Medical HRMS Academic Certification"
-  },
-  {
-   "fieldname": "teaching_experience",
-   "fieldtype": "Table",
-   "label": "Teaching Experience",
-   "options": "Medical HRMS Teaching Experience"
+   "label": "Professional Certificates & Training Courses",
+   "options": "Jameah Professional Certificates and Training Courses"
   },
   {
    "fieldname": "research_publications",
@@ -253,16 +238,10 @@
    "options": "Medical HRMS Research Publication"
   },
   {
-   "fieldname": "professional_memberships",
-   "fieldtype": "Table",
-   "label": "Professional Memberships",
-   "options": "Medical HRMS Professional Membership"
-  },
-  {
    "fieldname": "awards",
    "fieldtype": "Table",
    "label": "Awards",
-   "options": "Medical HRMS Award"
+   "options": "Jameah Award"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -270,7 +249,7 @@
  "modified": "2026-05-20 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
- "name": "Medical HRMS Job Applicant",
+ "name": "Employee Job Applicant",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

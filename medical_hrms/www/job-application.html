@@ -1,280 +1,173 @@
 {% extends "templates/web.html" %}
 
-{% block title %}{{ _("Job Application") }}{% endblock %}
+{% block title %}{{ _("Employee Job Application") }}{% endblock %}
 
 {% block head_include %}
 <link rel="stylesheet" href="/assets/medical_hrms/css/job_application.css?v={{ frappe.utils.now_datetime() }}">
 {% endblock %}
 
 {% block page_content %}
+{% set cfg = job_application_config | default({}, true) %}
 <div class="ja-shell">
-  {% if not is_valid %}
-    <div class="ja-card ja-invalid">
-      <h2>{{ _("Job Application Unavailable") }}</h2>
-      <p>{{ _(invalid_message) }}</p>
+  <div class="ja-hero">
+    <h1>{{ _("Employee Job Application") }}</h1>
+    <p>{{ _("Complete all sections to build a complete employee profile.") }}</p>
+    <div class="ja-badge">{{ _("Category") }}: <span id="application-category-badge"></span></div>
+    {% if is_admin_preview %}<div class="ja-badge">{{ _("Admin Preview Mode") }}</div>{% endif %}
+  </div>
+
+  <div class="ja-card">
+    <div id="job-application-alert" class="ja-alert"></div>
+    <div class="ja-stepper">
+      <div class="ja-step is-active" data-step="0">1. {{ _("Core Details") }}</div>
+      <div class="ja-step" data-step="1">2. {{ _("Identity Details") }}</div>
+      <div class="ja-step" data-step="2">3. {{ _("Address & Contacts") }}</div>
+      <div class="ja-step" data-step="3">4. {{ _("Personal Details") }}</div>
+      <div class="ja-step" data-step="4">5. {{ _("Academic Qualifications") }}</div>
+      <div class="ja-step" data-step="5">6. {{ _("Academic Work Experience") }}</div>
+      <div class="ja-step" data-step="6">7. {{ _("Previous Work Experience") }}</div>
+      <div class="ja-step" data-step="7">8. {{ _("Professional Certificates & Training Courses") }}</div>
+      <div class="ja-step" data-step="8">9. {{ _("Awards") }}</div>
+      <div class="ja-step" data-step="9">10. {{ _("Research Publications") }}</div>
+      <div class="ja-step" data-step="10">11. {{ _("Attachments") }}</div>
     </div>
-  {% else %}
-    <div class="ja-hero">
-      <h1>{{ _("Join Our Team") }}</h1>
-      <p>{{ _("Complete the application form below. Required fields are marked.") }}</p>
-      <div class="ja-badge">{{ _("Category") }}: <span id="application-category-badge"></span></div>
-      {% if is_admin_preview %}
-        <div class="ja-badge">{{ _("Admin Preview Mode") }}</div>
-      {% endif %}
-    </div>
 
-    <div class="ja-card">
-      <div id="job-application-alert" class="ja-alert"></div>
-      <form id="job-application-form" enctype="multipart/form-data">
-        <div class="ja-section">
-          <h2>{{ _("Applicant Details") }}</h2>
-          <p>{{ _("Tell us about yourself and the role you are applying for.") }}</p>
-          <div class="ja-grid">
-            <div class="ja-field">
-              <label>{{ _("Full Name") }}<span class="ja-required">*</span></label>
-              <input type="text" data-field="full_name" required>
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Email Address") }}<span class="ja-required">*</span></label>
-              <input type="email" data-field="email" required>
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Phone Number") }}<span class="ja-required">*</span></label>
-              <input type="text" data-field="phone" required>
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Gender") }}</label>
-              <select data-field="gender">
-                <option value="">--</option>
-                <option value="Male">{{ _("Male") }}</option>
-                <option value="Female">{{ _("Female") }}</option>
-                <option value="Other">{{ _("Other") }}</option>
-              </select>
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Date of Birth") }}</label>
-              <input type="date" data-field="date_of_birth">
-            </div>
-            <div class="ja-field">
-              <label>{{ _("NIC / Passport") }}</label>
-              <input type="text" data-field="nic_passport">
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Designation Applying For") }}<span class="ja-required">*</span></label>
-              <select data-field="designation" required>
-                <option value="">--</option>
-                {% for designation in designations %}
-                  <option value="{{ designation.name }}">{{ designation.name }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Department") }}<span class="ja-required">*</span></label>
-              <select data-field="department" required>
-                <option value="">--</option>
-                {% for department in departments %}
-                  <option value="{{ department.name }}">{{ department.name }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Expected Salary") }}</label>
-              <input type="number" data-field="expected_salary" min="0" step="0.01">
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Salary Currency") }}</label>
-              <input type="text" data-field="expected_salary_currency" placeholder="{{ _("e.g. USD") }}">
-            </div>
-          </div>
+    <form id="job-application-form" enctype="multipart/form-data" novalidate>
+      <section class="ja-panel is-active" data-panel="0">
+        <div class="ja-section-head"><h2>{{ _("Core Details") }}</h2><p>{{ _("Identity and employment basics.") }}</p></div>
+        <div class="ja-grid">
+          <div class="ja-field ja-field-wide"><label>{{ _("Salutation") }}</label><input type="text" data-field="salutation"></div>
+          <div class="ja-field"><label>{{ _("First Name (English)") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_first_name_en" required></div>
+          <div class="ja-field"><label>{{ _("First Name (Arabic)") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_first_name_ar" lang="ar" dir="rtl" required></div>
+          <div class="ja-field"><label>{{ _("Second Name (English)") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_second_name_en" required></div>
+          <div class="ja-field"><label>{{ _("Second Name (Arabic)") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_second_name_ar" lang="ar" dir="rtl" required></div>
+          <div class="ja-field"><label>{{ _("Third Name (English)") }}</label><input type="text" data-field="custom_third_name_en"></div>
+          <div class="ja-field"><label>{{ _("Third Name (Arabic)") }}</label><input type="text" data-field="custom_third_name_ar" lang="ar" dir="rtl"></div>
+          <div class="ja-field"><label>{{ _("Fourth Name (English)") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_last_name_en" required></div>
+          <div class="ja-field"><label>{{ _("Fourth Name (Arabic)") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_last_name_ar" lang="ar" dir="rtl" required></div>
+          <div class="ja-field"><label>{{ _("Employee Number") }}</label><input type="text" data-field="employee_number"></div>
+          <div class="ja-field"><label>{{ _("Gender") }}</label><select data-field="gender"><option value="">--</option><option value="Male">{{ _("Male") }}</option><option value="Female">{{ _("Female") }}</option><option value="Other">{{ _("Other") }}</option></select></div>
+          <div class="ja-field"><label>{{ _("Date of Birth") }}</label><input type="date" data-field="date_of_birth"></div>
+          <div class="ja-field"><label>{{ _("Date of Joining") }}</label><input type="date" data-field="date_of_joining"></div>
         </div>
+      </section>
 
-        <div class="ja-section">
-          <h2>{{ _("Contact Details") }}</h2>
-          <p>{{ _("Provide your address and emergency contact information.") }}</p>
-          <div class="ja-grid">
-            <div class="ja-field">
-              <label>{{ _("Address") }}</label>
-              <textarea data-field="address"></textarea>
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Emergency Contact Name") }}</label>
-              <input type="text" data-field="emergency_contact_name">
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Emergency Contact Phone") }}</label>
-              <input type="text" data-field="emergency_contact_phone">
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Emergency Contact Relation") }}</label>
-              <input type="text" data-field="emergency_contact_relation">
-            </div>
-          </div>
+      <section class="ja-panel" data-panel="1">
+        <div class="ja-section-head"><h2>{{ _("Identity Details") }}</h2><p>{{ _("Identity, nationality, and legally required personal details.") }}</p></div>
+        <div class="ja-grid">
+          <div class="ja-field"><label>{{ _("Identity Type") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_identity_type" required></div>
+          <div class="ja-field"><label>{{ _("Identity Civil Registry in the Kingdom") }}</label><input type="text" data-field="custom_identity_number"></div>
+          <div class="ja-field"><label>{{ _("Identity Issue Date") }}</label><input type="date" data-field="custom_identity_issue_date"></div>
+          <div class="ja-field"><label>{{ _("Identity Issue Place") }}</label><input type="text" data-field="custom_identity_issue_place"></div>
+          <div class="ja-field"><label>{{ _("ID Number in Country of Origin") }}</label><input type="text" data-field="custom_original_home_id_number"></div>
+          <div class="ja-field"><label>{{ _("Place of Birth") }}</label><input type="text" data-field="custom_ministry_place_of_birth"></div>
+          <div class="ja-field"><label>{{ _("Nationality") }}<span class="ja-required">*</span></label><input type="text" data-field="custom_jameah_nationality" required></div>
+          <div class="ja-field"><label>{{ _("Religion") }}</label><input type="text" data-field="custom_ministry_religion"></div>
+          <div class="ja-field"><label>{{ _("Is Special Needs") }}</label><select data-field="custom_is_special_needs"><option value="">--</option><option value="1">{{ _("Yes") }}</option><option value="0">{{ _("No") }}</option></select></div>
+          <div class="ja-field"><label>{{ _("Type of Special Needs") }}</label><input type="text" data-field="custom_ministry_special_needs_type"></div>
+          <div class="ja-field"><label>{{ _("Work Telephone Number") }}</label><input type="text" data-field="custom_work_telephone_number"></div>
+          <div class="ja-field"><label>{{ _("Work Telephone Extension Number") }}</label><input type="text" data-field="custom_work_telephone_extention_number"></div>
         </div>
+      </section>
 
-        <div class="ja-section">
-          <h2>{{ _("Application Category") }}</h2>
-          <p>{{ _("The category is set by the application link.") }}</p>
-          <div class="ja-grid">
-            <div class="ja-field">
-              <label>{{ _("Category") }}</label>
-              <select id="application-category">
-                <option value="Academic Staff">{{ _("Academic Staff") }}</option>
-                <option value="Non-Academic / Other Staff">{{ _("Non-Academic / Other Staff") }}</option>
-              </select>
-            </div>
-          </div>
+      <section class="ja-panel" data-panel="2">
+        <div class="ja-section-head"><h2>{{ _("Address & Contacts") }}</h2><p>{{ _("Personal and company contact details.") }}</p></div>
+        <div class="ja-grid">
+          <div class="ja-field"><label>{{ _("Mobile") }}<span class="ja-required">*</span></label><input type="text" data-field="cell_number" required></div>
+          <div class="ja-field"><label>{{ _("Personal Email") }}<span class="ja-required">*</span></label><input type="email" data-field="personal_email" required></div>
+          <div class="ja-field"><label>{{ _("Company Email") }}</label><input type="email" data-field="company_email"></div>
+          <div class="ja-field"><label>{{ _("Preferred Contact Email") }}</label><select data-field="prefered_contact_email"><option value="">--</option><option value="Company Email">{{ _("Company Email") }}</option><option value="Personal Email">{{ _("Personal Email") }}</option><option value="User ID">{{ _("User ID") }}</option></select></div>
+          <div class="ja-field"><label>{{ _("Preferred Email") }}</label><input type="email" data-field="prefered_email"></div>
+          <div class="ja-field"><label>{{ _("User ID") }}</label><input type="text" data-field="user_id"></div>
+          <div class="ja-field"><label>{{ _("Permanent Address") }}</label><textarea data-field="permanent_address"></textarea></div>
+          <div class="ja-field"><label>{{ _("Permanent Address Is") }}</label><select data-field="permanent_accommodation_type"><option value="">--</option><option value="Owned">{{ _("Owned") }}</option><option value="Rented">{{ _("Rented") }}</option></select></div>
+          <div class="ja-field"><label>{{ _("Current Address") }}</label><textarea data-field="current_address"></textarea></div>
+          <div class="ja-field"><label>{{ _("Current Address Is") }}</label><select data-field="current_accommodation_type"><option value="">--</option><option value="Owned">{{ _("Owned") }}</option><option value="Rented">{{ _("Rented") }}</option></select></div>
         </div>
+      </section>
 
-        <div class="ja-section">
-          <h2>{{ _("Resume and Cover Letter") }}</h2>
-          <div class="ja-grid">
-            <div class="ja-field">
-              <label>{{ _("Resume / CV Upload") }}</label>
-              <input type="file" id="resume_file" accept=".pdf,.doc,.docx">
-            </div>
-            <div class="ja-field">
-              <label>{{ _("Resume Link") }}</label>
-              <input type="text" data-field="resume_link">
-            </div>
-            <div class="ja-field" style="grid-column: span 2;">
-              <label>{{ _("Cover Letter") }}</label>
-              <textarea data-field="cover_letter"></textarea>
-            </div>
-          </div>
+      <section class="ja-panel" data-panel="3">
+        <div class="ja-section-head"><h2>{{ _("Personal Details") }}</h2><p>{{ _("Identity, passport, and personal profile.") }}</p></div>
+        <div class="ja-grid">
+          <div class="ja-field"><label>{{ _("Passport Number") }}</label><input type="text" data-field="passport_number"></div>
+          <div class="ja-field"><label>{{ _("Date of Issue") }}</label><input type="date" data-field="date_of_issue"></div>
+          <div class="ja-field"><label>{{ _("Valid Upto") }}</label><input type="date" data-field="valid_upto"></div>
+          <div class="ja-field"><label>{{ _("Place of Issue") }}</label><input type="text" data-field="place_of_issue"></div>
+          <div class="ja-field"><label>{{ _("Marital Status") }}</label><select data-field="marital_status"><option value="">--</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select></div>
+          <div class="ja-field"><label>{{ _("Blood Group") }}</label><select data-field="blood_group"><option value="">--</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+          <div class="ja-field"><label>{{ _("Family Background") }}</label><textarea data-field="family_background"></textarea></div>
+          <div class="ja-field"><label>{{ _("Health Details") }}</label><textarea data-field="health_details"></textarea></div>
         </div>
+      </section>
 
-        <div class="ja-section">
-          <h2>{{ _("Professional Profile") }}</h2>
-          <p>{{ _("Add your qualifications, experience, and professional details.") }}</p>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Education Qualifications") }}</h3>
-              <button class="ja-add-row" type="button" data-table="education">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="education">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Work Experience") }}</h3>
-              <button class="ja-add-row" type="button" data-table="work_experience">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="work_experience">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Skills") }}</h3>
-              <button class="ja-add-row" type="button" data-table="skills">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="skills">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Training Courses") }}</h3>
-              <button class="ja-add-row" type="button" data-table="training_courses">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="training_courses">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Academic Certifications") }}</h3>
-              <button class="ja-add-row" type="button" data-table="academic_certifications">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="academic_certifications">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Teaching Experience") }}</h3>
-              <button class="ja-add-row" type="button" data-table="teaching_experience">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="teaching_experience">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Research Publications") }}</h3>
-              <button class="ja-add-row" type="button" data-table="research_publications">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="research_publications">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Professional Memberships") }}</h3>
-              <button class="ja-add-row" type="button" data-table="professional_memberships">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="professional_memberships">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="ja-table">
-            <div class="ja-table-head">
-              <h3>{{ _("Awards") }}</h3>
-              <button class="ja-add-row" type="button" data-table="awards">{{ _("Add Row") }}</button>
-            </div>
-            <div class="ja-table-scroll">
-              <table data-table="awards">
-                <thead><tr></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
+      <section class="ja-panel" data-panel="4">
+        <div class="ja-section-head"><h2>{{ _("Academic Qualifications") }}</h2><p>{{ _("Education records with academic qualification details.") }}</p></div>
+        <div class="ja-table">
+          <div class="ja-table-head"><h3>{{ _("Academic Qualifications") }}</h3><button class="ja-add-row" type="button" data-table="academic_qualifications">{{ _("Add Row") }}</button></div>
+          <div class="ja-rowlist" data-table="academic_qualifications"></div>
         </div>
+      </section>
 
-        <div class="ja-actions">
-          <button class="ja-submit" type="submit" id="job-application-submit">{{ _("Submit Application") }}</button>
+      <section class="ja-panel" data-panel="5">
+        <div class="ja-section-head"><h2>{{ _("Academic Work Experience") }}</h2><p>{{ _("Academic and teaching-related work history.") }}</p></div>
+        <div class="ja-table">
+          <div class="ja-table-head"><h3>{{ _("Academic Work Experience") }}</h3><button class="ja-add-row" type="button" data-table="academic_work_experience">{{ _("Add Row") }}</button></div>
+          <div class="ja-rowlist" data-table="academic_work_experience"></div>
         </div>
-      </form>
-    </div>
-  {% endif %}
+      </section>
+
+      <section class="ja-panel" data-panel="6">
+        <div class="ja-section-head"><h2>{{ _("Previous Work Experience") }}</h2><p>{{ _("Non-academic previous employment history.") }}</p></div>
+        <div class="ja-table">
+          <div class="ja-table-head"><h3>{{ _("Previous Work Experience") }}</h3><button class="ja-add-row" type="button" data-table="previous_work_experience">{{ _("Add Row") }}</button></div>
+          <div class="ja-rowlist" data-table="previous_work_experience"></div>
+        </div>
+      </section>
+
+      <section class="ja-panel" data-panel="7">
+        <div class="ja-section-head"><h2>{{ _("Professional Certificates & Training Courses") }}</h2><p>{{ _("Certificates, trainings, and completion history.") }}</p></div>
+        <div class="ja-table">
+          <div class="ja-table-head"><h3>{{ _("Professional Certificates & Training Courses") }}</h3><button class="ja-add-row" type="button" data-table="professional_certificates_training">{{ _("Add Row") }}</button></div>
+          <div class="ja-rowlist" data-table="professional_certificates_training"></div>
+        </div>
+      </section>
+
+      <section class="ja-panel" data-panel="8">
+        <div class="ja-section-head"><h2>{{ _("Awards") }}</h2><p>{{ _("Awards and recognitions.") }}</p></div>
+        <div class="ja-table">
+          <div class="ja-table-head"><h3>{{ _("Awards") }}</h3><button class="ja-add-row" type="button" data-table="awards">{{ _("Add Row") }}</button></div>
+          <div class="ja-rowlist" data-table="awards"></div>
+        </div>
+      </section>
+
+      <section class="ja-panel" data-panel="9">
+        <div class="ja-section-head"><h2>{{ _("Research Publications") }}</h2><p>{{ _("Published work and academic outputs.") }}</p></div>
+        <div class="ja-table">
+          <div class="ja-table-head"><h3>{{ _("Research Publications") }}</h3><button class="ja-add-row" type="button" data-table="research_publications">{{ _("Add Row") }}</button></div>
+          <div class="ja-rowlist" data-table="research_publications"></div>
+        </div>
+      </section>
+
+      <section class="ja-panel" data-panel="10">
+        <div class="ja-section-head"><h2>{{ _("Attachments") }}</h2><p>{{ _("Profile image, resume, and cover letter.") }}</p></div>
+        <div class="ja-grid">
+          <div class="ja-field"><label>{{ _("Image") }}</label><input type="file" id="profile_image" accept="image/*"></div>
+          <div class="ja-field"><label>{{ _("Resume / CV Upload") }}</label><input type="file" id="resume_file" accept=".pdf,.doc,.docx"></div>
+          <div class="ja-field"><label>{{ _("Bio / Cover Letter") }}</label><textarea data-field="bio"></textarea></div>
+        </div>
+      </section>
+
+      <div class="ja-actions">
+        <button type="button" class="ja-nav-btn" id="ja-prev">{{ _("Previous") }}</button>
+        <button type="button" class="ja-nav-btn primary" id="ja-next">{{ _("Next") }}</button>
+        <button class="ja-submit" type="submit" id="job-application-submit">{{ _("Submit Application") }}</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
-  window.jobApplicationConfig = {{ job_application_config | tojson }};
+  window.jobApplicationConfig = {{ (job_application_config | default({}, true)) | tojson }};
   window.jobAppVersion = "{{ frappe.utils.now_datetime() }}";
 </script>
 <script src="/assets/medical_hrms/js/job_application.js?v={{ frappe.utils.now_datetime() }}"></script>

@@ -11,7 +11,7 @@ from medical_hrms.medical_hrms.recruitment.job_application import (
 
 def get_context(context):
 	context.no_cache = 1
-	context.title = _("Job Application")
+	context.title = _("Employee Applicant")
 	context.body_class = "job-application-page"
 
 	token = frappe.form_dict.get("token")
@@ -31,7 +31,8 @@ def get_context(context):
 		is_admin_preview = True
 		application_category = ACADEMIC_CATEGORY
 	else:
-		invalid_message = _("Job Application Link Unavailable.")
+		is_valid = True
+		application_category = ACADEMIC_CATEGORY
 
 	context.is_valid = is_valid
 	context.invalid_message = invalid_message
@@ -56,4 +57,7 @@ def get_context(context):
 		"token": token,
 		"application_category": application_category,
 		"allow_category_override": is_admin_preview,
+		"page_title": _("Employee Applicant"),
+		"ministry_codes": frappe.get_all("Jameah Ministry Code", fields=["name", "name_english"], order_by="name_english", ignore_permissions=True),
 	}
+	context.company = frappe.db.get_default("company")

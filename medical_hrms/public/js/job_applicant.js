@@ -1,4 +1,4 @@
-frappe.ui.form.on("Medical HRMS Job Applicant", {
+frappe.ui.form.on("Employee Job Applicant", {
 	refresh(frm) {
 		if (frm.doc.__islocal) {
 			return;
