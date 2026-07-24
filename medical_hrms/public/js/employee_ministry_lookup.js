@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 hide_ministry_code_docnames_in_links();
 
 frappe.ui.form.on("Employee", {
@@ -42,6 +45,7 @@ frappe.ui.form.on("Employee", {
 			});
 		}
 
+<<<<<<< HEAD
 		const academic_qualification_fields = {
 			degree: "Coding of academic degrees",
 			specialization: "Specialization Coding Guide",
@@ -51,10 +55,14 @@ frappe.ui.form.on("Employee", {
 			study_type: "Study type coding",
 			institute: "Coding of educational insti",
 			faculty: "College Coding Guide",
+=======
+		const work_experience_fields = {
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 			city: "Coding cities and governora",
 			country: "Nationality",
 		};
 
+<<<<<<< HEAD
 		if (frm.fields_dict.custom_jameah_qualifications?.grid) {
 			Object.entries(academic_qualification_fields).forEach(([fieldname, category]) => {
 				const grid_field = frm.fields_dict.custom_jameah_qualifications.grid.get_field(fieldname);
@@ -86,6 +94,10 @@ frappe.ui.form.on("Employee", {
 				if (!category) {
 					return;
 				}
+=======
+		if (frm.fields_dict.custom_jameah_experience?.grid) {
+			Object.entries(work_experience_fields).forEach(([fieldname, category]) => {
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 				const grid_field = frm.fields_dict.custom_jameah_experience.grid.get_field(fieldname);
 				if (grid_field) {
 					grid_field.get_query = () => ministry_code_query(category);
@@ -93,11 +105,16 @@ frappe.ui.form.on("Employee", {
 			});
 		}
 
+<<<<<<< HEAD
 		const previous_work_experience_fields = {
+=======
+		const training_fields = {
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 			city: "Coding cities and governora",
 			country: "Nationality",
 		};
 
+<<<<<<< HEAD
 		if (frm.fields_dict.custom_jameah_previous_experience?.grid) {
 			Object.entries(previous_work_experience_fields).forEach(([fieldname, category]) => {
 				const grid_field = frm.fields_dict.custom_jameah_previous_experience.grid.get_field(fieldname);
@@ -112,6 +129,8 @@ frappe.ui.form.on("Employee", {
 			course_country: "Nationality",
 		};
 
+=======
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 		if (frm.fields_dict.custom_jameah_training?.grid) {
 			Object.entries(training_fields).forEach(([fieldname, category]) => {
 				const grid_field = frm.fields_dict.custom_jameah_training.grid.get_field(fieldname);
