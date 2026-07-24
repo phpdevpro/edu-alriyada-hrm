@@ -15,8 +15,7 @@ def execute():
 		print("Instructor DocType not found; skipped.")
 		return
 
-	dt = frappe.get_doc("DocType", "Instructor")
-	dt.set("permissions", [])
+	frappe.db.delete("Custom DocPerm", {"parent": "Instructor"})
 
 	for role in ALLOWED_ROLES:
 		if not frappe.db.exists("Role", role):
@@ -37,9 +36,21 @@ def execute():
 		elif role == "Instructor":
 			row.update({"write": 1})
 
-		dt.append("permissions", row)
+		_insert_custom_permission("Instructor", row)
 
-	dt.save(ignore_permissions=True)
 	frappe.clear_cache(doctype="Instructor")
 	frappe.db.commit()
 	print("Instructor permissions updated for Academic handoff model.")
+
+
+def _insert_custom_permission(doctype_name: str, permission: dict):
+	doc = frappe.get_doc(
+		{
+			"doctype": "Custom DocPerm",
+			"parent": doctype_name,
+			"parenttype": "DocType",
+			"parentfield": "permissions",
+			**permission,
+		}
+	)
+	doc.insert(ignore_permissions=True)

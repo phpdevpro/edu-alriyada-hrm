@@ -6,6 +6,7 @@ medical_hrms.patches.pre_model_sync.cleanup_broken_applicant_custom_fields
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+<<<<<<< HEAD
 medical_hrms.patches.post_model_sync.add_job_application_fields
 medical_hrms.patches.post_model_sync.add_employee_job_applicant_fields
 medical_hrms.patches.post_model_sync.mirror_employee_fields_to_applicant
@@ -17,3 +18,6 @@ medical_hrms.patches.post_model_sync.order_restored_applicant_fields
 medical_hrms.patches.post_model_sync.fix_applicant_field_names_order
 medical_hrms.patches.post_model_sync.strict_job_application_order
 medical_hrms.patches.post_model_sync.set_ministry_code_title_field
+=======
+medical_hrms.setup_job_applicant_ministry_fields
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9

@@ -109,7 +109,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
+<<<<<<< HEAD
  "modified": "2026-07-16 12:36:39.310738",
+=======
+ "modified": "2026-05-15 13:35:47.728547",
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
  "modified_by": "Administrator",
  "module": "Medical HRMS",
  "name": "Employee Medical License",

@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 import frappe
 
 from medical_hrms.ministry_lookup_config import MINISTRY_LOOKUP_FIELD_MAP
@@ -34,6 +37,7 @@ def validate_employee_ministry_lookups(doc, method=None):
 	for row in doc.get("education") or []:
 		validate_employee_education_ministry_lookups(row)
 
+<<<<<<< HEAD
 	for row in doc.get("custom_jameah_qualifications") or []:
 		validate_jameah_academic_qualification_ministry_lookups(row)
 
@@ -42,6 +46,10 @@ def validate_employee_ministry_lookups(doc, method=None):
 
 	for row in doc.get("custom_jameah_previous_experience") or []:
 		validate_jameah_previous_work_experience_ministry_lookups(row)
+=======
+	for row in doc.get("custom_jameah_experience") or []:
+		validate_jameah_work_experience_ministry_lookups(row)
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 
 	for row in doc.get("custom_jameah_training") or []:
 		validate_jameah_training_course_ministry_lookups(row)
@@ -52,11 +60,14 @@ def validate_employee_education_ministry_lookups(doc, method=None):
 		_validate_field(doc, field["fieldname"], field["category"])
 
 
+<<<<<<< HEAD
 def validate_jameah_academic_qualification_ministry_lookups(doc, method=None):
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Academic Qualification"]:
 		_validate_field(doc, field["fieldname"], field["category"])
 
 
+=======
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 def _validate_identity_number_by_nationality(doc):
 	nationality = doc.get("custom_jameah_nationality")
 	if not nationality:
@@ -76,6 +87,7 @@ def _validate_identity_number_by_nationality(doc):
 		frappe.throw("ID Number in Country of Origin for Non-Saudis is required.")
 
 
+<<<<<<< HEAD
 def validate_jameah_academic_work_experience_ministry_lookups(doc, method=None):
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Academic Work Experience"]:
 		_validate_field(doc, field["fieldname"], field["category"])
@@ -83,9 +95,17 @@ def validate_jameah_academic_work_experience_ministry_lookups(doc, method=None):
 
 def validate_jameah_previous_work_experience_ministry_lookups(doc, method=None):
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Previous Work Experience"]:
+=======
+def validate_jameah_work_experience_ministry_lookups(doc, method=None):
+	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Work Experience"]:
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 		_validate_field(doc, field["fieldname"], field["category"])
 
 
 def validate_jameah_training_course_ministry_lookups(doc, method=None):
+<<<<<<< HEAD
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Professional Certificates and Training Courses"]:
+=======
+	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Training Course"]:
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 		_validate_field(doc, field["fieldname"], field["category"])

@@ -2,6 +2,7 @@ import frappe
 from pathlib import Path
 
 
+<<<<<<< HEAD
 def execute(file_path: str):
 	"""Run full, idempotent normalization pipeline for ministry codes."""
 	if not file_path or file_path.startswith("/path/to/"):
@@ -16,6 +17,37 @@ def execute(file_path: str):
 
 	if not Path(file_path).exists():
 		frappe.throw(f"Excel file not found: {file_path}")
+=======
+WORKBOOK_NAME = "Ministry Code - (Translated).xlsx"
+
+
+def _resolve_file_path(file_path: str | None) -> str:
+	candidates = []
+
+	if file_path and not file_path.startswith("/path/to/"):
+		candidates.append(Path(file_path))
+		candidates.append(Path(frappe.get_site_path(Path(file_path).name)))
+	else:
+		candidates.append(Path(frappe.get_site_path(WORKBOOK_NAME)))
+
+	try:
+		candidates.append(Path(frappe.get_app_path("education")).parent / WORKBOOK_NAME)
+	except Exception:
+		pass
+
+	for candidate in candidates:
+		if candidate.exists():
+			return str(candidate)
+
+	checked_paths = "\n".join(str(candidate) for candidate in candidates)
+	frappe.throw(f"Excel file not found. Checked:\n{checked_paths}")
+
+
+def execute(file_path: str):
+	"""Run full, idempotent normalization pipeline for ministry codes."""
+	file_path = _resolve_file_path(file_path)
+	print(f"Using workbook: {file_path}")
+>>>>>>> 31a5d95401dd98673b8dda7840d4f2a7600b47d9
 
 	print("Step 1/6: fix constraints")
 	from medical_hrms.fix_jameah_ministry_code_constraints import execute as fix_constraints

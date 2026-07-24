@@ -112,17 +112,29 @@ FINANCE_DOCTYPES = {
 
 
 def _apply_permissions(doctype_name: str):
-    dt = frappe.get_doc("DocType", doctype_name)
-    dt.set("permissions", [])
+    frappe.db.delete("Custom DocPerm", {"parent": doctype_name})
 
     for row in BASE_PERMISSIONS:
-        dt.append("permissions", row)
+        _insert_custom_permission(doctype_name, row)
 
     if doctype_name in FINANCE_DOCTYPES:
-        dt.append("permissions", FINANCE_PERMISSION)
+        _insert_custom_permission(doctype_name, FINANCE_PERMISSION)
 
-    dt.save(ignore_permissions=True)
+    frappe.clear_cache(doctype=doctype_name)
     print(f"Updated permissions: {doctype_name}")
+
+
+def _insert_custom_permission(doctype_name: str, permission: dict):
+    doc = frappe.get_doc(
+        {
+            "doctype": "Custom DocPerm",
+            "parent": doctype_name,
+            "parenttype": "DocType",
+            "parentfield": "permissions",
+            **permission,
+        }
+    )
+    doc.insert(ignore_permissions=True)
 
 
 def execute():
