@@ -127,14 +127,34 @@ EMPLOYEE_EDUCATION_MINISTRY_FIELDS = [
 
 JAMEAH_WORK_EXPERIENCE_MINISTRY_FIELDS = [
 	{
-		"fieldname": "city",
-		"label": "City",
+		"fieldname": "employment_status_code",
+		"label": "Employee's Job Status",
+		"category": "Job status",
+	},
+	{
+		"fieldname": "institute_code",
+		"label": "Educational Entity",
+		"category": "Coding of educational insti",
+	},
+	{
+		"fieldname": "location_code",
+		"label": "Geographical Work Location",
 		"category": "Coding cities and governora",
 	},
 	{
-		"fieldname": "country",
-		"label": "Country",
-		"category": "Nationality",
+		"fieldname": "section_code",
+		"label": "Academic Department",
+		"category": "Coding academic departments",
+	},
+	{
+		"fieldname": "profession_rank_code",
+		"label": "Job Rank",
+		"category": "Job ranks",
+	},
+	{
+		"fieldname": "accommodation_code",
+		"label": "Housing",
+		"category": "Residential status coding",
 	},
 ]
 
