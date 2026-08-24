@@ -327,7 +327,7 @@ def execute():
 	)
 	custom_fields["Jameah Training Course"] = [
 		_plain_field("course_type", "Type", "Data", "course_name"),
-		_plain_field("city", "City", "Link", "date", options=DOCTYPE),
+		_plain_field("city", "City", "Data", "date"),
 		_plain_field("country", "Country", "Link", "city", options=DOCTYPE),
 	]
 

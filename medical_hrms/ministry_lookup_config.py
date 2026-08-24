@@ -99,28 +99,10 @@ EMPLOYEE_EDUCATION_MINISTRY_FIELDS = [
 		"insert_after": "custom_ministry_gpa_type",
 	},
 	{
-		"fieldname": "custom_ministry_graduate_from",
-		"label": "Graduation Institution",
-		"category": "Coding of educational insti",
-		"insert_after": "custom_ministry_study_type",
-	},
-	{
-		"fieldname": "custom_ministry_faculty",
-		"label": "College",
-		"category": "College Coding Guide",
-		"insert_after": "custom_ministry_graduate_from",
-	},
-	{
-		"fieldname": "custom_ministry_city",
-		"label": "Graduation City",
-		"category": "Coding cities and governora",
-		"insert_after": "custom_ministry_faculty",
-	},
-	{
 		"fieldname": "custom_ministry_country",
 		"label": "Graduation Country/Nationality",
 		"category": "Nationality",
-		"insert_after": "custom_ministry_city",
+		"insert_after": "custom_ministry_study_type",
 	},
 ]
 
@@ -161,10 +143,53 @@ JAMEAH_WORK_EXPERIENCE_MINISTRY_FIELDS = [
 
 JAMEAH_TRAINING_COURSE_MINISTRY_FIELDS = [
 	{
-		"fieldname": "city",
-		"label": "City",
-		"category": "Coding cities and governora",
+		"fieldname": "country",
+		"label": "Country",
+		"category": "Nationality",
 	},
+]
+
+
+JAMEAH_ACADEMIC_QUALIFICATION_MINISTRY_FIELDS = [
+	{
+		"fieldname": "degree",
+		"label": "Degree",
+		"category": "Coding of academic degrees",
+	},
+	{
+		"fieldname": "specialization",
+		"label": "Specialization",
+		"category": "Specialization Coding Guide",
+	},
+	{
+		"fieldname": "country",
+		"label": "Country",
+		"category": "Nationality",
+	},
+	{
+		"fieldname": "minor",
+		"label": "Subspecialty",
+		"category": "Specialization Coding Guide",
+	},
+	{
+		"fieldname": "assessment_type",
+		"label": "Appreciation",
+		"category": "Cumulative GPA",
+	},
+	{
+		"fieldname": "gpa_type",
+		"label": "Rate Type",
+		"category": "Cumulative GPA",
+	},
+	{
+		"fieldname": "study_type",
+		"label": "Study Type",
+		"category": "Study type coding",
+	},
+]
+
+
+JAMEAH_PREVIOUS_WORK_EXPERIENCE_MINISTRY_FIELDS = [
 	{
 		"fieldname": "country",
 		"label": "Country",
@@ -178,6 +203,8 @@ MINISTRY_LOOKUP_FIELD_MAP = {
 	"Employee Education": EMPLOYEE_EDUCATION_MINISTRY_FIELDS,
 	"Jameah Work Experience": JAMEAH_WORK_EXPERIENCE_MINISTRY_FIELDS,
 	"Jameah Training Course": JAMEAH_TRAINING_COURSE_MINISTRY_FIELDS,
+	"Jameah Academic Qualification": JAMEAH_ACADEMIC_QUALIFICATION_MINISTRY_FIELDS,
+	"Jameah Previous Work Experience": JAMEAH_PREVIOUS_WORK_EXPERIENCE_MINISTRY_FIELDS,
 }
 
 

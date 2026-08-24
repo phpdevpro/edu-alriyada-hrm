@@ -39,6 +39,12 @@ def validate_employee_ministry_lookups(doc, method=None):
 	for row in doc.get("custom_jameah_training") or []:
 		validate_jameah_training_course_ministry_lookups(row)
 
+	for row in doc.get("custom_jameah_qualifications") or []:
+		validate_jameah_academic_qualification_ministry_lookups(row)
+
+	for row in doc.get("custom_jameah_previous_experience") or []:
+		validate_jameah_previous_work_experience_ministry_lookups(row)
+
 
 def validate_employee_education_ministry_lookups(doc, method=None):
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Employee Education"]:
@@ -71,4 +77,14 @@ def validate_jameah_work_experience_ministry_lookups(doc, method=None):
 
 def validate_jameah_training_course_ministry_lookups(doc, method=None):
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Training Course"]:
+		_validate_field(doc, field["fieldname"], field["category"])
+
+
+def validate_jameah_academic_qualification_ministry_lookups(doc, method=None):
+	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Academic Qualification"]:
+		_validate_field(doc, field["fieldname"], field["category"])
+
+
+def validate_jameah_previous_work_experience_ministry_lookups(doc, method=None):
+	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Previous Work Experience"]:
 		_validate_field(doc, field["fieldname"], field["category"])
