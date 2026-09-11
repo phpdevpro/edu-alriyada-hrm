@@ -1,0 +1,630 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<style>
+	.job-application-page .ja-wrap {
+		max-width: 880px;
+		margin: 0 auto;
+		padding: 1.5rem 1rem 4rem;
+		font-family: inherit;
+	}
+	.job-application-page h1.ja-title {
+		font-size: 1.75rem;
+		font-weight: 600;
+		margin-bottom: 0.25rem;
+	}
+	.job-application-page .ja-subtitle {
+		color: var(--text-muted, #6c757d);
+		margin-bottom: 2rem;
+	}
+	.job-application-page .ja-alert {
+		border-radius: 8px;
+		padding: 1rem 1.25rem;
+		margin-bottom: 1.5rem;
+		border: 1px solid transparent;
+	}
+	.job-application-page .ja-alert-danger {
+		background: #fdecea;
+		border-color: #f5c2c0;
+		color: #7a1f1a;
+	}
+	.job-application-page .ja-alert-success {
+		background: #e8f6ee;
+		border-color: #b7e4c7;
+		color: #145a32;
+	}
+	.job-application-page .ja-section {
+		border: 1px solid var(--border-color, #e1e4e8);
+		border-radius: 10px;
+		padding: 1.5rem;
+		margin-bottom: 1.5rem;
+		background: var(--card-bg, #fff);
+	}
+	.job-application-page .ja-section h2 {
+		font-size: 1.15rem;
+		font-weight: 600;
+		margin: 0 0 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var(--border-color, #e1e4e8);
+	}
+	.job-application-page .ja-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 1rem;
+	}
+	.job-application-page .ja-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+	.job-application-page .ja-field.ja-full {
+		grid-column: 1 / -1;
+	}
+	.job-application-page label {
+		font-size: 0.85rem;
+		font-weight: 500;
+	}
+	.job-application-page label .ja-req {
+		color: #c0392b;
+	}
+	.job-application-page input,
+	.job-application-page select,
+	.job-application-page textarea {
+		padding: 0.5rem 0.65rem;
+		border: 1px solid var(--border-color, #ced4da);
+		border-radius: 6px;
+		font-size: 0.92rem;
+		background: var(--control-bg, #fff);
+		color: inherit;
+	}
+	.job-application-page textarea {
+		resize: vertical;
+		min-height: 80px;
+	}
+	.job-application-page .ja-row-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 0.75rem;
+		display: block;
+		overflow-x: auto;
+	}
+	.job-application-page .ja-repeat-row {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) auto;
+		gap: 0.5rem;
+		align-items: end;
+		border: 1px dashed var(--border-color, #d7dade);
+		border-radius: 8px;
+		padding: 0.75rem;
+		margin-bottom: 0.6rem;
+	}
+	.job-application-page .ja-repeat-row .ja-field {
+		gap: 0.25rem;
+	}
+	.job-application-page .ja-remove-row {
+		background: none;
+		border: none;
+		color: #c0392b;
+		cursor: pointer;
+		font-size: 1.1rem;
+		height: fit-content;
+		padding: 0.4rem;
+	}
+	.job-application-page .ja-add-row {
+		background: #eef2f7;
+		border: 1px solid #d7dde5;
+		border-radius: 6px;
+		padding: 0.45rem 0.9rem;
+		font-size: 0.85rem;
+		cursor: pointer;
+	}
+	.job-application-page .ja-submit-bar {
+		display: flex;
+		justify-content: flex-end;
+		gap: 1rem;
+		align-items: center;
+	}
+	.job-application-page .ja-submit-btn {
+		background: #2f6fed;
+		color: #fff;
+		border: none;
+		border-radius: 6px;
+		padding: 0.65rem 1.75rem;
+		font-size: 0.95rem;
+		font-weight: 500;
+		cursor: pointer;
+	}
+	.job-application-page .ja-submit-btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+	.job-application-page .ja-field-error {
+		color: #c0392b;
+		font-size: 0.8rem;
+	}
+	.job-application-page .ja-hidden {
+		display: none !important;
+	}
+</style>
+
+<div class="ja-wrap">
+	<h1 class="ja-title">{{ _("Employee Job Application") }}</h1>
+	<p class="ja-subtitle">{{ _("Please complete the form below to submit your application.") }}</p>
+
+	{% if not is_valid %}
+	<div class="ja-alert ja-alert-danger">
+		{{ _(invalid_message) if invalid_message else _("This application link is not valid.") }}
+	</div>
+	{% else %}
+
+	<div id="ja-success" class="ja-alert ja-alert-success ja-hidden"></div>
+	<div id="ja-error" class="ja-alert ja-alert-danger ja-hidden"></div>
+
+	<form id="ja-form">
+		<!-- Personal Information -->
+		<div class="ja-section">
+			<h2>{{ _("Personal Information") }}</h2>
+			<div class="ja-grid">
+				<div class="ja-field"><label>{{ _("First Name (English)") }} <span class="ja-req">*</span></label>
+					<input type="text" name="custom_first_name_en" required></div>
+				<div class="ja-field"><label>{{ _("Second Name (English)") }}</label>
+					<input type="text" name="custom_second_name_en"></div>
+				<div class="ja-field"><label>{{ _("Third Name (English)") }}</label>
+					<input type="text" name="custom_third_name_en"></div>
+				<div class="ja-field"><label>{{ _("Last Name (English)") }} <span class="ja-req">*</span></label>
+					<input type="text" name="custom_last_name_en" required></div>
+
+				<div class="ja-field"><label>{{ _("First Name (Arabic)") }}</label>
+					<input type="text" name="custom_first_name_ar"></div>
+				<div class="ja-field"><label>{{ _("Second Name (Arabic)") }}</label>
+					<input type="text" name="custom_second_name_ar"></div>
+				<div class="ja-field"><label>{{ _("Third Name (Arabic)") }}</label>
+					<input type="text" name="custom_third_name_ar"></div>
+				<div class="ja-field"><label>{{ _("Last Name (Arabic)") }}</label>
+					<input type="text" name="custom_last_name_ar"></div>
+
+				<div class="ja-field"><label>{{ _("Email") }} <span class="ja-req">*</span></label>
+					<input type="email" name="email" required></div>
+				<div class="ja-field"><label>{{ _("Phone") }} <span class="ja-req">*</span></label>
+					<input type="tel" name="phone" required></div>
+				<div class="ja-field"><label>{{ _("Date of Birth") }}</label>
+					<input type="date" name="date_of_birth"></div>
+				<div class="ja-field"><label>{{ _("Gender") }}</label>
+					<select name="gender" data-category="Gender"></select></div>
+
+				<div class="ja-field"><label>{{ _("National ID / Passport Number") }}</label>
+					<input type="text" name="nic_passport"></div>
+				<div class="ja-field ja-full"><label>{{ _("Address") }}</label>
+					<textarea name="address" rows="2"></textarea></div>
+			</div>
+		</div>
+
+		<!-- Ministry Identity Details -->
+		<div class="ja-section">
+			<h2>{{ _("Identity Details") }}</h2>
+			<div class="ja-grid">
+				<div class="ja-field"><label>{{ _("Identity Type") }}</label>
+					<select name="custom_identity_type" data-category="Identity type"></select></div>
+				<div class="ja-field"><label>{{ _("Identity Number") }}</label>
+					<input type="text" name="custom_identity_number"></div>
+				<div class="ja-field"><label>{{ _("Identity Issue Date") }}</label>
+					<input type="date" name="custom_identity_issue_date"></div>
+				<div class="ja-field"><label>{{ _("Identity Issue Place") }}</label>
+					<select name="custom_identity_issue_place" data-category="Coding cities and governora"></select></div>
+				<div class="ja-field"><label>{{ _("ID Number in Country of Origin") }}</label>
+					<input type="text" name="custom_original_home_id_number"></div>
+				<div class="ja-field"><label>{{ _("Place of Birth") }}</label>
+					<select name="custom_ministry_place_of_birth" data-category="Coding cities and governora"></select></div>
+				<div class="ja-field"><label>{{ _("Nationality") }} <span class="ja-req">*</span></label>
+					<select name="custom_jameah_nationality" data-category="Nationality" required></select></div>
+				<div class="ja-field"><label>{{ _("Religion") }}</label>
+					<select name="custom_ministry_religion" data-category="Religions"></select></div>
+				<div class="ja-field"><label>{{ _("Has Special Needs") }}</label>
+					<select name="custom_is_special_needs">
+						<option value="0">{{ _("No") }}</option>
+						<option value="1">{{ _("Yes") }}</option>
+					</select></div>
+				<div class="ja-field"><label>{{ _("Type of Special Needs") }}</label>
+					<select name="custom_ministry_special_needs_type" data-category="Type of special needs"></select></div>
+				<div class="ja-field"><label>{{ _("Work Telephone Number") }}</label>
+					<input type="tel" name="custom_work_telephone_number"></div>
+				<div class="ja-field"><label>{{ _("Work Telephone Extension") }}</label>
+					<input type="text" name="custom_work_telephone_extention_number"></div>
+				<div class="ja-field"><label>{{ _("City (Place of Business)") }}</label>
+					<select name="custom_ministry_work_city" data-category="Coding cities and governora"></select></div>
+				<div class="ja-field"><label>{{ _("Job Rank") }}</label>
+					<select name="custom_ministry_job_rank" data-category="Job ranks"></select></div>
+				<div class="ja-field"><label>{{ _("Housing") }}</label>
+					<select name="custom_ministry_accommodation"></select></div>
+			</div>
+		</div>
+
+		<!-- Emergency Contact -->
+		<div class="ja-section">
+			<h2>{{ _("Emergency Contact") }}</h2>
+			<div class="ja-grid">
+				<div class="ja-field"><label>{{ _("Name") }}</label>
+					<input type="text" name="emergency_contact_name"></div>
+				<div class="ja-field"><label>{{ _("Phone") }}</label>
+					<input type="tel" name="emergency_contact_phone"></div>
+				<div class="ja-field"><label>{{ _("Relation") }}</label>
+					<input type="text" name="emergency_contact_relation"></div>
+			</div>
+		</div>
+
+		<!-- Position Information -->
+		<div class="ja-section">
+			<h2>{{ _("Position Information") }}</h2>
+			<div class="ja-grid">
+				<div class="ja-field">
+					<label>{{ _("Application Category") }}</label>
+					<select name="application_category" id="ja-application-category" {{ "disabled" if not is_admin_preview else "" }}>
+						<option value="Academic Staff" {{ "selected" if application_category == "Academic Staff" else "" }}>{{ _("Academic Staff") }}</option>
+						<option value="Non-Academic / Other Staff" {{ "selected" if application_category == "Non-Academic / Other Staff" else "" }}>{{ _("Non-Academic / Other Staff") }}</option>
+					</select>
+				</div>
+				<div class="ja-field"><label>{{ _("Designation") }}</label>
+					<select name="designation">
+						<option value=""></option>
+						{% for d in designations %}
+						<option value="{{ d.name }}">{{ d.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="ja-field"><label>{{ _("Department") }}</label>
+					<select name="department">
+						<option value=""></option>
+						{% for d in departments %}
+						<option value="{{ d.name }}">{{ d.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="ja-field"><label>{{ _("Expected Salary") }}</label>
+					<input type="number" step="0.01" name="expected_salary"></div>
+			</div>
+			<div class="ja-grid" style="margin-top:1rem;">
+				<div class="ja-field ja-full"><label>{{ _("Cover Letter") }}</label>
+					<textarea name="cover_letter" rows="4"></textarea></div>
+				<div class="ja-field"><label>{{ _("Resume Link (optional)") }}</label>
+					<input type="url" name="resume_link"></div>
+				<div class="ja-field"><label>{{ _("Resume Attachment") }}</label>
+					<input type="file" id="ja-resume-file" name="resume" accept=".pdf,.doc,.docx"></div>
+			</div>
+		</div>
+
+		<!-- Academic Qualifications -->
+		<div class="ja-section" id="ja-section-academic-qualifications">
+			<h2>{{ _("Academic Qualifications") }}</h2>
+			<div id="ja-rows-academic_qualifications"></div>
+			<button type="button" class="ja-add-row" data-table="academic_qualifications">+ {{ _("Add Qualification") }}</button>
+		</div>
+
+		<!-- Academic Work Experience -->
+		<div class="ja-section" id="ja-section-academic-experience">
+			<h2>{{ _("Academic Work Experience") }}</h2>
+			<div id="ja-rows-academic_work_experience"></div>
+			<button type="button" class="ja-add-row" data-table="academic_work_experience">+ {{ _("Add Experience") }}</button>
+		</div>
+
+		<!-- Previous Work Experience -->
+		<div class="ja-section">
+			<h2>{{ _("Previous Work Experience") }}</h2>
+			<div id="ja-rows-previous_work_experience"></div>
+			<button type="button" class="ja-add-row" data-table="previous_work_experience">+ {{ _("Add Previous Experience") }}</button>
+		</div>
+
+		<!-- Training Courses -->
+		<div class="ja-section">
+			<h2>{{ _("Professional Certificates & Training Courses") }}</h2>
+			<div id="ja-rows-professional_certificates_training"></div>
+			<button type="button" class="ja-add-row" data-table="professional_certificates_training">+ {{ _("Add Course") }}</button>
+		</div>
+
+		<!-- Publications -->
+		<div class="ja-section">
+			<h2>{{ _("Research Publications") }}</h2>
+			<div id="ja-rows-research_publications"></div>
+			<button type="button" class="ja-add-row" data-table="research_publications">+ {{ _("Add Publication") }}</button>
+		</div>
+
+		<!-- Awards -->
+		<div class="ja-section">
+			<h2>{{ _("Awards") }}</h2>
+			<div id="ja-rows-awards"></div>
+			<button type="button" class="ja-add-row" data-table="awards">+ {{ _("Add Award") }}</button>
+		</div>
+
+		<div class="ja-submit-bar">
+			<span id="ja-submitting-msg" class="ja-hidden">{{ _("Submitting...") }}</span>
+			<button type="submit" class="ja-submit-btn" id="ja-submit-btn">{{ _("Submit Application") }}</button>
+		</div>
+	</form>
+	{% endif %}
+</div>
+
+<script>
+(function () {
+	if (!document.getElementById("ja-form")) return;
+
+	var CONFIG = {{ job_application_config | tojson }};
+	var MINISTRY_CODES = CONFIG.ministry_codes || [];
+
+	var TABLE_FIELDS = {
+		academic_qualifications: [
+			{ name: "is_last_academic_data_record", label: "{{ _('Latest Academic Record') }}", type: "checkbox", checked: true },
+			{ name: "degree", label: "{{ _('Academic Qualification') }}", type: "select", category: "Coding of academic degrees" },
+			{ name: "specialization", label: "{{ _('General Specialization') }}", type: "select", category: "Specialization Coding Guide" },
+			{ name: "minor", label: "{{ _('Subspecialty') }}", type: "select", category: "Specialization Coding Guide" },
+			{ name: "assessment_type", label: "{{ _('Appreciation') }}", type: "select", category: "Cumulative GPA" },
+			{ name: "gpa", label: "{{ _('Graduation Rate') }}", type: "number" },
+			{ name: "gpa_type", label: "{{ _('Rate Type') }}", type: "select", category: "Cumulative GPA" },
+			{ name: "study_type", label: "{{ _('Study System') }}", type: "select", category: "Study type coding" },
+			{ name: "institute", label: "{{ _('Graduation Place') }}", type: "text" },
+			{ name: "faculty", label: "{{ _('College') }}", type: "text" },
+			{ name: "qualification_date", label: "{{ _('Date of Obtaining the Qualification') }}", type: "date" },
+			{ name: "graduation_year", label: "{{ _('Graduation Year (AD)') }}", type: "number" },
+			{ name: "city", label: "{{ _('City') }}", type: "text" },
+			{ name: "country", label: "{{ _('Country') }}", type: "select", category: "Nationality" }
+		],
+		academic_work_experience: [
+			{ name: "is_latest_work_experience_record", label: "{{ _('Latest Work Experience Record') }}", type: "checkbox", checked: true },
+			{ name: "current_academic_year_date", label: "{{ _('School Year History') }}", type: "date" },
+			{ name: "employment_status_code", label: "{{ _('Employment Status') }}", type: "select", category: "Job status" },
+			{ name: "designation", label: "{{ _('Job Title') }}", type: "text" },
+			{ name: "institute_code", label: "{{ _('Educational Entity') }}", type: "select", category: "Coding of educational insti" },
+			{ name: "location_code", label: "{{ _('Geographical Work Location') }}", type: "select", category: "Coding cities and governora" },
+			{ name: "section_code", label: "{{ _('Academic Department') }}", type: "select", category: "Coding academic departments" },
+			{ name: "employee_number", label: "{{ _('Job Number') }}", type: "text" },
+			{ name: "profession_rank_code", label: "{{ _('Job Rank') }}", type: "select", category: "Job ranks" },
+			{ name: "hiring_date", label: "{{ _('Date of Appointment to the Rank') }}", type: "date" },
+			{ name: "start_date", label: "{{ _('Start Date') }}", type: "date" },
+			{ name: "end_date", label: "{{ _('End of Work Date') }}", type: "date" },
+			{ name: "job_duties", label: "{{ _('Job Duties') }}", type: "text" },
+			{ name: "accommodation_code", label: "{{ _('Housing') }}", type: "select", category: "Residential status coding" }
+		],
+		previous_work_experience: [
+			{ name: "profession", label: "{{ _('Job Title') }}", type: "text" },
+			{ name: "organization_name", label: "{{ _('Educational Institution / Company') }}", type: "text" },
+			{ name: "city", label: "{{ _('City') }}", type: "text" },
+			{ name: "country", label: "{{ _('Country') }}", type: "select", category: "Nationality" },
+			{ name: "department", label: "{{ _('College / Administration') }}", type: "text" },
+			{ name: "section", label: "{{ _('Section') }}", type: "text" },
+			{ name: "start_work_date", label: "{{ _('Start Date') }}", type: "date" },
+			{ name: "end_work_date", label: "{{ _('End of Work Date') }}", type: "date" },
+			{ name: "functional_tasks", label: "{{ _('Job Duties') }}", type: "text" }
+		],
+		professional_certificates_training: [
+			{ name: "course_name", label: "{{ _('Course Name') }}", type: "text" },
+			{ name: "course_type", label: "{{ _('Type') }}", type: "text" },
+			{ name: "provider", label: "{{ _('Provider') }}", type: "text" },
+			{ name: "duration", label: "{{ _('Duration (Days)') }}", type: "text" },
+			{ name: "date", label: "{{ _('Course History') }}", type: "date" },
+			{ name: "city", label: "{{ _('City') }}", type: "text" },
+			{ name: "country", label: "{{ _('Country') }}", type: "select", category: "Nationality" }
+		],
+		research_publications: [
+			{ name: "title", label: "{{ _('Title') }}", type: "text" },
+			{ name: "journal", label: "{{ _('Journal') }}", type: "text" },
+			{ name: "publication_date", label: "{{ _('Publication Date') }}", type: "date" },
+			{ name: "link", label: "{{ _('Link') }}", type: "text" }
+		],
+		awards: [
+			{ name: "award_name", label: "{{ _('Award Name') }}", type: "text" },
+			{ name: "organization", label: "{{ _('Organization') }}", type: "text" },
+			{ name: "date", label: "{{ _('Date') }}", type: "date" }
+		]
+	};
+
+	function codesForCategory(category) {
+		if (!category) return [];
+		return MINISTRY_CODES.filter(function (c) { return c.code_category === category; });
+	}
+
+	function populateStaticSelects() {
+		document.querySelectorAll("select[data-category]").forEach(function (select) {
+			var category = select.getAttribute("data-category");
+			var codes = codesForCategory(category);
+			var frag = document.createDocumentFragment();
+			var blank = document.createElement("option");
+			blank.value = "";
+			frag.appendChild(blank);
+			codes.forEach(function (code) {
+				var opt = document.createElement("option");
+				opt.value = code.name;
+				opt.textContent = code.name_english || code.name;
+				frag.appendChild(opt);
+			});
+			select.appendChild(frag);
+		});
+	}
+
+	function buildFieldInput(field) {
+		var el;
+		if (field.type === "select") {
+			el = document.createElement("select");
+			var blank = document.createElement("option");
+			blank.value = "";
+			el.appendChild(blank);
+			codesForCategory(field.category).forEach(function (code) {
+				var opt = document.createElement("option");
+				opt.value = code.name;
+				opt.textContent = code.name_english || code.name;
+				el.appendChild(opt);
+			});
+		} else if (field.type === "date") {
+			el = document.createElement("input");
+			el.type = "date";
+		} else if (field.type === "number") {
+			el = document.createElement("input");
+			el.type = "number";
+			el.step = "0.01";
+		} else if (field.type === "checkbox") {
+			el = document.createElement("input");
+			el.type = "checkbox";
+			el.checked = !!field.checked;
+		} else {
+			el = document.createElement("input");
+			el.type = "text";
+		}
+		el.name = field.name;
+		return el;
+	}
+
+	function addRow(tableName) {
+		var container = document.getElementById("ja-rows-" + tableName);
+		var fields = TABLE_FIELDS[tableName];
+		var row = document.createElement("div");
+		row.className = "ja-repeat-row";
+		row.dataset.table = tableName;
+
+		fields.forEach(function (field) {
+			var wrap = document.createElement("div");
+			wrap.className = "ja-field";
+			var label = document.createElement("label");
+			label.textContent = field.label;
+			wrap.appendChild(label);
+			wrap.appendChild(buildFieldInput(field));
+			row.appendChild(wrap);
+		});
+
+		var removeBtn = document.createElement("button");
+		removeBtn.type = "button";
+		removeBtn.className = "ja-remove-row";
+		removeBtn.title = "{{ _('Remove') }}";
+		removeBtn.innerHTML = "&times;";
+		removeBtn.addEventListener("click", function () {
+			row.remove();
+		});
+		row.appendChild(removeBtn);
+
+		container.appendChild(row);
+	}
+
+	function collectRows(tableName) {
+		var container = document.getElementById("ja-rows-" + tableName);
+		var fields = TABLE_FIELDS[tableName];
+		var rows = [];
+		container.querySelectorAll(".ja-repeat-row").forEach(function (rowEl) {
+			var row = {};
+			var hasValue = false;
+			fields.forEach(function (field) {
+				var input = rowEl.querySelector('[name="' + field.name + '"]');
+				var value;
+				if (field.type === "checkbox") {
+					value = input ? (input.checked ? 1 : 0) : 0;
+					if (value) hasValue = true;
+				} else {
+					value = input ? input.value : "";
+					if (value) hasValue = true;
+				}
+				row[field.name] = value;
+			});
+			if (hasValue) rows.push(row);
+		});
+		return rows;
+	}
+
+	document.querySelectorAll(".ja-add-row").forEach(function (btn) {
+		btn.addEventListener("click", function () {
+			addRow(btn.getAttribute("data-table"));
+		});
+	});
+
+	populateStaticSelects();
+	// Start every repeatable section with one row for convenience.
+	Object.keys(TABLE_FIELDS).forEach(function (tableName) {
+		if (document.getElementById("ja-rows-" + tableName)) addRow(tableName);
+	});
+
+	var academicCategorySections = ["ja-section-academic-qualifications", "ja-section-academic-experience"];
+
+	function toggleAcademicSections() {
+		var categorySelect = document.getElementById("ja-application-category");
+		var category = categorySelect ? categorySelect.value : CONFIG.application_category;
+		var isAcademic = category === "Academic Staff";
+		academicCategorySections.forEach(function (id) {
+			var el = document.getElementById(id);
+			if (el) el.classList.toggle("ja-hidden", !isAcademic);
+		});
+	}
+
+	var categorySelect = document.getElementById("ja-application-category");
+	if (categorySelect) categorySelect.addEventListener("change", toggleAcademicSections);
+	toggleAcademicSections();
+
+	var form = document.getElementById("ja-form");
+	var submitBtn = document.getElementById("ja-submit-btn");
+	var submittingMsg = document.getElementById("ja-submitting-msg");
+	var successBox = document.getElementById("ja-success");
+	var errorBox = document.getElementById("ja-error");
+
+	form.addEventListener("submit", function (e) {
+		e.preventDefault();
+		errorBox.classList.add("ja-hidden");
+		successBox.classList.add("ja-hidden");
+
+		var payload = {};
+		form.querySelectorAll("input[name], select[name], textarea[name]").forEach(function (input) {
+			if (input.closest(".ja-repeat-row")) return; // collected separately below
+			if (input.name === "resume") return;
+			if (input.type === "file") return;
+			payload[input.name] = input.value;
+		});
+
+		Object.keys(TABLE_FIELDS).forEach(function (tableName) {
+			payload[tableName] = collectRows(tableName);
+		});
+
+		if (!CONFIG.allow_category_override) {
+			payload.application_category = CONFIG.application_category;
+		}
+
+		var formData = new FormData();
+		formData.append("data", JSON.stringify(payload));
+		if (CONFIG.token) formData.append("token", CONFIG.token);
+		var fileInput = document.getElementById("ja-resume-file");
+		if (fileInput && fileInput.files && fileInput.files[0]) {
+			formData.append("resume", fileInput.files[0]);
+		}
+
+		submitBtn.disabled = true;
+		submittingMsg.classList.remove("ja-hidden");
+
+		fetch("/api/method/medical_hrms.medical_hrms.recruitment.job_application.submit_application", {
+			method: "POST",
+			headers: { "X-Frappe-CSRF-Token": frappe.csrf_token || "" },
+			body: formData
+		})
+			.then(function (res) {
+				return res.json().then(function (body) {
+					return { ok: res.ok, body: body };
+				});
+			})
+			.then(function (result) {
+				submitBtn.disabled = false;
+				submittingMsg.classList.add("ja-hidden");
+				if (result.ok && result.body && result.body.message) {
+					form.classList.add("ja-hidden");
+					successBox.textContent = "{{ _('Thank you! Your application has been submitted. Reference: ') }}" + result.body.message.name;
+					successBox.classList.remove("ja-hidden");
+				} else {
+					var msg = (result.body && (result.body.exc_type ? result.body._server_messages : result.body.exception)) ||
+						"{{ _('Something went wrong while submitting your application. Please try again.') }}";
+					try {
+						var serverMessages = JSON.parse(result.body._server_messages || "[]");
+						if (serverMessages.length) msg = JSON.parse(serverMessages[0]).message;
+					} catch (err) { /* ignore parse issues, fall back to generic message */ }
+					errorBox.textContent = msg;
+					errorBox.classList.remove("ja-hidden");
+				}
+			})
+			.catch(function () {
+				submitBtn.disabled = false;
+				submittingMsg.classList.add("ja-hidden");
+				errorBox.textContent = "{{ _('Network error. Please try again.') }}";
+				errorBox.classList.remove("ja-hidden");
+			});
+	});
+})();
+</script>
+{% endblock %}

@@ -79,6 +79,16 @@ on_session_creation = [
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
 
+# Website Route Rules
+# --------------------
+# Map the public /job-application/<token> path (used by generated Job
+# Application Link URLs) onto the job-application www page so the token is
+# injected into frappe.form_dict.
+
+website_route_rules = [
+	{"from_route": "/job-application/<token>", "to_route": "job-application"},
+]
+
 # Jinja
 # ----------
 

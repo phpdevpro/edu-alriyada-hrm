@@ -1,0 +1,496 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:APP-{YY}-{MM}-{#####}",
+ "creation": "2026-08-25 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "applicant_name",
+  "status",
+  "application_category",
+  "application_token",
+  "column_break_personal",
+  "email_id",
+  "phone_number",
+  "section_personal",
+  "date_of_birth",
+  "gender",
+  "nic_passport",
+  "column_break_personal_2",
+  "address",
+  "section_ministry",
+  "custom_first_name_en",
+  "custom_second_name_en",
+  "custom_third_name_en",
+  "custom_last_name_en",
+  "column_break_ministry_ar",
+  "custom_first_name_ar",
+  "custom_second_name_ar",
+  "custom_third_name_ar",
+  "custom_last_name_ar",
+  "section_ministry_identity",
+  "custom_identity_type",
+  "custom_identity_number",
+  "custom_identity_issue_date",
+  "custom_identity_issue_place",
+  "custom_original_home_id_number",
+  "column_break_ministry_identity",
+  "custom_ministry_place_of_birth",
+  "custom_jameah_nationality",
+  "custom_ministry_religion",
+  "custom_is_special_needs",
+  "custom_ministry_special_needs_type",
+  "section_ministry_work",
+  "custom_work_telephone_number",
+  "custom_work_telephone_extention_number",
+  "custom_ministry_work_city",
+  "column_break_ministry_work",
+  "custom_ministry_job_rank",
+  "custom_ministry_accommodation",
+  "section_emergency",
+  "emergency_contact_name",
+  "emergency_contact_phone",
+  "column_break_emergency",
+  "emergency_contact_relation",
+  "section_position",
+  "designation",
+  "department",
+  "column_break_position",
+  "expected_salary",
+  "currency",
+  "section_documents",
+  "cover_letter",
+  "resume_link",
+  "resume_attachment",
+  "section_qualifications",
+  "academic_qualifications",
+  "academic_work_experience",
+  "previous_work_experience",
+  "professional_certificates_training",
+  "research_publications",
+  "awards",
+  "section_meta",
+  "application_details_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "applicant_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Applicant Name",
+   "reqd": 1
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nAccepted\nRejected",
+   "read_only": 1
+  },
+  {
+   "fieldname": "application_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Application Category",
+   "options": "Academic Staff\nNon-Academic / Other Staff"
+  },
+  {
+   "fieldname": "application_token",
+   "fieldtype": "Data",
+   "label": "Application Token",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_personal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "section_personal",
+   "fieldtype": "Section Break",
+   "label": "Personal Information"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Link",
+   "label": "Gender",
+   "options": "Gender"
+  },
+  {
+   "fieldname": "nic_passport",
+   "fieldtype": "Data",
+   "label": "National ID / Passport Number"
+  },
+  {
+   "fieldname": "column_break_personal_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "section_ministry",
+   "fieldtype": "Section Break",
+   "label": "Ministry Details - Name"
+  },
+  {
+   "fieldname": "custom_first_name_en",
+   "fieldtype": "Data",
+   "label": "First Name (EN)"
+  },
+  {
+   "fieldname": "custom_second_name_en",
+   "fieldtype": "Data",
+   "label": "Second Name (EN)"
+  },
+  {
+   "fieldname": "custom_third_name_en",
+   "fieldtype": "Data",
+   "label": "Third Name (EN)"
+  },
+  {
+   "fieldname": "custom_last_name_en",
+   "fieldtype": "Data",
+   "label": "Last Name (EN)"
+  },
+  {
+   "fieldname": "column_break_ministry_ar",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "custom_first_name_ar",
+   "fieldtype": "Data",
+   "label": "First Name (AR)"
+  },
+  {
+   "fieldname": "custom_second_name_ar",
+   "fieldtype": "Data",
+   "label": "Second Name (AR)"
+  },
+  {
+   "fieldname": "custom_third_name_ar",
+   "fieldtype": "Data",
+   "label": "Third Name (AR)"
+  },
+  {
+   "fieldname": "custom_last_name_ar",
+   "fieldtype": "Data",
+   "label": "Last Name (AR)"
+  },
+  {
+   "fieldname": "section_ministry_identity",
+   "fieldtype": "Section Break",
+   "label": "Ministry Details - Identity"
+  },
+  {
+   "fieldname": "custom_identity_type",
+   "fieldtype": "Link",
+   "label": "Identity Type",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "custom_identity_number",
+   "fieldtype": "Data",
+   "label": "Identity Number"
+  },
+  {
+   "fieldname": "custom_identity_issue_date",
+   "fieldtype": "Date",
+   "label": "Identity Issue Date"
+  },
+  {
+   "fieldname": "custom_identity_issue_place",
+   "fieldtype": "Link",
+   "label": "Identity Issue Place",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "custom_original_home_id_number",
+   "fieldtype": "Data",
+   "label": "ID Number in Country of Origin"
+  },
+  {
+   "fieldname": "column_break_ministry_identity",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "custom_ministry_place_of_birth",
+   "fieldtype": "Link",
+   "label": "Place of Birth",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "custom_jameah_nationality",
+   "fieldtype": "Link",
+   "label": "Nationality",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "custom_ministry_religion",
+   "fieldtype": "Link",
+   "label": "Religion",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "custom_is_special_needs",
+   "fieldtype": "Check",
+   "label": "Has Special Needs"
+  },
+  {
+   "depends_on": "custom_is_special_needs",
+   "fieldname": "custom_ministry_special_needs_type",
+   "fieldtype": "Link",
+   "label": "Type of Special Needs",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "section_ministry_work",
+   "fieldtype": "Section Break",
+   "label": "Ministry Details - Work"
+  },
+  {
+   "fieldname": "custom_work_telephone_number",
+   "fieldtype": "Data",
+   "label": "Work Telephone Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "custom_work_telephone_extention_number",
+   "fieldtype": "Data",
+   "label": "Work Telephone Extension",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "custom_ministry_work_city",
+   "fieldtype": "Link",
+   "label": "City (Geographical Place of Business)",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "column_break_ministry_work",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "custom_ministry_job_rank",
+   "fieldtype": "Link",
+   "label": "Job Rank",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "custom_ministry_accommodation",
+   "fieldtype": "Link",
+   "label": "Housing",
+   "options": "Jameah Ministry Code"
+  },
+  {
+   "fieldname": "section_emergency",
+   "fieldtype": "Section Break",
+   "label": "Emergency Contact"
+  },
+  {
+   "fieldname": "emergency_contact_name",
+   "fieldtype": "Data",
+   "label": "Emergency Contact Name"
+  },
+  {
+   "fieldname": "emergency_contact_phone",
+   "fieldtype": "Data",
+   "label": "Emergency Contact Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "column_break_emergency",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "emergency_contact_relation",
+   "fieldtype": "Data",
+   "label": "Relation"
+  },
+  {
+   "fieldname": "section_position",
+   "fieldtype": "Section Break",
+   "label": "Position Information"
+  },
+  {
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Designation",
+   "options": "Designation"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "column_break_position",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expected_salary",
+   "fieldtype": "Currency",
+   "label": "Expected Salary",
+   "options": "currency"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "section_documents",
+   "fieldtype": "Section Break",
+   "label": "Cover Letter & Resume"
+  },
+  {
+   "fieldname": "cover_letter",
+   "fieldtype": "Text",
+   "label": "Cover Letter"
+  },
+  {
+   "fieldname": "resume_link",
+   "fieldtype": "Data",
+   "label": "Resume Link"
+  },
+  {
+   "fieldname": "resume_attachment",
+   "fieldtype": "Attach",
+   "label": "Resume Attachment",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_qualifications",
+   "fieldtype": "Section Break",
+   "label": "Qualifications & Experience"
+  },
+  {
+   "fieldname": "academic_qualifications",
+   "fieldtype": "Table",
+   "label": "Academic Qualifications",
+   "options": "Jameah Academic Qualification"
+  },
+  {
+   "fieldname": "academic_work_experience",
+   "fieldtype": "Table",
+   "label": "Academic Work Experience",
+   "options": "Jameah Work Experience"
+  },
+  {
+   "fieldname": "previous_work_experience",
+   "fieldtype": "Table",
+   "label": "Previous Work Experience",
+   "options": "Jameah Previous Work Experience"
+  },
+  {
+   "fieldname": "professional_certificates_training",
+   "fieldtype": "Table",
+   "label": "Professional Certificates & Training Courses",
+   "options": "Jameah Training Course"
+  },
+  {
+   "fieldname": "research_publications",
+   "fieldtype": "Table",
+   "label": "Research Publications",
+   "options": "Jameah Research Publication"
+  },
+  {
+   "fieldname": "awards",
+   "fieldtype": "Table",
+   "label": "Awards",
+   "options": "Jameah Award"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_meta",
+   "fieldtype": "Section Break",
+   "label": "Raw Submission"
+  },
+  {
+   "fieldname": "application_details_json",
+   "fieldtype": "Code",
+   "label": "Application Details (JSON)",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Medical HRMS",
+ "name": "Employee Job Applicant",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

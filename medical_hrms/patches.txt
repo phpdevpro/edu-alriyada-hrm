@@ -6,3 +6,4 @@
 # Patches added in this section will be executed after doctypes are migrated
 medical_hrms.setup_job_applicant_ministry_fields
 medical_hrms.setup_employee_ministry_expected_fields
+medical_hrms.setup_employee_job_applicant_field
