@@ -298,13 +298,6 @@ def execute():
 			"final_confirmation_date",
 		),
 		_plain_field(
-			"custom_school_year_history",
-			"School Year History",
-			"Data",
-			"date_of_joining",
-			reqd=1,
-		),
-		_plain_field(
 			"custom_job_duties",
 			"Job Duties",
 			"Small Text",
@@ -325,13 +318,6 @@ def execute():
 			"custom_ministry_country",
 		)
 	)
-	custom_fields["Jameah Work Experience"] = [
-		_plain_field("city", "City", "Link", "company", options=DOCTYPE),
-		_plain_field("country", "Country", "Link", "city", options=DOCTYPE),
-		_plain_field("college_administration", "College / Administration", "Data", "country"),
-		_plain_field("section", "Section", "Data", "college_administration"),
-		_plain_field("job_duties", "Job Duties", "Small Text", "end_date"),
-	]
 	custom_fields["Jameah Training Course"] = [
 		_plain_field("course_type", "Type", "Data", "course_name"),
 		_plain_field("city", "City", "Link", "date", options=DOCTYPE),

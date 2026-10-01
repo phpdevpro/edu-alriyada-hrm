@@ -42,6 +42,12 @@ frappe.ui.form.on("Employee", {
 		}
 
 		const work_experience_fields = {
+			employment_status: "Job status",
+			institute: "Coding of educational insti",
+			location: "Coding cities and governora",
+			academic_department: "Coding academic departments",
+			profession_rank: "Academic ranks",
+			accommodation: "Residential status coding",
 			city: "Coding cities and governora",
 			country: "Nationality",
 		};

@@ -8,6 +8,8 @@ from frappe.utils.password import update_password
 
 DEFAULT_HR_EMAIL = "hr.manager.demo@medicalcollege.local"
 DEFAULT_HR_PASSWORD = "MedicalHR@2026"
+DEFAULT_EMPLOYEE_EMAIL = "employee.demo@medicalcollege.local"
+DEFAULT_EMPLOYEE_PASSWORD = "Employee@2026"
 
 
 def _insert_if_missing(doctype, values, name):
@@ -93,6 +95,11 @@ def _resolve_person_ministry_links(values):
             "country": "Nationality",
         },
         "custom_jameah_experience": {
+            "employment_status": "Job status",
+            "institute": "Coding of educational insti",
+            "location": "Coding cities and governora",
+            "academic_department": "Coding academic departments",
+            "profession_rank": "Academic ranks",
             "city": "Coding cities and governora",
             "country": "Nationality",
         },
@@ -126,7 +133,11 @@ def _ensure_genders():
                 pass
 
 
-def _ensure_hr_login(email, password):
+def _ensure_demo_login(email, password, first_name, last_name, roles):
+    for role in roles:
+        if frappe.db.exists("Role", role) and frappe.db.get_value("Role", role, "disabled"):
+            frappe.db.set_value("Role", role, "disabled", 0)
+
     if frappe.db.exists("User", email):
         user = frappe.get_doc("User", email)
     else:
@@ -134,8 +145,8 @@ def _ensure_hr_login(email, password):
         values = {
             "doctype": "User",
             "email": email,
-            "first_name": "HR",
-            "last_name": "Manager Demo",
+            "first_name": first_name,
+            "last_name": last_name,
             "enabled": 1,
             "user_type": "System User",
             "send_welcome_email": 0,
@@ -171,7 +182,7 @@ def _ensure_hr_login(email, password):
             )
 
     existing_roles = {row.role for row in user.roles}
-    for role in ("HR User", "HR Manager"):
+    for role in roles:
         if role not in existing_roles:
             user.append("roles", {"role": role})
 
@@ -179,9 +190,44 @@ def _ensure_hr_login(email, password):
     user.user_type = "System User"
     user.save(ignore_permissions=True)
     update_password(user=email, pwd=password, logout_all_sessions=True)
+    return user
 
 
-def execute(hr_email=DEFAULT_HR_EMAIL, hr_password=DEFAULT_HR_PASSWORD):
+def setup_employee_dashboard_login(
+    employee_number="EMP-0001",
+    employee_email=DEFAULT_EMPLOYEE_EMAIL,
+    employee_password=DEFAULT_EMPLOYEE_PASSWORD,
+):
+    employee = frappe.db.get_value(
+        "Employee", {"employee_number": employee_number}, "name"
+    )
+    if not employee:
+        raise frappe.ValidationError(f"Employee number not found: {employee_number}")
+
+    employee_doc = frappe.get_doc("Employee", employee)
+    _ensure_demo_login(
+        employee_email,
+        employee_password,
+        employee_doc.first_name or "Employee",
+        employee_doc.last_name or "Demo",
+        ("Employee",),
+    )
+    if employee_doc.user_id != employee_email:
+        frappe.db.set_value(
+            "Employee", employee_doc.name, "user_id", employee_email, update_modified=False
+        )
+
+    frappe.db.commit()
+    print(f"Employee dashboard login ready: {employee_email}")
+    return employee_doc.name
+
+
+def execute(
+    hr_email=DEFAULT_HR_EMAIL,
+    hr_password=DEFAULT_HR_PASSWORD,
+    employee_email=DEFAULT_EMPLOYEE_EMAIL,
+    employee_password=DEFAULT_EMPLOYEE_PASSWORD,
+):
     app_path = frappe.get_app_path("medical_hrms")
     data_file = os.path.join(app_path, "seed_data", "jameah_dummy_data.json")
     with open(data_file, "r", encoding="utf-8") as f:
@@ -306,8 +352,26 @@ def execute(hr_email=DEFAULT_HR_EMAIL, hr_password=DEFAULT_HR_PASSWORD):
             if original_after_insert is not None:
                 instructor_module.Instructor.after_insert = original_after_insert
 
-    _ensure_hr_login(hr_email, hr_password)
+    _ensure_demo_login(
+        hr_email,
+        hr_password,
+        "HR",
+        "Manager Demo",
+        ("HR User", "HR Manager"),
+    )
+    _ensure_demo_login(
+        employee_email,
+        employee_password,
+        employee_doc.first_name or "Ahmed",
+        employee_doc.last_name or "Employee Demo",
+        ("Employee",),
+    )
+    if employee_doc.user_id != employee_email:
+        frappe.db.set_value(
+            "Employee", employee_doc.name, "user_id", employee_email, update_modified=False
+        )
 
     frappe.db.commit()
     print("Seed migration complete")
     print(f"HR login: {hr_email}")
+    print(f"Employee login: {employee_email}")

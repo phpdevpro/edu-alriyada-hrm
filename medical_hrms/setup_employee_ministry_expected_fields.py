@@ -12,7 +12,7 @@ CUSTOM_FIELD_LABELS = {
 	("Employee", "custom_ministry_special_needs_type"): "Type of Special Needs",
 	("Employee", "custom_ministry_work_city"): "City (Geographical Place of Business)",
 	("Employee", "custom_ministry_accommodation"): "Housing",
-	("Employee", "custom_jameah_experience"): "Employee Previous Experience",
+	("Employee", "custom_jameah_experience"): "Employee Academic Experience",
 	("Employee", "custom_jameah_training"): "Employee Professional Certificates & Training Courses",
 	("Employee Education", "custom_ministry_assessment_type"): "Appreciation",
 	("Employee Education", "custom_ministry_gpa_type"): "Rate Type",
@@ -54,7 +54,6 @@ REQUIRED_STANDARD_FIELDS = {
 CHILD_FIELD_LABELS = {
 	("Jameah Training Course", "date"): "Course History",
 	("Jameah Work Experience", "designation"): "Job Title",
-	("Jameah Work Experience", "company"): "Educational Institution / Company",
 	("Jameah Work Experience", "end_date"): "End of Work Date",
 }
 
