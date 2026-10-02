@@ -9,8 +9,5 @@ medical_hrms.setup_employee_workspace
 medical_hrms.setup_leave_defaults
 medical_hrms.setup_job_applicant_ministry_fields
 medical_hrms.setup_employee_ministry_expected_fields
-<<<<<<< HEAD
 medical_hrms.setup_employee_job_applicant_field
-=======
 medical_hrms.update_employee_academic_experience_fields
->>>>>>> 5b44f35f407eb005b3bdc116f475c9002a5f001a

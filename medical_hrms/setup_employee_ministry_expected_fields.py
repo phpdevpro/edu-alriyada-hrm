@@ -14,10 +14,7 @@ CUSTOM_FIELD_LABELS = {
 	("Employee", "custom_ministry_work_city"): "City (Geographical Place of Business)",
 	("Employee", "custom_ministry_accommodation"): "Housing",
 	("Employee", "custom_jameah_experience"): "Employee Academic Experience",
-<<<<<<< HEAD
 	("Employee", "custom_jameah_previous_experience"): "Employee Previous Experience",
-=======
->>>>>>> 5b44f35f407eb005b3bdc116f475c9002a5f001a
 	("Employee", "custom_jameah_training"): "Employee Professional Certificates & Training Courses",
 	("Employee Education", "custom_ministry_assessment_type"): "Appreciation",
 	("Employee Education", "custom_ministry_gpa_type"): "Rate Type",
@@ -61,11 +58,8 @@ REQUIRED_STANDARD_FIELDS = {
 
 CHILD_FIELD_LABELS = {
 	("Jameah Training Course", "date"): "Course History",
-<<<<<<< HEAD
-=======
 	("Jameah Work Experience", "designation"): "Job Title",
 	("Jameah Work Experience", "end_date"): "End of Work Date",
->>>>>>> 5b44f35f407eb005b3bdc116f475c9002a5f001a
 }
 
 LOOKUP_DOCTYPE = "Jameah Ministry Code"
