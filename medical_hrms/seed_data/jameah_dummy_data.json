@@ -15,7 +15,11 @@
     {"code_category": "Specialization", "ministry_code": "SPEC-MED", "name_english": "Medicine", "name_arabic": "الطب"},
     {"code_category": "Faculty Status", "ministry_code": "FS-ACT", "name_english": "Active", "name_arabic": "نشط"},
     {"code_category": "Faculty Contract Type", "ministry_code": "FCT-FULL", "name_english": "Full Time", "name_arabic": "دوام كامل"},
-    {"code_category": "Faculty Ranking", "ministry_code": "FR-ASST", "name_english": "Assistant Professor", "name_arabic": "أستاذ مساعد"}
+    {"code_category": "Faculty Ranking", "ministry_code": "FR-ASST", "name_english": "Assistant Professor", "name_arabic": "أستاذ مساعد"},
+    {"code_category": "Job status", "ministry_code": "JS-ACT", "name_english": "Active", "name_arabic": "نشط"},
+    {"code_category": "Coding of educational insti", "ministry_code": "INST-MC", "name_english": "Medical College", "name_arabic": "الكلية الطبية"},
+    {"code_category": "Coding academic departments", "ministry_code": "DEP-IM", "name_english": "Internal Medicine", "name_arabic": "الطب الباطني"},
+    {"code_category": "Academic ranks", "ministry_code": "RANK-ASST", "name_english": "Assistant Professor", "name_arabic": "أستاذ مساعد"}
   ],
   "branches": [
     {"branch_name_en": "Main Riyadh Campus Branch", "branch_name_ar": "فرع الرياض الرئيسي", "ministry_code": "CITY-RIYADH"}
@@ -93,8 +97,8 @@
       {"degree": "DEG-MSC", "specialization": "SPEC-MED", "institute": "King Abdulaziz University", "country": "N-SA", "graduation_year": "2014"}
     ],
     "custom_jameah_experience": [
-      {"company": "King Fahad Hospital", "designation": "Resident", "start_date": "2014-01-01", "end_date": "2016-12-31"},
-      {"company": "Medical City", "designation": "Specialist", "start_date": "2017-01-01", "end_date": "2023-12-31"}
+      {"current_academic_year_date": "2016-01-01", "employment_status": "JS-ACT", "institute": "INST-MC", "location": "CITY-RIYADH", "academic_department": "DEP-IM", "profession_rank": "RANK-ASST", "designation": "Resident", "start_date": "2014-01-01", "end_date": "2016-12-31"},
+      {"current_academic_year_date": "2023-01-01", "employment_status": "JS-ACT", "institute": "INST-MC", "location": "CITY-RIYADH", "academic_department": "DEP-IM", "profession_rank": "RANK-ASST", "designation": "Specialist", "start_date": "2017-01-01", "end_date": "2023-12-31"}
     ],
     "custom_jameah_training": [
       {"course_name": "Advanced Life Support", "provider": "Saudi Health Academy", "duration": "5", "date": "2023-06-01"}
@@ -153,7 +157,7 @@
       {"degree": "DEG-PHD", "specialization": "SPEC-MED", "institute": "Imam Muhammad ibn Saud Islamic University", "country": "N-SA", "graduation_year": "2019"}
     ],
     "custom_jameah_experience": [
-      {"company": "King Fahad Hospital", "designation": "Resident", "start_date": "2014-01-01", "end_date": "2016-12-31"}
+      {"current_academic_year_date": "2016-01-01", "employment_status": "JS-ACT", "institute": "INST-MC", "location": "CITY-RIYADH", "academic_department": "DEP-IM", "profession_rank": "RANK-ASST", "designation": "Resident", "start_date": "2014-01-01", "end_date": "2016-12-31"}
     ],
     "custom_jameah_training": [
       {"course_name": "Medical Teaching Skills", "provider": "Faculty Development Center", "duration": "3", "date": "2023-09-01"}

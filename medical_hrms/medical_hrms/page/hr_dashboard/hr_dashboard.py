@@ -1,8 +1,17 @@
 import frappe
 
 
+def _require_hr_access():
+    if frappe.session.user == "Administrator" or set(frappe.get_roles()).intersection(
+        {"HR User", "HR Manager", "System Manager"}
+    ):
+        return
+    frappe.throw("You are not permitted to view the HR Dashboard.", frappe.PermissionError)
+
+
 @frappe.whitelist()
 def get_logged_in_user_details():
+    _require_hr_access()
     user_email = frappe.session.user
     user = frappe.get_doc("User", user_email)
 
@@ -20,6 +29,7 @@ def get_logged_in_user_details():
 
 @frappe.whitelist()
 def get_hr_dashboard_stats():
+    _require_hr_access()
     try:
         return {
             "status": "success",
@@ -51,6 +61,7 @@ def get_hr_dashboard_stats():
 
 @frappe.whitelist()
 def get_hr_doctype_counts():
+    _require_hr_access()
     doctypes = [
         "Permission Request",
         "Remote Work Request",

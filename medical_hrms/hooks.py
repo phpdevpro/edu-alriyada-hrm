@@ -25,8 +25,11 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/medical_hrms/css/medical_hrms.css"
-# app_include_js = "/assets/medical_hrms/js/medical_hrms.js"
+app_include_css = "/assets/medical_hrms/css/workspace_theme.css?v=2"
+app_include_js = [
+	"/assets/medical_hrms/js/workspace_theme.js?v=2",
+	"/assets/medical_hrms/js/employee_navigation.js?v=1",
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/medical_hrms/css/medical_hrms.css"
@@ -67,6 +70,7 @@ doctype_list_js = {
 role_home_page = {
 	"HR User": "hr-dashboard",
 	"HR Manager": "hr-dashboard",
+	"Employee": "employee-dashboard",
 }
 
 on_session_creation = [
@@ -102,7 +106,22 @@ website_route_rules = [
 # ------------
 
 # before_install = "medical_hrms.install.before_install"
-# after_install = "medical_hrms.install.after_install"
+# Jameah Ministry Code is a dynamic custom DocType rather than a filesystem
+# DocType, so normal model sync cannot create it. Keep its idempotent setup in
+# both lifecycle paths: fresh installs and subsequent migrations/restores.
+after_install = [
+	"medical_hrms.monthly_leave_policy.setup",
+	"medical_hrms.create_jameah_doctypes.execute",
+	"medical_hrms.setup_hr_roles.execute",
+	"medical_hrms.setup_employee_workspace.execute",
+	"medical_hrms.setup_leave_defaults.execute",
+]
+after_migrate = [
+	"medical_hrms.monthly_leave_policy.setup",
+	"medical_hrms.create_jameah_doctypes.execute",
+	"medical_hrms.setup_employee_workspace.execute",
+	"medical_hrms.setup_leave_defaults.execute",
+]
 
 # Uninstallation
 # ------------
@@ -136,13 +155,32 @@ website_route_rules = [
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
-#
-# has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
-# }
+permission_query_conditions = {
+	doctype: "medical_hrms.employee_permissions.get_employee_request_query_condition"
+	for doctype in (
+		"Permission Request",
+		"Remote Work Request",
+		"Leave Plan Request",
+		"Return from Leave Request",
+		"Salary Certificate Request",
+		"Pre Approved Overtime Request",
+		"Employee Training Request",
+		"Children Medical Allowance Request",
+		"Company Car Request",
+		"Contract Renewal Request",
+		"Employee Data Update Request",
+	)
+}
+
+has_permission = {
+	doctype: "medical_hrms.employee_permissions.has_employee_request_permission"
+	for doctype in permission_query_conditions
+}
+permission_query_conditions["Employee"] = "medical_hrms.employee_permissions.get_own_employee_query_condition"
+has_permission["Employee"] = "medical_hrms.employee_permissions.has_own_employee_permission"
+for doctype in ("Leave Application", "Attendance Request", "Expense Claim"):
+	permission_query_conditions[doctype] = "medical_hrms.employee_permissions.get_self_service_query_condition"
+	has_permission[doctype] = "medical_hrms.employee_permissions.has_self_service_permission"
 
 # DocType Class
 # ---------------
@@ -157,6 +195,14 @@ website_route_rules = [
 # Hook on document methods and events
 
 doc_events = {
+	"Leave Policy Assignment": {"validate": "medical_hrms.medical_leave.prevent_annual_assignment"},
+	"HR Settings": {"validate": "medical_hrms.monthly_leave_policy.validate_settings"},
+	"Remote Work Request": {"validate": "medical_hrms.monthly_leave_policy.validate_monthly_limit"},
+	"Leave Application": {
+		"before_validate": "medical_hrms.self_service.validate_employee_leave",
+		"validate": ["medical_hrms.monthly_leave_policy.validate_monthly_limit", "medical_hrms.medical_leave.validate_medical_leave"],
+		"before_cancel": "medical_hrms.medical_leave.validate_medical_leave",
+	},
 	"Employee": {
 		"validate": "medical_hrms.ministry_lookup_validation.validate_employee_ministry_lookups",
 	},
@@ -187,6 +233,10 @@ doc_events = {
 }
 
 # Scheduled Tasks
+from medical_hrms.employee_permissions import EMPLOYEE_REQUEST_DOCTYPES
+for request_doctype in EMPLOYEE_REQUEST_DOCTYPES:
+	doc_events.setdefault(request_doctype, {})["before_validate"] = "medical_hrms.self_service.validate_employee_request"
+
 # ---------------
 
 # scheduler_events = {

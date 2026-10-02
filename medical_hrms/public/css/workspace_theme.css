@@ -1,0 +1,128 @@
+/* Match the college workspace palette without changing other Desk pages. */
+.medical-hrms-themed .codex-editor__redactor {
+	background: #f9fafb;
+	color: #111827;
+	padding: 30px !important;
+}
+.medical-hrms-themed .ce-block.medical-hrms-section {
+	width: 100% !important;
+	flex: 0 0 100%;
+	max-width: 100%;
+}
+.medical-hrms-themed .ce-header {
+	background: transparent;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 20px;
+}
+.medical-hrms-themed .ce-header .h3 {
+	font-size: 24px;
+	font-weight: 700;
+	color: #111827;
+}
+.medical-hrms-themed .ce-paragraph {
+	color: #6b7280;
+	font-size: 14px;
+	border-bottom: 1px solid #e5e7eb;
+	padding-bottom: 24px;
+}
+.medical-hrms-themed .links-widget-box {
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	padding: 0;
+}
+.medical-hrms-themed .links-widget-box .widget-head { margin: 24px 0 15px; }
+.medical-hrms-themed .links-widget-box .widget-head .widget-label .widget-title {
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	color: #9ca3af !important;
+}
+.medical-hrms-themed .links-widget-box .widget-body {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+.medical-hrms-themed .links-widget-box a.link-item {
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-inline-start: 4px solid #6366f1;
+	border-radius: 12px;
+	padding: 20px;
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	min-height: 115px;
+	height: auto;
+	margin: 0;
+	white-space: normal;
+	transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.medical-hrms-themed .links-widget-box a.link-item:hover,
+.medical-hrms-themed .links-widget-box a.link-item:focus-visible {
+	border-color: #6366f1;
+	box-shadow: 0 10px 15px -3px rgb(0 0 0 / 5%);
+	transform: translateY(-2px);
+}
+.medical-hrms-themed .link-content { display: block; white-space: normal; }
+.medical-hrms-themed .link-text { font-size: 15px; font-weight: 600; color: #111827; }
+.medical-hrms-themed .link-content > svg { display: none; }
+.medical-hrms-themed .shortcut-widget-box {
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-inline-start: 4px solid #6366f1;
+	border-radius: 12px;
+	padding: 20px;
+	min-height: 115px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 14px;
+}
+.medical-hrms-themed .shortcut-widget-box .widget-head { flex: 1; min-width: 0; }
+.medical-hrms-themed .shortcut-widget-box .widget-title { white-space: normal; }
+.medical-hrms-themed .shortcut-widget-box:hover,
+.medical-hrms-themed .shortcut-widget-box:focus-visible {
+	border-color: #6366f1;
+	box-shadow: 0 10px 15px -3px rgb(0 0 0 / 5%);
+}
+.medical-hrms-themed .onboarding-widget-box {
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 20px;
+}
+.medical-hrms-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	background: #eef2ff;
+	color: #6366f1;
+	--icon-stroke: #6366f1;
+}
+.medical-hrms-description { display: none; }
+.medical-hrms-themed .medical-hrms-description {
+	display: block;
+	font-size: 12.5px;
+	line-height: 1.4;
+	color: #6b7280;
+	margin-top: 3px;
+}
+.layout-main-section:not(.medical-hrms-themed) .medical-hrms-icon { display: none; }
+@media (max-width: 1100px) {
+	.medical-hrms-themed .links-widget-box .widget-body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+	.medical-hrms-themed .codex-editor__redactor { padding: 16px !important; }
+	.medical-hrms-themed .links-widget-box .widget-body { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.medical-hrms-themed .links-widget-box a.link-item { transition: none; transform: none; }
+}

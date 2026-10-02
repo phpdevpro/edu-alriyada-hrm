@@ -7,10 +7,10 @@ def redirect_hr_users_after_login(login_manager=None):
 		return
 
 	roles = set(frappe.get_roles(user))
-	if not ({"HR User", "HR Manager"} & roles):
-		return
-
 	if frappe.cache.hget("redirect_after_login", user):
 		return
 
-	frappe.cache.hset("redirect_after_login", user, "/app/hr-dashboard")
+	if {"HR User", "HR Manager"} & roles:
+		frappe.cache.hset("redirect_after_login", user, "/app/hr-dashboard")
+	elif "Employee" in roles:
+		frappe.cache.hset("redirect_after_login", user, "/app/employee-dashboard")

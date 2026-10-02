@@ -298,13 +298,6 @@ def execute():
 			"final_confirmation_date",
 		),
 		_plain_field(
-			"custom_school_year_history",
-			"School Year History",
-			"Data",
-			"date_of_joining",
-			reqd=1,
-		),
-		_plain_field(
 			"custom_job_duties",
 			"Job Duties",
 			"Small Text",

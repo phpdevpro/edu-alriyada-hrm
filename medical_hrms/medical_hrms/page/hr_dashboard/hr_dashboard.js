@@ -1,3 +1,4 @@
+(() => {
 frappe.pages["hr-dashboard"].on_page_load = function (wrapper) {
   const page = frappe.ui.make_app_page({
     parent: wrapper,
@@ -125,6 +126,17 @@ function render_layout(page) {
         </div>
       </div>
 
+      <section class="hrd-group" aria-labelledby="hrd-leave-heading">
+        <h3 id="hrd-leave-heading">Leave Management</h3>
+        <p class="hrd-section-sub">Define a shared policy, assign it to employees, and track individual balances.</p>
+        <div class="hrd-cards" style="margin-bottom:18px">
+          <article class="hrd-card"><h3>Annual Leave</h3><p>The 21-day and 30-day draft policies cover annual leave only. Assign the appropriate policy after checking service length and contract terms.</p><a class="hrd-btn" href="/app/leave-policy">Review Annual Policies</a></article>
+          <article class="hrd-card"><h3>Medical / Sick Leave</h3><p>Separate from annual leave. Review and submit the Medical Leave policy, then activate each employee’s sick year from the first illness date. Requests must stay within the configured pay stages.</p><a class="hrd-btn" href="/app/leave-policy">Review Medical Policy</a><button class="hrd-btn" id="hrd-activate-medical" type="button" style="margin-top:8px">Activate Medical Leave Year</button></article>
+          <article class="hrd-card"><h3>Casual Leave</h3><p>No default casual-leave allowance has been assigned. This is a separate company-policy decision, not part of the 21 annual days. Monthly short-permission rules are also separate.</p><a class="hrd-btn" href="/app/hr-settings">Review Company Settings</a></article>
+        </div>
+        <div class="hrd-module-grid" id="hrd-leave-management"></div>
+      </section>
+
       <div class="hrd-group">
         <h3>Employee Request Management</h3>
         <div class="hrd-module-grid" id="hrd-requests-grid"></div>
@@ -150,6 +162,50 @@ function render_layout(page) {
   //       <div class="hrd-module-grid" id="hrd-master-grid"></div>
   //     </div>
   render_doctype_cards();
+  render_hr_leave_management();
+  $("#hrd-activate-medical").toggle(frappe.session.user === "Administrator" || frappe.user.has_role("HR Manager") || frappe.user.has_role("System Manager")).on("click", () => {
+    let saving = false;
+    const dialog = new frappe.ui.Dialog({
+      title: __("Activate Medical Leave Year"),
+      fields: [
+        {fieldtype: "HTML", options: "<p>Confirm the first illness date. This creates separate medical allocations for one year, without changing annual leave. Review the medical policy, leave types and payroll settings first.</p>"},
+        {fieldname: "employee", label: __("Employee"), fieldtype: "Link", options: "Employee", reqd: 1, get_query: () => ({filters: {status: "Active"}})},
+        {fieldname: "first_sick_date", label: __("First Sick-leave Date"), fieldtype: "Date", reqd: 1},
+      ],
+      primary_action_label: __("Activate Medical Year"),
+      primary_action(values) {
+        if (saving) return;
+        saving = true;
+        frappe.call({method: "medical_hrms.medical_leave.activate_year", args: values, freeze: true,
+          callback(r) {
+            dialog.hide();
+            frappe.msgprint(__("Medical leave year activated: {0} to {1}.", [r.message.from_date, r.message.to_date]));
+          }, always: () => { saving = false; },
+        });
+      },
+    });
+    dialog.show();
+  });
+}
+
+function render_hr_leave_management() {
+  const items = [
+    ["Leave Policy", "leave-policy", "The starter policies allocate annual leave only. Medical leave has a separate sick-year basis."],
+    ["Leave Policy Assignment", "leave-policy-assignment", "Assign a shared policy to employees and track its effective dates."],
+    ["Leave Control Panel", "leave-control-panel", "Assign leave policies to multiple employees together."],
+    ["Leave Allocation", "leave-allocation", "Review each employee’s allocated days and carry-forward balances."],
+    ["Leave Type", "leave-type", "Manage the leave categories used in your policies."],
+    ["Leave Period", "leave-period", "Define the dates of your organization’s leave year."],
+    ["Monthly Limits", "hr-settings", "Open HR Settings → Employee Monthly Limits to configure half-day and work-from-home limits."],
+  ];
+  const esc = frappe.utils.escape_html;
+  $("#hrd-leave-management").html(items.map(([title, route, description]) => `
+    <article class="hrd-module-card">
+      <h4 class="hrd-module-title">${esc(__(title))}</h4>
+      <p class="text-muted">${esc(__(description))}</p>
+      <a class="hrd-btn" href="/app/${route}" aria-label="${esc(__("Open {0}", [__(title)]))}">${esc(__("Open"))}</a>
+    </article>
+  `).join(""));
 }
 
 function render_doctype_cards() {
@@ -231,3 +287,4 @@ function load_data() {
     },
   });
 }
+})();

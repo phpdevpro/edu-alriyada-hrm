@@ -59,57 +59,33 @@ If `graduation_place` can be matched to a `Jameah Ministry Code`, also populate 
 
 ## 3. Academic Experience
 
-### Source table
-
-```text
-Job Applicant.custom_ministry_academic_experience
-```
-
-Source child DocType: `Job Applicant Academic Experience`.
-
-Academic Experience is a child table on Job Applicant, while the corresponding current-employment information is stored as fields on Employee. The transfer should select the latest or HR-confirmed Academic Experience row.
-
-| Source row field | Employee destination field | Transfer notes |
-|---|---|---|
-| `school_year_history` | `custom_school_year_history` | Direct value |
-| `employment_status` | `status` | Convert the Ministry Code to a valid Employee status |
-| `educational_entity` | `company` | Resolve to an existing `Company` record |
-| `work_location` | `branch` | Resolve to an existing `Branch` record |
-| `academic_department` | `department` | Resolve to an existing `Department` record |
-| `job_number` | `employee_number` | Direct value |
-| `job_rank` | `custom_ministry_job_rank` | Direct Ministry Code link |
-| `appointment_to_rank_date` | `custom_date_of_appointment_to_rank` | Direct date value |
-| `job_duties` | `custom_job_duties` | Direct text value |
-| `housing` | `custom_ministry_accommodation` | Direct Ministry Code link |
-
-If Job Applicant contains multiple Academic Experience rows, HR must identify which row represents the employee's current appointment. Other historical rows may be retained in a history table if required.
-
-## 4. Previous Experience
-
 ### Parent table mapping
 
 | Source | Destination |
 |---|---|
-| `Job Applicant.custom_ministry_previous_experience` | `Employee.custom_jameah_experience` |
-| Source child DocType: `Job Applicant Previous Experience` | Destination child DocType: `Jameah Work Experience` |
+| `Job Applicant.custom_ministry_academic_experience` | `Employee.custom_jameah_experience` |
+| Source child DocType: `Job Applicant Academic Experience` | Destination child DocType: `Jameah Work Experience` |
 
 ### Child-row field mapping
 
 | Source row field | Destination row field | Transfer notes |
 |---|---|---|
-| `job_title` | `designation` | Direct value |
-| `organization_name` | `company` | Direct value |
-| `city` | `city` | Direct Ministry Code link |
-| `country` | `country` | Direct Ministry Code link |
-| `college_administration` | `college_administration` | Direct value |
-| `section` | `section` | Direct value |
-| `start_date` | `start_date` | Direct date value |
-| `end_date` | `end_date` | Direct date value |
+| `school_year_history` | `current_academic_year_date` | Direct Gregorian date value |
+| `employment_status` | `employment_status` | Direct Ministry Code link |
+| `educational_entity` | `institute` | Direct Ministry Code link |
+| `work_location` | `location` | Direct Ministry Code link |
+| `academic_department` | `academic_department` | Direct Ministry Code link |
+| `job_number` | `employee_number` | Direct value |
+| `job_rank` | `profession_rank` | Direct Ministry Code link |
+| `appointment_to_rank_date` | `hiring_date` | Direct Gregorian date value |
 | `job_duties` | `job_duties` | Direct text value |
+| `housing` | `accommodation` | Direct Ministry Code link |
 
 Every source row should create one destination row.
 
-## 5. Professional Certificates and Training Courses
+The obsolete `company` and `section` fields are not part of the Employee Academic Experience destination table.
+
+## 4. Professional Certificates and Training Courses
 
 ### Parent table mapping
 
@@ -129,7 +105,7 @@ Every source row should create one destination row.
 
 Every source row should create one destination row.
 
-## 6. Additional Employee Requirements
+## 5. Additional Employee Requirements
 
 Creating an Employee requires standard HR information that may not be included in the Ministry child tables. Before inserting Employee, the transfer process or HR confirmation form must supply valid values for fields such as:
 
@@ -142,44 +118,45 @@ Creating an Employee requires standard HR information that may not be included i
 
 The exact mandatory fields should be checked against the Employee metadata on the target site before insertion.
 
-## 7. Required Lookup Conversions
+## 6. Required Lookup Conversions
 
 The following source values cannot always be copied without validation:
 
 | Source value | Required action |
 |---|---|
-| Ministry employment status | Convert to one of the valid Employee `status` options |
-| Educational entity | Find or create the corresponding `Company` according to the agreed master-data policy |
-| Work location | Find the corresponding `Branch` |
-| Academic department | Find the corresponding `Department` |
+| Ministry employment status | Confirm that it belongs to the `Job status` Ministry category |
+| Educational entity | Confirm that it belongs to the `Coding of educational insti` category |
+| Work location | Confirm that it belongs to the `Coding cities and governora` category |
+| Academic department | Confirm that it belongs to the `Coding academic departments` category |
 | Graduation place | Copy to `school_univ` and optionally resolve `custom_ministry_graduate_from` |
 | Job Applicant country | Resolve to `custom_jameah_nationality` if this is the agreed nationality source |
 
 Do not silently create Company, Branch, Department, or Ministry Code records during transfer unless HR has explicitly approved that behavior.
 
-## 8. Suggested Child-Table Copy Pattern
+## 7. Suggested Child-Table Copy Pattern
 
 ```python
-for source_row in job_applicant.custom_ministry_previous_experience or []:
+for source_row in job_applicant.custom_ministry_academic_experience or []:
 	employee.append(
 		"custom_jameah_experience",
 		{
-			"designation": source_row.job_title,
-			"company": source_row.organization_name,
-			"city": source_row.city,
-			"country": source_row.country,
-			"college_administration": source_row.college_administration,
-			"section": source_row.section,
-			"start_date": source_row.start_date,
-			"end_date": source_row.end_date,
+			"current_academic_year_date": source_row.school_year_history,
+			"employment_status": source_row.employment_status,
+			"institute": source_row.educational_entity,
+			"location": source_row.work_location,
+			"academic_department": source_row.academic_department,
+			"employee_number": source_row.job_number,
+			"profession_rank": source_row.job_rank,
+			"hiring_date": source_row.appointment_to_rank_date,
 			"job_duties": source_row.job_duties,
+			"accommodation": source_row.housing,
 		},
 	)
 ```
 
 The same append pattern should be used for Academic Qualifications and Training Courses with their respective destination table fields.
 
-## 9. Transfer Validation Checklist
+## 8. Transfer Validation Checklist
 
 Before saving the Employee record, confirm that:
 
@@ -187,8 +164,7 @@ Before saving the Employee record, confirm that:
 - Nationality and identity numbers satisfy the Saudi/non-Saudi validation rules.
 - Every Ministry Code link points to a record from the correct code category.
 - Company, Branch, and Department links exist.
-- The correct Academic Experience row was selected as the current appointment.
-- All qualification, previous-experience, and training rows were copied.
+- All Academic Experience rows were copied into `custom_jameah_experience`.
+- All qualification and training rows were copied.
 - Special-needs type and the `custom_is_special_needs` checkbox are consistent.
 - The transfer cannot create a second Employee from the same Job Applicant.
-
