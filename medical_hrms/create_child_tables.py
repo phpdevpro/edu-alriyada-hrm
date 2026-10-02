@@ -139,11 +139,18 @@ def link_tables_to_parents():
             "insert_after": "custom_jameah_qualifications"
         },
         {
+            "fieldname": "custom_jameah_previous_experience",
+            "label": "Employee Previous Experience",
+            "fieldtype": "Table",
+            "options": "Jameah Previous Work Experience",
+            "insert_after": "custom_jameah_experience"
+        },
+        {
             "fieldname": "custom_jameah_training",
             "label": "Training Courses",
             "fieldtype": "Table",
             "options": "Jameah Training Course",
-            "insert_after": "custom_jameah_experience"
+            "insert_after": "custom_jameah_previous_experience"
         },
         {
             "fieldname": "custom_jameah_publications",
@@ -158,15 +165,19 @@ def link_tables_to_parents():
             "fieldtype": "Table",
             "options": "Jameah Award",
             "insert_after": "custom_jameah_publications"
-        },
-        {
-            "fieldname": "custom_jameah_previous_experience",
-            "label": "Employee Previous Experience",
-            "fieldtype": "Table",
-            "options": "Jameah Previous Work Experience",
-            "insert_after": "custom_jameah_awards"
         }
     ]
+
+    # "custom_job_duties" (the anchor for the first table, Qualifications)
+    # only exists on Employee - Instructor has no such field, which previously
+    # broke the whole insert_after chain's resolution on Instructor (Frappe
+    # falls back to an undefined order when an anchor fieldname doesn't
+    # exist). "custom_jameah_facility" is the last Institute Placement field
+    # and is confirmed present on both doctypes, so it's used as Instructor's
+    # anchor instead - this only affects where the whole block starts on
+    # Instructor's form, not the relative order of the six tables themselves.
+    instructor_fields = [dict(field) for field in table_fields]
+    instructor_fields[0]["insert_after"] = "custom_jameah_facility"
 
     custom_fields = {
         "Employee": table_fields,
@@ -176,7 +187,7 @@ def link_tables_to_parents():
             else dict(field, label="Previous Work Experience")
             if field["fieldname"] == "custom_jameah_previous_experience"
             else field
-            for field in table_fields
+            for field in instructor_fields
         ]
     }
 
