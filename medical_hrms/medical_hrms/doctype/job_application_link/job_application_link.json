@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "application_category",
+  "role",
   "is_active",
   "column_break_1",
   "valid_from",
@@ -23,6 +24,14 @@
    "in_list_view": 1,
    "label": "Application Category",
    "options": "Academic Staff\nNon-Academic / Other Staff",
+   "reqd": 1
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Role",
+   "options": "Role",
    "reqd": 1
   },
   {

@@ -20,12 +20,14 @@ def get_context(context):
 	is_valid = False
 	invalid_message = ""
 	application_category = None
+	role = None
 	is_admin_preview = False
 
 	if token:
 		is_valid, reason, link = validate_application_link(token)
 		if is_valid:
 			application_category = link.application_category
+			role = link.role
 		else:
 			invalid_message = get_invalid_message(reason)
 	elif is_hr_admin():
@@ -39,13 +41,13 @@ def get_context(context):
 	context.is_valid = is_valid
 	context.invalid_message = invalid_message
 	context.application_category = application_category
+	context.role = role
 	context.is_admin_preview = is_admin_preview
 	context.token = token
-	context.designations = frappe.get_all("Designation", fields=["name"], order_by="name", ignore_permissions=True)
-	context.departments = frappe.get_all("Department", fields=["name"], order_by="name", ignore_permissions=True)
 	context.job_application_config = {
 		"token": token,
 		"application_category": application_category,
+		"role": role,
 		"allow_category_override": is_admin_preview,
 		"page_title": _("Employee Applicant"),
 		"ministry_codes": frappe.get_all(

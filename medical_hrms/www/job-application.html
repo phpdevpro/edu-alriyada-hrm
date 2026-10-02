@@ -264,20 +264,7 @@
 					</select>
 				</div>
 				<div class="ja-field"><label>{{ _("Designation") }}</label>
-					<select name="designation">
-						<option value=""></option>
-						{% for d in designations %}
-						<option value="{{ d.name }}">{{ d.name }}</option>
-						{% endfor %}
-					</select>
-				</div>
-				<div class="ja-field"><label>{{ _("Department") }}</label>
-					<select name="department">
-						<option value=""></option>
-						{% for d in departments %}
-						<option value="{{ d.name }}">{{ d.name }}</option>
-						{% endfor %}
-					</select>
+					<input type="text" value="{{ role or '' }}" disabled>
 				</div>
 				<div class="ja-field"><label>{{ _("Expected Salary") }}</label>
 					<input type="number" step="0.01" name="expected_salary"></div>
