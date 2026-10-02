@@ -116,6 +116,7 @@ after_install = [
 	"medical_hrms.create_institute_doctypes.execute",
 	"medical_hrms.create_facility_doctype.execute",
 	"medical_hrms.configure_jameah_master_permissions.execute",
+	"medical_hrms.hide_duplicate_employee_sections.execute",
 	"medical_hrms.setup_hr_roles.execute",
 	"medical_hrms.setup_employee_workspace.execute",
 	"medical_hrms.setup_leave_defaults.execute",
@@ -127,6 +128,7 @@ after_migrate = [
 	"medical_hrms.create_institute_doctypes.execute",
 	"medical_hrms.create_facility_doctype.execute",
 	"medical_hrms.configure_jameah_master_permissions.execute",
+	"medical_hrms.hide_duplicate_employee_sections.execute",
 	"medical_hrms.setup_employee_workspace.execute",
 	"medical_hrms.setup_leave_defaults.execute",
 ]
