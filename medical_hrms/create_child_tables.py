@@ -62,6 +62,20 @@ def create_child_doctypes():
                 {"fieldname": "organization", "fieldtype": "Data", "label": "Organization", "in_list_view": 1},
                 {"fieldname": "date", "fieldtype": "Date", "label": "Date", "in_list_view": 1}
             ]
+        },
+        {
+            "name": "Jameah Previous Work Experience",
+            "fields": [
+                {"fieldname": "profession", "fieldtype": "Data", "label": "Job Title", "in_list_view": 1},
+                {"fieldname": "organization_name", "fieldtype": "Data", "label": "Name of educational institution/company", "in_list_view": 1},
+                {"fieldname": "city", "fieldtype": "Data", "label": "The city"},
+                {"fieldname": "country", "fieldtype": "Link", "options": "Jameah Ministry Code", "label": "Country"},
+                {"fieldname": "department", "fieldtype": "Data", "label": "College / Administration"},
+                {"fieldname": "section", "fieldtype": "Data", "label": "Section"},
+                {"fieldname": "start_work_date", "fieldtype": "Date", "label": "Start date", "in_list_view": 1},
+                {"fieldname": "end_work_date", "fieldtype": "Date", "label": "End of work date", "in_list_view": 1},
+                {"fieldname": "functional_tasks", "fieldtype": "Data", "label": "Job Duties"}
+            ]
         }
     ]
 
@@ -144,6 +158,13 @@ def link_tables_to_parents():
             "fieldtype": "Table",
             "options": "Jameah Award",
             "insert_after": "custom_jameah_publications"
+        },
+        {
+            "fieldname": "custom_jameah_previous_experience",
+            "label": "Employee Previous Experience",
+            "fieldtype": "Table",
+            "options": "Jameah Previous Work Experience",
+            "insert_after": "custom_jameah_awards"
         }
     ]
 
@@ -152,6 +173,8 @@ def link_tables_to_parents():
         "Instructor": [
             dict(field, label="Academic Experience")
             if field["fieldname"] == "custom_jameah_experience"
+            else dict(field, label="Previous Work Experience")
+            if field["fieldname"] == "custom_jameah_previous_experience"
             else field
             for field in table_fields
         ]
