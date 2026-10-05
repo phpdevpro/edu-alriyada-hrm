@@ -117,7 +117,80 @@ def _copy_matching_child_tables(source, target, fieldnames):
 				target.append(fieldname, cleaned)
 
 
-def _create_instructor_from_employee(applicant, employee):
+def _ensure_user_role(user_name, role):
+	"""Give an already-existing User the Role, if it doesn't have it yet -
+	mirrors Instructor.link_existing_user()'s same append-if-missing pattern."""
+	if not role or not frappe.db.exists("Role", role):
+		return
+	if frappe.db.exists("Has Role", {"parent": user_name, "parenttype": "User", "role": role}):
+		return
+	user = frappe.get_doc("User", user_name)
+	user.append("roles", {"role": role})
+	user.flags.ignore_permissions = True
+	user.save(ignore_permissions=True)
+
+
+def _get_or_create_user_for_email(email, full_name, role=None):
+	"""Department Member rows are keyed by a real User account (Department
+	Member.user is a required Link to User, not a plain email field) - find
+	the matching one or create a minimal account on the spot, same pattern
+	Instructor.create_user() uses for its own login.
+
+	`role` is the applicant's own Role (e.g. "Instructor") - whoever this
+	account belongs to should actually hold that Role in the system, not
+	just have it on file as a label, so it's assigned here either way:
+	appended directly for a brand new account, or added to an existing one
+	if it doesn't already have it."""
+	if not email:
+		return None
+	existing = frappe.db.exists("User", email)
+	if existing:
+		_ensure_user_role(existing, role)
+		return existing
+	user = frappe.new_doc("User")
+	user.email = email
+	user.first_name = full_name or email
+	user.send_welcome_email = 0
+	user.enabled = 1
+	if role and frappe.db.exists("Role", role):
+		user.append("roles", {"role": role})
+	user.flags.ignore_permissions = True
+	user.insert(ignore_permissions=True)
+	return user.name
+
+
+def _add_department_member(department, email, full_name):
+	"""Add the chosen email (company or personal, see create_employee_from_applicant)
+	as a Department Member on the Department Edu picked in the Create Employee
+	dialog, so the new hire shows up under that department's Faculty & Staff
+	list regardless of their Role."""
+	if not department or not email:
+		return
+	user_name = _get_or_create_user_for_email(email, full_name)
+	if not user_name:
+		return
+	dept = frappe.get_doc("Department Edu", department)
+	if any(row.user == user_name for row in dept.department_member):
+		return
+	# Name (full_name) normally fills itself in via fetch_from: "user.full_name"
+	# - but that resolution happens inside the same _validate_links() call that
+	# ignore_links below skips entirely, so it would never run here. Set it
+	# explicitly instead of relying on a mechanism this same fix disables.
+	member_full_name = frappe.db.get_value("User", user_name, "full_name") or user_name
+	dept.append("department_member", {"user": user_name, "full_name": member_full_name})
+	dept.flags.ignore_permissions = True
+	# Many Department Edu records are incompletely seeded (missing Arabic
+	# name, code, college list, ...) or carry a stale link (e.g. a Head of
+	# Department pointing at a User that no longer exists) in fields that
+	# have nothing to do with this. A plain save() re-validates the WHOLE
+	# document, so ignore_mandatory/ignore_links keep those unrelated,
+	# pre-existing gaps from blocking this specific, narrow append.
+	dept.flags.ignore_mandatory = True
+	dept.flags.ignore_links = True
+	dept.save(ignore_permissions=True)
+
+
+def _create_instructor_from_employee(applicant, employee, email=None, department=None):
 	"""Auto-create the matching Instructor record when an applicant who
 	applied under the "Instructor" Role is accepted and converted to an
 	Employee - so HR doesn't have to remember a separate manual step.
@@ -138,7 +211,7 @@ def _create_instructor_from_employee(applicant, employee):
 	straight from self.email - a blank email would fail there regardless
 	of the domain check.
 	"""
-	email = (applicant.email_id or "").strip().lower()
+	email = (email or applicant.email_id or "").strip().lower()
 	if not email:
 		frappe.msgprint(
 			_(
@@ -185,7 +258,7 @@ def _create_instructor_from_employee(applicant, employee):
 		instructor.mobile_no = employee.cell_number or applicant.phone_number
 		instructor.employee_no = employee.employee_number or employee.name
 		instructor.gender = _resolve_gender_from_ministry_code(applicant.gender)
-		instructor.department = _resolve_department_edu_from_employee(employee.department)
+		instructor.department = department or _resolve_department_edu_from_employee(employee.department)
 		instructor.status = "Active"
 		_copy_matching_scalar_fields(employee, instructor, INSTRUCTOR_SCALAR_COPY_SKIP_FIELDS)
 		_copy_matching_child_tables(employee, instructor, INSTRUCTOR_CHILD_TABLE_FIELDNAMES)
@@ -446,7 +519,7 @@ def reject_application(job_applicant):
 
 
 @frappe.whitelist()
-def create_employee_from_applicant(job_applicant):
+def create_employee_from_applicant(job_applicant, department=None, company_email=None):
 	frappe.has_permission(APPLICANT_DOCTYPE, "write", throw=True)
 	applicant = frappe.get_doc(APPLICANT_DOCTYPE, job_applicant)
 
@@ -455,6 +528,22 @@ def create_employee_from_applicant(job_applicant):
 
 	if frappe.db.exists("Employee", {"custom_job_applicant": applicant.name}):
 		frappe.throw(_("An Employee record already exists for this applicant."))
+
+	company_email = (company_email or "").strip().lower()
+	# HR either provides a real company email, or explicitly chooses to go
+	# forward with the applicant's own personal email instead - either way
+	# this is the email used for the Instructor record (if the Role calls
+	# for one) and for the Department Member row below, so there's always
+	# a concrete "which email represents this person" decision made once,
+	# here, rather than each downstream step guessing independently.
+	chosen_email = company_email or (applicant.email_id or "").strip().lower()
+
+	# A User account is needed for this person regardless of Role or
+	# Department (login access, Department Member rows, etc.), so it's
+	# created here unconditionally rather than only as a side effect of the
+	# Instructor or Department Member steps below - both of those just find
+	# this same account via _get_or_create_user_for_email's exists() check.
+	user_name = _get_or_create_user_for_email(chosen_email, applicant.applicant_name, role=applicant.role)
 
 	first_name, last_name = split_full_name(applicant.applicant_name)
 	company = get_default_company()
@@ -468,6 +557,8 @@ def create_employee_from_applicant(job_applicant):
 	employee.company = company
 	employee.date_of_joining = nowdate()
 	employee.personal_email = applicant.email_id
+	if company_email:
+		employee.company_email = company_email
 	employee.cell_number = applicant.phone_number
 	employee.custom_first_name_en = applicant.custom_first_name_en
 	employee.custom_second_name_en = applicant.custom_second_name_en
@@ -528,9 +619,26 @@ def create_employee_from_applicant(job_applicant):
 	employee.flags.ignore_mandatory = True
 	employee.insert(ignore_permissions=True)
 
+	if user_name:
+		# Set via a raw DB write rather than employee.user_id + a normal
+		# save: Employee's on_update() (ERPNext core) syncs several fields
+		# onto the linked User the moment user_id is set, including
+		# user.gender = employee.gender - but Employee.gender holds a raw
+		# Jameah Ministry Code value (e.g. "Gender::1"), not a real Gender
+		# doctype record, which User.gender actually links to. Going
+		# through that sync would throw a LinkValidationError on every
+		# single Employee creation. The raw write bypasses on_update/sync
+		# entirely and still links the two records correctly.
+		frappe.db.set_value("Employee", employee.name, "user_id", user_name)
+
 	instructor_name = None
 	if applicant.role == INSTRUCTOR_ROLE_NAME:
-		instructor_name = _create_instructor_from_employee(applicant, employee)
+		instructor_name = _create_instructor_from_employee(
+			applicant, employee, email=chosen_email, department=department
+		)
+
+	if department:
+		_add_department_member(department, chosen_email, applicant.applicant_name)
 
 	return {"employee": employee.name, "instructor": instructor_name}
 
