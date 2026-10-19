@@ -28,6 +28,19 @@ HIREABLE_ROLES = (
 )
 
 
+# What each hired Role needs for its Education dashboard to work (see
+# education.education.utils.user_redirect.ROLE_LANDING_PRIORITY). Every
+# hire also gets "Employee" so HR self-service (leave, requests) works.
+ADVISOR_ROLE_NAME = "Academic Advisor"
+# Advisors are teaching faculty too: most existing advisors also have an
+# Instructor record.
+INSTRUCTOR_RECORD_ROLES = {INSTRUCTOR_ROLE_NAME, ADVISOR_ROLE_NAME}
+HOD_ROLES = {"Head of Department", "Department Head"}
+# The clinical-manager page only admits Clinical Education Manager; existing
+# Clinic Training Manager users hold both roles.
+COMPANION_ROLES = {"Clinic Training Manager": ("Clinical Education Manager",)}
+
+
 def validate_hireable_role(role):
 	if role and role not in HIREABLE_ROLES:
 		frappe.throw(
@@ -215,6 +228,95 @@ def _add_department_member(department, email, full_name):
 	dept.save(ignore_permissions=True)
 
 
+def _applicant_arabic_name(applicant):
+	parts = [
+		applicant.custom_first_name_ar,
+		applicant.custom_second_name_ar,
+		applicant.custom_third_name_ar,
+		applicant.custom_last_name_ar,
+	]
+	return " ".join(filter(None, parts)) or applicant.applicant_name
+
+
+def _to_phone_field(number, default_region="SA"):
+	"""Phone-type fields need a country code; the public form collects local
+	numbers (e.g. 05XXXXXXXX). Returns None when the number can't be parsed,
+	so a bad phone never blocks the record."""
+	from phonenumbers import NumberParseException, PhoneNumberFormat, format_number, is_valid_number, parse
+
+	try:
+		parsed = parse(number or "", default_region)
+	except NumberParseException:
+		return None
+	return format_number(parsed, PhoneNumberFormat.E164) if is_valid_number(parsed) else None
+
+
+def _create_advisor_from_employee(applicant, employee, email):
+	"""Academic Advisor record for an "Academic Advisor" hire - the advisor
+	dashboard finds the logged-in advisor by Academic Advisor.email. Named by
+	advisor_id, which existing records set to the employee number."""
+	if not email:
+		return None
+	existing = frappe.db.get_value("Academic Advisor", {"email": email}, "name")
+	if existing:
+		return existing
+
+	try:
+		advisor = frappe.new_doc("Academic Advisor")
+		advisor.advisor_id = employee.employee_number or employee.name
+		advisor.employee_no = advisor.advisor_id
+		advisor.advisor_name = applicant.applicant_name
+		advisor.arabic_name = _applicant_arabic_name(applicant)
+		advisor.email = email
+		advisor.personal_email_id = applicant.email_id
+		advisor.mobile_no = _to_phone_field(employee.cell_number or applicant.phone_number)
+		advisor.gender = _resolve_gender_from_ministry_code(applicant.gender)
+		advisor.flags.ignore_mandatory = True
+		advisor.insert(ignore_permissions=True)
+		# Same as Instructor: gender has fetch_from employee.gender (a Ministry
+		# code, not a Gender Edu value), so link Employee without a re-fetch.
+		frappe.db.set_value("Academic Advisor", advisor.name, "employee", employee.name)
+		return advisor.name
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), f"Could not auto-create Academic Advisor for Employee {employee.name}")
+		frappe.msgprint(
+			_("The Employee was created, but the matching Academic Advisor record could not be "
+				"created automatically. Please create it manually."),
+			title=_("Academic Advisor Record Not Created"),
+			indicator="orange",
+		)
+		return None
+
+
+def _assign_department_head(department, user_name):
+	"""Make the hire Head of the Department Edu chosen in the Create Employee
+	dialog. Mirrors DepartmentEdu.assign_hod_role(), but without
+	Department Edu.save(): its on_update commits mid-request, which would
+	leave a half-finished conversion behind if a later step failed."""
+	if not department or not user_name:
+		frappe.msgprint(
+			_("Choose a Department in Create Employee to make this hire its Head of Department."),
+			title=_("Head of Department Not Assigned"),
+			indicator="orange",
+		)
+		return None
+	dept = frappe.db.get_value("Department Edu", department, ["hod", "department_name"], as_dict=True)
+	if dept.hod and dept.hod != user_name:
+		frappe.msgprint(
+			_("{0} already has a Head of Department ({1}); it was not changed.").format(department, dept.hod),
+			title=_("Head of Department Not Assigned"),
+			indicator="orange",
+		)
+		return None
+
+	frappe.db.set_value("Department Edu", department, "hod", user_name)
+	hod_role = f"HOD {(dept.department_name or department).replace(' ', '')}"
+	if not frappe.db.exists("Role", hod_role):
+		frappe.get_doc({"doctype": "Role", "role_name": hod_role, "desk_access": 1}).insert(ignore_permissions=True)
+	_ensure_user_role(user_name, hod_role)
+	return department
+
+
 def _create_instructor_from_employee(applicant, employee, email=None, department=None):
 	"""Auto-create the matching Instructor record when an applicant who
 	applied under the "Instructor" Role is accepted and converted to an
@@ -250,20 +352,7 @@ def _create_instructor_from_employee(applicant, employee, email=None, department
 		)
 		return None
 
-	arabic_name = (
-		" ".join(
-			filter(
-				None,
-				[
-					applicant.custom_first_name_ar,
-					applicant.custom_second_name_ar,
-					applicant.custom_third_name_ar,
-					applicant.custom_last_name_ar,
-				],
-			)
-		)
-		or applicant.applicant_name
-	)
+	arabic_name = _applicant_arabic_name(applicant)
 
 	try:
 		# Both Instructor.gender (-> Gender Edu) and Instructor.department
@@ -661,16 +750,28 @@ def create_employee_from_applicant(job_applicant, department=None, company_email
 		# entirely and still links the two records correctly.
 		frappe.db.set_value("Employee", employee.name, "user_id", user_name)
 
+	if user_name:
+		for extra_role in ("Employee", *COMPANION_ROLES.get(applicant.role, ())):
+			_ensure_user_role(user_name, extra_role)
+
 	instructor_name = None
-	if applicant.role == INSTRUCTOR_ROLE_NAME:
+	if applicant.role in INSTRUCTOR_RECORD_ROLES:
 		instructor_name = _create_instructor_from_employee(
 			applicant, employee, email=chosen_email, department=department
 		)
 
+	advisor_name = None
+	if applicant.role == ADVISOR_ROLE_NAME:
+		advisor_name = _create_advisor_from_employee(applicant, employee, chosen_email)
+
+	hod_of = None
+	if applicant.role in HOD_ROLES:
+		hod_of = _assign_department_head(department, user_name)
+
 	if department:
 		_add_department_member(department, chosen_email, applicant.applicant_name)
 
-	return {"employee": employee.name, "instructor": instructor_name}
+	return {"employee": employee.name, "instructor": instructor_name, "advisor": advisor_name, "hod_of": hod_of}
 
 
 def validate_payload(payload, application_category):

@@ -43,6 +43,8 @@ function show_create_employee_dialog(frm) {
 				fieldtype: "Link",
 				options: "Department Edu",
 				label: __("Department"),
+				// The hire becomes Head of this department.
+				reqd: ["Head of Department", "Department Head"].includes(frm.doc.role) ? 1 : 0,
 			},
 			{
 				fieldname: "email_choice",
@@ -78,9 +80,16 @@ function show_create_employee_dialog(frm) {
 				},
 				freeze: true,
 				callback: (r) => {
-					if (r.message && r.message.employee) {
-						frappe.set_route("Form", "Employee", r.message.employee);
-					}
+					const res = r.message || {};
+					if (!res.employee) return;
+					const created = [
+						__("Employee {0}", [res.employee]),
+						res.instructor && __("Instructor {0}", [res.instructor]),
+						res.advisor && __("Academic Advisor {0}", [res.advisor]),
+						res.hod_of && __("Head of {0}", [res.hod_of]),
+					].filter(Boolean);
+					frappe.show_alert({ message: __("Created: {0}", [created.join(", ")]), indicator: "green" }, 8);
+					frappe.set_route("Form", "Employee", res.employee);
 				},
 			});
 		},
