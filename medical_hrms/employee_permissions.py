@@ -16,31 +16,39 @@ EMPLOYEE_REQUEST_DOCTYPES = (
 )
 
 
+# Roles that review other employees' requests; standard role permissions apply.
+REVIEWER_ROLES = {"HR User", "HR Manager", "System Manager", "Accounts Manager", "Finance Manager"}
+
+
+def is_reviewer(user):
+	return user == "Administrator" or bool(REVIEWER_ROLES.intersection(frappe.get_roles(user)))
+
+
 def get_employee_for_user(user=None):
 	user = user or frappe.session.user
 	return frappe.db.get_value("Employee", {"user_id": user}, "name")
 
 
-def get_employee_request_query_condition(user=None):
+def get_employee_request_query_condition(user=None, doctype=None):
 	user = user or frappe.session.user
-	roles = set(frappe.get_roles(user))
-	if user == "Administrator" or roles.intersection({"HR User", "HR Manager", "System Manager"}):
+	if is_reviewer(user):
 		return ""
-	if "Employee" not in roles:
+	if "Employee" not in frappe.get_roles(user):
 		return "1=0"
 
 	employee = get_employee_for_user(user)
 	if not employee:
 		return "1=0"
-	return f"`employee` = {frappe.db.escape(employee)}"
+	# Table-qualified so list views that join child tables stay unambiguous.
+	column = f"`tab{doctype}`.`employee`" if doctype else "`employee`"
+	return f"{column} = {frappe.db.escape(employee)}"
 
 
 def has_employee_request_permission(doc, user=None, permission_type=None):
 	user = user or frappe.session.user
-	roles = set(frappe.get_roles(user))
-	if user == "Administrator" or roles.intersection({"HR User", "HR Manager", "System Manager"}):
+	if is_reviewer(user):
 		return None
-	if "Employee" not in roles:
+	if "Employee" not in frappe.get_roles(user):
 		return False
 
 	employee = get_employee_for_user(user)
@@ -80,11 +88,11 @@ def _is_self_service_user(user):
 	})
 
 
-def get_self_service_query_condition(user=None):
+def get_self_service_query_condition(user=None, doctype=None):
 	user = user or frappe.session.user
 	if not _is_self_service_user(user):
 		return ""
-	return get_employee_request_query_condition(user)
+	return get_employee_request_query_condition(user, doctype)
 
 
 def has_self_service_permission(doc, user=None, permission_type=None):

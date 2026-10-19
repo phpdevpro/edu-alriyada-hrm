@@ -213,7 +213,7 @@ function render_doctype_cards() {
     ["Permission Request", "permission-request"],
     ["Remote Work Request", "remote-work-request"],
     ["Leave Plan Request", "leave-plan-request"],
-    ["Return From Leave Request", "return-from-leave-request"],
+    ["Return from Leave Request", "return-from-leave-request"],
     ["Salary Certificate Request", "salary-certificate-request"],
     ["Pre Approved Overtime Request", "pre-approved-overtime-request"],
     ["Employee Training Request", "employee-training-request"],

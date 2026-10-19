@@ -1,7 +1,7 @@
 """Allowlisted employee forms. Never accept identity or approval fields from clients."""
 import frappe
 from frappe.utils import cint
-from medical_hrms.employee_permissions import get_employee_for_user
+from medical_hrms.employee_permissions import get_employee_for_user, is_reviewer
 
 FIELDS = {
     "Permission Request": "date from_time to_time reason",
@@ -46,7 +46,7 @@ def form_schema(doctype):
 
 
 def validate_employee_request(doc, method=None):
-    if frappe.session.user == "Administrator" or set(frappe.get_roles()).intersection({"HR User", "HR Manager", "System Manager"}):
+    if is_reviewer(frappe.session.user):
         return
     employee = employee_identity()
     if doc.employee != employee:
@@ -60,9 +60,11 @@ def validate_employee_request(doc, method=None):
     pending = next((status for status in statuses if status.startswith("Pending")), None)
     if doc.status not in ("Draft", pending):
         frappe.throw("Only HR can set approval status.", frappe.PermissionError)
+    # Compare with a fresh document: Select fields default to their first option.
+    blank = None if old else frappe.new_doc(doc.doctype)
     for field in ("occupational_health_clearance", "approved_amount", "manager_recommendation", "proposed_salary_increase"):
         if doc.meta.has_field(field):
-            expected = old.get(field) if old else doc.meta.get_field(field).default
+            expected = old.get(field) if old else blank.get(field)
             if (doc.get(field) or "") != (expected or ""):
                 frappe.throw("Only HR can change approval or clearance fields.", frappe.PermissionError)
     if doc.get("leave_application"):

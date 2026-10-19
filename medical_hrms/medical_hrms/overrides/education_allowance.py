@@ -19,16 +19,9 @@ def validate_education_allowance(doc, method):
     if doc.child_name not in unique_children and len(unique_children) >= 3:
         frappe.throw(_("Employee has reached the maximum limit of 3 children for the education allowance this academic year."))
 
-    # 2. Check grade-based cap (Example: Grade 10+ only, cap 30k)
-    employee = frappe.get_doc("Employee", doc.employee)
-    if not employee.grade:
-        frappe.throw(_("Employee must have a Grade assigned to claim Education Allowance."))
-        
-    grade = frappe.db.get_value("Employee Grade", employee.grade, "name")
-    
-    # Example mock grade check (assuming grades are named Grade 10, Grade 11, etc.)
-    # In reality, this would check a custom field on Employee Grade like 'max_education_allowance'
-    # We will enforce a basic logic here
+    # 2. Per-child cap. Grade-based caps are not defined yet, so Employee
+    # Grade is not required: requiring it blocked every claim (even drafts)
+    # without the grade changing the outcome.
     max_cap = 30000.0
     
     # Sum up existing approved amounts for THIS child

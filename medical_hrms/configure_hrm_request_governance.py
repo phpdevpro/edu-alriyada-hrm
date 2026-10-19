@@ -1,5 +1,7 @@
 import frappe
 
+from medical_hrms.medical_hrms.overrides import FINANCE_APPROVER_ROLES
+
 
 REQUEST_DOCTYPES = [
     "Employee Data Update Request",
@@ -10,7 +12,7 @@ REQUEST_DOCTYPES = [
     "Children Medical Allowance Request",
     "Salary Certificate Request",
     "Pre Approved Overtime Request",
-    "Return From Leave Request",
+    "Return from Leave Request",
     "Remote Work Request",
     "Permission Request",
     "Employee Medical License",
@@ -118,7 +120,10 @@ def _apply_permissions(doctype_name: str):
         _insert_custom_permission(doctype_name, row)
 
     if doctype_name in FINANCE_DOCTYPES:
-        _insert_custom_permission(doctype_name, FINANCE_PERMISSION)
+        # Both roles can give finance approval (see FINANCE_APPROVER_ROLES).
+        for role in FINANCE_APPROVER_ROLES:
+            if frappe.db.exists("Role", role):
+                _insert_custom_permission(doctype_name, {**FINANCE_PERMISSION, "role": role})
 
     frappe.clear_cache(doctype=doctype_name)
     print(f"Updated permissions: {doctype_name}")

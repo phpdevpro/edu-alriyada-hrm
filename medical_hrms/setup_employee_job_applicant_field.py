@@ -6,7 +6,8 @@ APPLICANT_DOCTYPE = "Employee Job Applicant"
 EMPLOYEE_FIELDS = [
 	{
 		"fieldname": "custom_job_applicant",
-		"label": "Job Applicant",
+		# Core HRMS already adds a "Job Applicant" field (standard recruitment).
+		"label": "Employee Job Applicant",
 		"fieldtype": "Link",
 		"options": APPLICANT_DOCTYPE,
 		"insert_after": "custom_zip_code",

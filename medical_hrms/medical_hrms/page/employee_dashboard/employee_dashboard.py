@@ -116,7 +116,8 @@ def get_dashboard_data():
 
 	approved = sum(status_totals.get(status, 0) for status in APPROVED_STATUSES)
 	rejected = sum(status_totals.get(status, 0) for status in REJECTED_STATUSES)
-	pending = max(total - approved - rejected, 0)
+	# Unsent drafts are not waiting on anyone, so they are not "pending".
+	pending = max(total - approved - rejected - status_totals.get("Draft", 0), 0)
 
 	recent_requests.sort(key=lambda row: row["modified"], reverse=True)
 	recent_requests = recent_requests[:8]

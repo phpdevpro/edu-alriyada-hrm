@@ -1,6 +1,8 @@
 import frappe
 from frappe import _
 
+from medical_hrms.medical_hrms.overrides import FINANCE_APPROVER_ROLES, has_any_role
+
 def validate_expense_claim(doc, method):
     # This hook applies to standard Expense Claim.
     # We evaluate total claimed amount to set required approver level (could be a custom field).
@@ -20,13 +22,11 @@ def validate_expense_claim(doc, method):
 
     # If it's being approved
     if doc.approval_status == "Approved":
-        user_roles = frappe.get_roles(frappe.session.user)
-        
         if total_claimed > 20000:
-            if "Finance Manager" not in user_roles and frappe.session.user != "Administrator":
-                frappe.throw(_("Claims above AED 20,000 require Finance Manager approval."))
+            if not has_any_role(*FINANCE_APPROVER_ROLES):
+                frappe.throw(_("Claims above AED 20,000 require Finance approval."))
         elif total_claimed > 5000:
-            if "Department Manager" not in user_roles and "Department Head" not in user_roles and frappe.session.user != "Administrator":
+            if not has_any_role("Department Head", *FINANCE_APPROVER_ROLES):
                 frappe.throw(_("Claims above AED 5,000 require Department Head approval."))
         else:
             # Direct manager can approve (assuming Leave Approver or equivalent)

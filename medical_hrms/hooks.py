@@ -179,6 +179,9 @@ permission_query_conditions = {
 		"Company Car Request",
 		"Contract Renewal Request",
 		"Employee Data Update Request",
+		# Not a self-service request (no Pending status), but licenses are
+		# personal records: employees may only see their own.
+		"Employee Medical License",
 	)
 }
 
