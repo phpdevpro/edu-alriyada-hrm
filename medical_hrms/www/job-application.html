@@ -384,10 +384,10 @@
 		<div class="ja-section">
 			<h2>{{ _("Identity Details") }}</h2>
 			<div class="ja-grid">
-				<div class="ja-field"><label>{{ _("Identity Type") }}</label>
-					<select name="custom_identity_type" data-category="Identity type"></select></div>
-				<div class="ja-field"><label>{{ _("Identity Number") }}</label>
-					<input type="text" name="custom_identity_number"></div>
+				<div class="ja-field"><label>{{ _("Identity Type") }} <span class="ja-req">*</span></label>
+					<select name="custom_identity_type" data-category="Identity type" required></select></div>
+				<div class="ja-field"><label>{{ _("Identity Number") }} <span class="ja-req">*</span></label>
+					<input type="text" name="custom_identity_number" required></div>
 				<div class="ja-field"><label>{{ _("Identity Issue Date") }}</label>
 					<input type="date" name="custom_identity_issue_date"></div>
 				<div class="ja-field"><label>{{ _("Identity Issue Place") }}</label>

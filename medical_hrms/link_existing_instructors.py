@@ -17,6 +17,8 @@ from collections import Counter
 import frappe
 from frappe.utils import getdate
 
+from medical_hrms.ministry_lookup_validation import find_ministry_code
+
 from medical_hrms.medical_hrms.recruitment.job_application import (
 	INSTRUCTOR_CHILD_TABLE_FIELDNAMES,
 	_copy_matching_child_tables,
@@ -37,9 +39,7 @@ SKIP_FIELDS = {
 
 def _ministry_gender(label):
 	"""Instructor.gender holds a Gender Edu label; Employee.gender a Ministry code."""
-	if not label:
-		return None
-	return frappe.db.get_value("Jameah Ministry Code", {"code_category": "Gender", "name_english": label}, "name")
+	return find_ministry_code("Gender", label) if label else None
 
 
 def _core_department(department_edu, company):
@@ -76,7 +76,7 @@ def _build_employee(instructor, company):
 
 
 # Values HR supplies through instructor_data_sheet that Instructor stores too.
-INSTRUCTOR_SHEET_FIELDS = ("custom_jameah_nationality", "custom_identity_number", "gender", "department")
+INSTRUCTOR_SHEET_FIELDS = ("custom_jameah_nationality", "custom_identity_type", "custom_identity_number", "gender", "department")
 
 
 def _link_one(instructor, company, commit, sheet_values=None):

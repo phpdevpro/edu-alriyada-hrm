@@ -787,6 +787,18 @@ def validate_payload(payload, application_category):
 	if payload.get("email"):
 		validate_email_address(payload.get("email"), throw=True)
 
+	# Same Ministry identity rules the Employee will be held to, so an
+	# application can't be accepted only to fail at Create Employee.
+	from medical_hrms.ministry_lookup_validation import identity_problems
+
+	problems = identity_problems(
+		payload.get("custom_jameah_nationality"),
+		payload.get("custom_identity_type"),
+		payload.get("custom_identity_number"),
+	)
+	if problems:
+		frappe.throw("<br>".join(_(problem) for problem in problems))
+
 	arabic_pattern = re.compile("^[؀-ۿݐ-ݿࢠ-ࣿ\\s'’-]+$")
 	for fieldname in (
 		"custom_first_name_ar",
