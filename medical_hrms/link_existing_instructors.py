@@ -75,13 +75,30 @@ def _build_employee(instructor, company):
 	return employee
 
 
-def _link_one(instructor, company, commit):
+# Values HR supplies through instructor_data_sheet that Instructor stores too.
+INSTRUCTOR_SHEET_FIELDS = ("custom_jameah_nationality", "custom_identity_number", "gender", "department")
+
+
+def _link_one(instructor, company, commit, sheet_values=None):
+	sheet_values = sheet_values or {}
+	for fieldname in INSTRUCTOR_SHEET_FIELDS:
+		if sheet_values.get(fieldname):
+			instructor.set(fieldname, sheet_values[fieldname])
+			# Direct write: these are pre-validated lookups, and Instructor.save()
+			# would re-run unrelated checks (e.g. the college email domain rule).
+			frappe.db.set_value("Instructor", instructor.name, fieldname, sheet_values[fieldname])
+
 	user = instructor.email if instructor.email and frappe.db.exists("User", instructor.email) else None
 	existing = frappe.db.get_value("Employee", {"user_id": user}, "name") if user else None
 	if existing:
 		employee_name = existing
 	else:
 		employee = _build_employee(instructor, company)
+		if sheet_values.get("employee_number"):
+			employee.employee_number = sheet_values["employee_number"]
+		# Instructor has no field for this; it only lives on Employee.
+		if sheet_values.get("custom_original_home_id_number"):
+			employee.custom_original_home_id_number = sheet_values["custom_original_home_id_number"]
 		employee.insert(ignore_permissions=True)
 		employee_name = employee.name
 		if user:
@@ -97,6 +114,25 @@ def _link_one(instructor, company, commit):
 	if user and commit:
 		_ensure_user_role(user, "Employee")
 	return "linked existing Employee" if existing else "created Employee"
+
+
+def try_link(instructor_name, company, commit, sheet_values=None):
+	"""Attempt one Instructor inside a savepoint. Returns (ok, outcome or error)."""
+	instructor = frappe.get_doc("Instructor", instructor_name)
+	frappe.db.savepoint("link_instructor")
+	try:
+		outcome = _link_one(instructor, company, commit, sheet_values)
+	except Exception as error:
+		frappe.db.rollback(save_point="link_instructor")
+		return False, frappe.utils.strip_html(str(error)).split("\n")[0][:200] or type(error).__name__
+	else:
+		if commit:
+			frappe.db.commit()
+		else:
+			frappe.db.rollback(save_point="link_instructor")
+		return True, outcome
+	finally:
+		frappe.local.message_log = []
 
 
 def execute(commit=0, limit=None):
@@ -115,23 +151,12 @@ def execute(commit=0, limit=None):
 	outcomes, failures = Counter(), Counter()
 	examples = {}
 	for name in names:
-		instructor = frappe.get_doc("Instructor", name)
-		frappe.db.savepoint("link_instructor")
-		try:
-			outcome = _link_one(instructor, company, commit)
-		except Exception as error:
-			frappe.db.rollback(save_point="link_instructor")
-			reason = frappe.utils.strip_html(str(error)).split("\n")[0][:120] or type(error).__name__
-			failures[reason] += 1
-			examples.setdefault(reason, name)
+		ok, result = try_link(name, company, commit)
+		if ok:
+			outcomes[result] += 1
 		else:
-			outcomes[outcome] += 1
-			if commit:
-				frappe.db.commit()
-			else:
-				frappe.db.rollback(save_point="link_instructor")
-		finally:
-			frappe.local.message_log = []
+			failures[result] += 1
+			examples.setdefault(result, name)
 
 	if not commit:
 		frappe.db.rollback()
