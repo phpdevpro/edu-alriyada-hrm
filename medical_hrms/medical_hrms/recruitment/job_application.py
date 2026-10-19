@@ -10,6 +10,31 @@ from frappe.utils.file_manager import save_file
 
 INSTRUCTOR_ROLE_NAME = "Instructor"
 
+# Roles a hire may receive through recruitment. Converting an applicant
+# grants this Role to a (possibly pre-existing) User, so admin roles (System
+# Manager, HR, Finance, ...) are deliberately excluded: those must be granted
+# by an administrator, never as a side effect of accepting an application.
+HIREABLE_ROLES = (
+	"Employee",
+	"Instructor",
+	"Academic Advisor",
+	"Head of Department",
+	"Department Head",
+	"Vice Dean",
+	"Clinical Education Manager",
+	"Clinic Training Manager",
+	"Program Manager",
+	"Student Affairs Manager",
+)
+
+
+def validate_hireable_role(role):
+	if role and role not in HIREABLE_ROLES:
+		frappe.throw(
+			_("Role {0} cannot be assigned through a job application.").format(frappe.bold(role)),
+			frappe.PermissionError,
+		)
+
 
 def _get_or_create_designation_for_role(role):
 	"""The public form no longer lets applicants pick a Designation
@@ -420,7 +445,9 @@ def submit_application(data, token=None):
 		role = link.role
 	else:
 		application_category = payload.get("application_category") or ACADEMIC_CATEGORY
-		role = payload.get("role")
+		# Without an HR-issued link the Role is never taken from the
+		# (guest-supplied) payload; HR sets it on the applicant if needed.
+		role = None
 
 	validate_payload(payload, application_category)
 
@@ -528,6 +555,9 @@ def create_employee_from_applicant(job_applicant, department=None, company_email
 
 	if frappe.db.exists("Employee", {"custom_job_applicant": applicant.name}):
 		frappe.throw(_("An Employee record already exists for this applicant."))
+
+	# Checked before any User is created or given this Role.
+	validate_hireable_role(applicant.role)
 
 	company_email = (company_email or "").strip().lower()
 	# HR either provides a real company email, or explicitly chooses to go
@@ -739,12 +769,21 @@ def copy_matching_employee_fields(source, target):
 			setattr(target, field.fieldname, getattr(source, custom_fieldname))
 
 
+# Set by the server (from the HR link, workflow or upload), never from the
+# guest-supplied payload.
+PROTECTED_APPLICANT_FIELDS = {
+	"name", "owner", "docstatus", "idx", "creation", "modified", "modified_by",
+	"status", "role", "designation", "application_category", "application_token",
+	"application_details_json", "resume_attachment",
+}
+
+
 def copy_payload_fields_to_applicant(doc, payload):
 	"""Persist every scalar form value in a real Applicant field when available."""
 	applicant_meta = doc.meta
 	employee_meta = frappe.get_meta("Employee")
 	for fieldname, value in payload.items():
-		if isinstance(value, (list, dict)) or value in (None, ""):
+		if isinstance(value, (list, dict)) or value in (None, "") or fieldname in PROTECTED_APPLICANT_FIELDS:
 			continue
 		if applicant_meta.has_field(fieldname):
 			setattr(doc, fieldname, value)

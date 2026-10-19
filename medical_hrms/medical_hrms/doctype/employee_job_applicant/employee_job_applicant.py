@@ -5,8 +5,11 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
+from medical_hrms.medical_hrms.recruitment.job_application import validate_hireable_role
+
 
 class EmployeeJobApplicant(Document):
 	def validate(self):
 		if self.application_category == "Academic Staff" and not self.academic_qualifications:
 			frappe.throw(_("Academic Qualifications are required for Academic Staff applicants."))
+		validate_hireable_role(self.role)

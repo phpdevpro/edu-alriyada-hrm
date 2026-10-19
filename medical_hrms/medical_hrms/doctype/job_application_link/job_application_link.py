@@ -8,6 +8,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import get_datetime, get_url
 
+from medical_hrms.medical_hrms.recruitment.job_application import validate_hireable_role
+
 NON_ACADEMIC_CATEGORY = "Non-Academic / Other Staff"
 NON_ACADEMIC_ROLE = "Employee"
 
@@ -23,6 +25,7 @@ class JobApplicationLink(Document):
 		# here too so it can't be bypassed via the API or a bulk edit.
 		if self.application_category == NON_ACADEMIC_CATEGORY:
 			self.role = NON_ACADEMIC_ROLE
+		validate_hireable_role(self.role)
 
 	@frappe.whitelist()
 	def generate_link(self):
