@@ -53,26 +53,23 @@ def validate_employee_education_ministry_lookups(doc, method=None):
 		_validate_field(doc, field["fieldname"], field["category"])
 
 
-SAUDI_NATIONALITY_CODES = {"101", "N-SA"}
+SAUDI_NATIONALITY_CODES = {"101"}
 # Identity types that are 10-digit Kingdom civil registry numbers -> first
-# digit. Real Ministry codes (sheet "30 - Identity type": 01 National ID,
-# 03 Iqama) and the demo seed codes. Gulf ID, Passport and Border Number
-# have other formats, so they only need a number.
-IDENTITY_NUMBER_PREFIX = {"01": "1", "ID-NID": "1", "03": "2", "ID-IQ": "2"}
-NATIONAL_ID_TYPE_CODES = {"01", "ID-NID"}
+# digit (Ministry sheet "30 - Identity type": 01 National ID, 03 Iqama).
+# Gulf ID, Passport and Border Number have other formats, so they only
+# need a number.
+IDENTITY_NUMBER_PREFIX = {"01": "1", "03": "2"}
+NATIONAL_ID_TYPE_CODES = {"01"}
 
 
 def ministry_codes(category):
-	"""Codes of one category, real Ministry codes (numeric, from the Ministry
-	workbook) before the demo seed codes (e.g. G-MALE, N-SA) that share their
-	labels, so label lookups resolve to the real code."""
-	rows = frappe.get_all(
+	"""Codes of one category (all Ministry codes, see ministry_codes.sync)."""
+	return frappe.get_all(
 		DOCTYPE,
 		filters={"code_category": category},
 		fields=["name", "ministry_code", "name_english", "name_arabic"],
 		order_by="name_english",
 	)
-	return sorted(rows, key=lambda row: not (row.ministry_code or "").isdigit())
 
 
 def find_ministry_code(category, label):

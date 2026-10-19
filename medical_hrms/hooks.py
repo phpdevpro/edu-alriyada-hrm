@@ -112,6 +112,7 @@ website_route_rules = [
 after_install = [
 	"medical_hrms.monthly_leave_policy.setup",
 	"medical_hrms.create_jameah_doctypes.execute",
+	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",
 	"medical_hrms.create_institute_doctypes.execute",
 	"medical_hrms.create_facility_doctype.execute",
@@ -124,6 +125,7 @@ after_install = [
 after_migrate = [
 	"medical_hrms.monthly_leave_policy.setup",
 	"medical_hrms.create_jameah_doctypes.execute",
+	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",
 	"medical_hrms.create_institute_doctypes.execute",
 	"medical_hrms.create_facility_doctype.execute",
