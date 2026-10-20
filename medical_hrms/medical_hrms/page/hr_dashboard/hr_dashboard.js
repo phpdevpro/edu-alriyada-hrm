@@ -126,6 +126,17 @@ function render_layout(page) {
         </div>
       </div>
 
+      <section class="hrd-group" aria-labelledby="hrd-academic-heading">
+        <h3 id="hrd-academic-heading">Academic Schedules &amp; Presence</h3>
+        <p class="hrd-section-sub">Faculty and proctor timetables, and who is on campus, from the class timetables and recorded attendance.</p>
+        <div class="hrd-module-grid">
+          <article class="hrd-module-card"><p class="hrd-module-title">Faculty Schedules</p><p class="hrd-section-sub" style="font-size:14px">Every teaching session by faculty member, room and mode.</p><a class="hrd-link" href="/app/hr-academic-presence/faculty">Open →</a></article>
+          <article class="hrd-module-card"><p class="hrd-module-title">Proctor Schedules</p><p class="hrd-section-sub" style="font-size:14px">Exam supervision assignments by date, time and room.</p><a class="hrd-link" href="/app/hr-academic-presence/proctors">Open →</a></article>
+          <article class="hrd-module-card"><p class="hrd-module-title">Students on Campus</p><p class="hrd-section-sub" style="font-size:14px">Expected and present students in each hour of the day.</p><a class="hrd-link" href="/app/hr-academic-presence/students">Open →</a></article>
+          <article class="hrd-module-card"><p class="hrd-module-title">Faculty After 4 PM</p><p class="hrd-section-sub" style="font-size:14px">Faculty on campus after 4:00 PM each day, teaching or proctoring.</p><a class="hrd-link" href="/app/hr-academic-presence/after_hours">Open →</a></article>
+        </div>
+      </section>
+
       <section class="hrd-group" aria-labelledby="hrd-leave-heading">
         <h3 id="hrd-leave-heading">Leave Management</h3>
         <p class="hrd-section-sub">Define a shared policy, assign it to employees, and track individual balances.</p>
