@@ -91,7 +91,7 @@
  "modified": "2026-05-15 13:35:46.909460",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
- "name": "Return from Leave Request",
+ "name": "Leave Return Request",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

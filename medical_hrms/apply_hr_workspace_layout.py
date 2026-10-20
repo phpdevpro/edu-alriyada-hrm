@@ -50,7 +50,7 @@ def execute():
     doc.append("links", {"label": "HR Dashboard", "type": "Link", "link_type": "Page", "link_to": "hr-dashboard"})
 
     doc.append("links", {"label": "Employee Services", "type": "Card Break"})
-    for item in ["Permission Request", "Remote Work Request", "Leave Plan Request", "Return from Leave Request", "Salary Certificate Request"]:
+    for item in ["Permission Request", "Remote Work Request", "Leave Plan Request", "Leave Return Request", "Salary Certificate Request"]:
         doc.append("links", {"label": item, "type": "Link", "link_type": "DocType", "link_to": item})
 
     doc.append("links", {"label": "Time & Attendance", "type": "Card Break"})

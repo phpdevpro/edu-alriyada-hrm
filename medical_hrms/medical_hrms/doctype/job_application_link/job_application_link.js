@@ -5,6 +5,11 @@ const NON_ACADEMIC_CATEGORY = "Non-Academic / Other Staff";
 const NON_ACADEMIC_ROLE = "Employee";
 
 frappe.ui.form.on("Job Application Link", {
+	setup(frm) {
+		frappe
+			.xcall("medical_hrms.medical_hrms.doctype.job_application_link.job_application_link.get_hireable_roles")
+			.then((roles) => frm.set_query("role", () => ({ filters: { name: ["in", roles] } })));
+	},
 	refresh(frm) {
 		toggle_role_for_category(frm);
 

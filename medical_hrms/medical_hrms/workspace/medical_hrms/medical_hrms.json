@@ -74,9 +74,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Return from Leave Request",
+   "label": "Leave Return Request",
    "link_count": 0,
-   "link_to": "Return from Leave Request",
+   "link_to": "Leave Return Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"

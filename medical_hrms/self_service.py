@@ -7,7 +7,7 @@ FIELDS = {
     "Permission Request": "date from_time to_time reason",
     "Remote Work Request": "from_date to_date work_plan location",
     "Leave Application": "leave_type from_date to_date half_day half_day_date description",
-    "Return from Leave Request": "leave_application actual_return_date fitness_certificate",
+    "Leave Return Request": "leave_application actual_return_date fitness_certificate",
     "Salary Certificate Request": "purpose language_preference addressee include_salary_breakdown",
     "Pre Approved Overtime Request": "date ot_hours_requested ot_type business_justification compensation_preference",
     "Employee Training Request": "course_details provider estimated_cost business_benefit",

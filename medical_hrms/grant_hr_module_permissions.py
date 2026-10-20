@@ -50,7 +50,7 @@ TARGET_DOCTYPES = [
 	"Permission Request",
 	"Remote Work Request",
 	"Leave Plan Request",
-	"Return from Leave Request",
+	"Leave Return Request",
 	"Salary Certificate Request",
 	"Pre Approved Overtime Request",
 	"Employee Training Request",

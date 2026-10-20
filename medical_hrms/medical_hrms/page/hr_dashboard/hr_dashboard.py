@@ -66,7 +66,7 @@ def get_hr_doctype_counts():
         "Permission Request",
         "Remote Work Request",
         "Leave Plan Request",
-        "Return from Leave Request",
+        "Leave Return Request",
         "Salary Certificate Request",
         "Pre Approved Overtime Request",
         "Employee Training Request",

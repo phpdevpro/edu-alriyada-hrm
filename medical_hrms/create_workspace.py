@@ -28,7 +28,7 @@ def execute():
             {"label": "Time & Attendance", "type": "Card Break"},
             {"label": "Permission Request", "type": "Link", "link_type": "DocType", "link_to": "Permission Request"},
             {"label": "Remote Work Request", "type": "Link", "link_type": "DocType", "link_to": "Remote Work Request"},
-            {"label": "Return from Leave Request", "type": "Link", "link_type": "DocType", "link_to": "Return from Leave Request"},
+            {"label": "Leave Return Request", "type": "Link", "link_type": "DocType", "link_to": "Leave Return Request"},
             {"label": "Leave Plan Request", "type": "Link", "link_type": "DocType", "link_to": "Leave Plan Request"},
             
             {"label": "Financial & Admin", "type": "Card Break"},

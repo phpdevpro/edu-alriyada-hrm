@@ -5,7 +5,7 @@
 		"permission-request": ["file", "Request permission for time away from work."],
 		"remote-work-request": ["users", "Submit and track remote work requests."],
 		"leave-plan-request": ["calendar", "Plan upcoming leave and review requests."],
-		"return-from-leave-request": ["calendar", "Record an employee’s return from leave."],
+		"leave-return-request": ["calendar", "Record an employee’s return from leave."],
 		"salary-certificate-request": ["file", "Request employment and salary certificates."],
 		"leave-application": ["calendar", "Manage employee leave applications."],
 		"attendance-request": ["calendar", "Review attendance adjustments and requests."],

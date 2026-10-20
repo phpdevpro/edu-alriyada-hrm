@@ -51,7 +51,7 @@ bench restart
 Log into the Frappe Desk (usually `http://site1.local:8000`).
 1. Go to the **Employee** List. Open any Employee. You should now see a new field called **"LMS Instructor"** located right after the User ID.
 2. Search for **"Employee Medical License"** in the awesome bar. This new tracking system should be available.
-3. Search for **"Return from Leave Request"**, **"Children Education Allowance"**, or **"Pre Approved Overtime Request"**.
+3. Search for **"Leave Return Request"**, **"Children Education Allowance"**, or **"Pre Approved Overtime Request"**.
 
 ## 8. Role Setup for Workflows
 The python validation hooks (`apps/medical_hrms/medical_hrms/medical_hrms/overrides/`) rely on standard role names to authorize high-value requests. 

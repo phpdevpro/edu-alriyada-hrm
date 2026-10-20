@@ -1,7 +1,7 @@
 import frappe
 
 def execute():
-    doctype_name = "Return from Leave Request"
+    doctype_name = "Leave Return Request"
     
     if frappe.db.exists("DocType", doctype_name):
         return

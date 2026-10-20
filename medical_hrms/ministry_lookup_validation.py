@@ -171,3 +171,11 @@ def validate_jameah_academic_qualification_ministry_lookups(doc, method=None):
 def validate_jameah_previous_work_experience_ministry_lookups(doc, method=None):
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Jameah Previous Work Experience"]:
 		_validate_field(doc, field["fieldname"], field["category"])
+
+
+def core_gender(ministry_gender):
+	"""The core Gender named like a Ministry Gender code (Gender::1 -> Male), or None."""
+	if not ministry_gender or frappe.db.exists("Gender", ministry_gender):
+		return ministry_gender
+	english = frappe.db.get_value(DOCTYPE, {"name": ministry_gender, "code_category": "Gender"}, "name_english")
+	return english if english and frappe.db.exists("Gender", english) else None

@@ -112,6 +112,7 @@ website_route_rules = [
 after_install = [
 	"medical_hrms.monthly_leave_policy.setup",
 	"medical_hrms.academic_presence_setup.execute",
+	"medical_hrms.hr_core_permissions.execute",
 	"medical_hrms.create_jameah_doctypes.execute",
 	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",
@@ -126,6 +127,7 @@ after_install = [
 after_migrate = [
 	"medical_hrms.monthly_leave_policy.setup",
 	"medical_hrms.academic_presence_setup.execute",
+	"medical_hrms.hr_core_permissions.execute",
 	"medical_hrms.create_jameah_doctypes.execute",
 	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",
@@ -175,7 +177,7 @@ permission_query_conditions = {
 		"Permission Request",
 		"Remote Work Request",
 		"Leave Plan Request",
-		"Return from Leave Request",
+		"Leave Return Request",
 		"Salary Certificate Request",
 		"Pre Approved Overtime Request",
 		"Employee Training Request",
@@ -203,9 +205,11 @@ for doctype in ("Leave Application", "Attendance Request", "Expense Claim"):
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+# medical_hrms is installed after hrms, so this replaces (and extends)
+# hrms.overrides.employee_master.EmployeeMaster.
+override_doctype_class = {
+	"Employee": "medical_hrms.medical_hrms.overrides.employee.MedicalEmployee",
+}
 
 # Document Events
 # ---------------

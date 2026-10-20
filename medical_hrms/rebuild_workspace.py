@@ -56,7 +56,7 @@ def execute():
             {
                 "id": "block_es_4",
                 "type": "shortcut",
-                "data": {"shortcut_name": "Return from Leave Request", "col": 3}
+                "data": {"shortcut_name": "Leave Return Request", "col": 3}
             },
             {
                 "id": "block_es_5",
@@ -192,7 +192,7 @@ def execute():
             {"label": "Leave Application", "type": "DocType", "link_to": "Leave Application"},
             {"label": "Permission Request", "type": "DocType", "link_to": "Permission Request"},
             {"label": "Remote Work Request", "type": "DocType", "link_to": "Remote Work Request"},
-            {"label": "Return from Leave Request", "type": "DocType", "link_to": "Return from Leave Request"},
+            {"label": "Leave Return Request", "type": "DocType", "link_to": "Leave Return Request"},
             {"label": "Leave Plan Request", "type": "DocType", "link_to": "Leave Plan Request"},
             {"label": "Attendance Request", "type": "DocType", "link_to": "Attendance Request"},
             

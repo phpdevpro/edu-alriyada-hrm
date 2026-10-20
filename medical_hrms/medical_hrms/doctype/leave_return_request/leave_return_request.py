@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ReturnfromLeaveRequest(Document):
+class LeaveReturnRequest(Document):
 	pass

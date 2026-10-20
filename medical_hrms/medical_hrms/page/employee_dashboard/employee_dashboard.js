@@ -20,7 +20,7 @@ const employeeServices = [
 	["Permission Request", "Permission Request", "Request short permission or time away", "clock"],
 	["Remote Work", "Remote Work Request", "Request remote work for specific dates", "laptop"],
 	["Request Leave", "Leave Application", "Apply for leave and track your approval", "calendar"],
-	["Return from Leave", "Return from Leave Request", "Confirm your return and medical clearance", "refresh-cw"],
+	["Return from Leave", "Leave Return Request", "Confirm your return and medical clearance", "refresh-cw"],
 	["Salary Certificate", "Salary Certificate Request", "Request an official salary certificate", "file-text"],
 	["Overtime", "Pre Approved Overtime Request", "Request overtime pre-approval", "clock"],
 	["Training", "Employee Training Request", "Request professional training", "book-open"],

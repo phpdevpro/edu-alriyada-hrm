@@ -12,7 +12,7 @@ REQUEST_DOCTYPES = [
     "Children Medical Allowance Request",
     "Salary Certificate Request",
     "Pre Approved Overtime Request",
-    "Return from Leave Request",
+    "Leave Return Request",
     "Remote Work Request",
     "Permission Request",
     "Employee Medical License",

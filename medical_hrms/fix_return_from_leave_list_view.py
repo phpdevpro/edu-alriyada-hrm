@@ -3,7 +3,7 @@ import json
 import frappe
 
 
-DOCTYPE = "Return from Leave Request"
+DOCTYPE = "Leave Return Request"
 SAFE_SORT_FIELDS = {"modified", "creation", "name", "employee", "actual_return_date", "status"}
 SAFE_SORT_ORDERS = {"asc", "desc"}
 

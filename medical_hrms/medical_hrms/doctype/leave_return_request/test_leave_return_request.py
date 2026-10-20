@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestReturnfromLeaveRequest(FrappeTestCase):
+class TestLeaveReturnRequest(FrappeTestCase):
 	pass

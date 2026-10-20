@@ -27,7 +27,7 @@ def execute():
         {
             "id": "block5",
             "type": "shortcut",
-            "data": {"shortcut_name": "Return from Leave Request", "col": 3}
+            "data": {"shortcut_name": "Leave Return Request", "col": 3}
         },
         {
             "id": "block6",

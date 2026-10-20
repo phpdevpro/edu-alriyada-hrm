@@ -8,7 +8,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import get_datetime, get_url
 
-from medical_hrms.medical_hrms.recruitment.job_application import validate_hireable_role
+from medical_hrms.medical_hrms.recruitment.job_application import HIREABLE_ROLES, validate_hireable_role
 
 NON_ACADEMIC_CATEGORY = "Non-Academic / Other Staff"
 NON_ACADEMIC_ROLE = "Employee"
@@ -45,3 +45,10 @@ class JobApplicationLink(Document):
 			if not frappe.db.exists("Job Application Link", {"generated_token": token}):
 				return token
 		frappe.throw(_("Unable to generate a unique token. Please try again."))
+
+
+@frappe.whitelist()
+def get_hireable_roles():
+	"""Roles HR may offer on an application link (for the Role field's filter)."""
+	frappe.has_permission("Job Application Link", "read", throw=True)
+	return list(HIREABLE_ROLES)
