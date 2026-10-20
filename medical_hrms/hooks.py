@@ -111,6 +111,7 @@ website_route_rules = [
 # both lifecycle paths: fresh installs and subsequent migrations/restores.
 after_install = [
 	"medical_hrms.monthly_leave_policy.setup",
+	"medical_hrms.academic_presence_setup.execute",
 	"medical_hrms.create_jameah_doctypes.execute",
 	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",
@@ -124,6 +125,7 @@ after_install = [
 ]
 after_migrate = [
 	"medical_hrms.monthly_leave_policy.setup",
+	"medical_hrms.academic_presence_setup.execute",
 	"medical_hrms.create_jameah_doctypes.execute",
 	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",

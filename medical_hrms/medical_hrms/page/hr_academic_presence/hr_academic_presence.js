@@ -38,11 +38,11 @@ const TABS = {
 	},
 	after_hours: {
 		label: __("Faculty After 4 PM"),
-		hint: __("Faculty on campus after 4:00 PM each day for teaching or proctoring. \"Confirmed\" means attendance was recorded for that class."),
+		hint: __("Faculty on campus after the cut-off time each day (HR Settings, default 4:00 PM). Attendance-device logs are used when available; otherwise in-person teaching or proctoring, confirmed when class attendance was recorded."),
 		filters: "range",
 		method: "get_faculty_after_hours",
 		columns: [["date", __("Date")], ["name", __("Faculty Member")], ["email", __("Email")], ["until", __("On Campus Until")],
-			["activities", __("Activities")], ["status", __("Status")]],
+			["activities", __("Activities")], ["status", __("Status")], ["source", __("Evidence")]],
 		stats: (s) => [[s.people, __("Faculty Members")], [s.person_days, __("Person-days")], [s.busiest_day ? frappe.datetime.str_to_user(s.busiest_day) : "—", __("Busiest Day")]],
 		empty: __("No faculty on campus after 4 PM in this period."),
 	},
@@ -170,8 +170,25 @@ class AcademicPresence {
 				<tbody>${rows.map((row) => `<tr>${tab.columns.map(([key]) => `<td>${cell(key, row)}</td>`).join("")}</tr>`).join("")}</tbody>
 			</table>`);
 		}
+		const notes = [];
 		const outside = this.data.outside_hours || [];
-		this.$(".ap-extra").html(outside.length ? `<div class="ap-note">${esc(__("{0} class session(s) fall outside 07:00–22:00 and are not shown in the hourly table (check the timetable): ", [outside.length]))}${outside.map((s) => esc(`${s.class_name} ${s.time}`)).join(", ")}</div>` : "");
+		if (outside.length) {
+			notes.push(esc(__("{0} class session(s) fall outside 07:00–22:00 and are not shown in the hourly table (check the timetable): ", [outside.length])) + outside.map((s) => esc(`${s.class_name} ${s.time}`)).join(", "));
+		}
+		const days_off = this.data.days_off || [];
+		if (days_off.length) {
+			notes.push(esc(__("No regular classes on: ")) + days_off.map((d) => esc(`${frappe.datetime.str_to_user(d.date)} (${d.reason})`)).join(", "));
+		}
+		if (this.data.holiday_list_missing) {
+			notes.push(esc(__("No Academic Holiday List is set, so official holidays are not excluded. Set it in HR Settings > Academic Schedules & Presence.")));
+		}
+		if (this.tab === "after_hours") {
+			notes.push(esc(__("Cut-off time: {0}. Change it in HR Settings > Academic Schedules & Presence.", [this.data.cutoff])));
+			if (!this.data.devices_connected) {
+				notes.push(esc(__("No attendance-device logs in this period, so times come from the timetable and class attendance. Once devices are connected, actual check-out times are used automatically.")));
+			}
+		}
+		this.$(".ap-extra").html(notes.map((note) => `<div class="ap-note">${note}</div>`).join(""));
 	}
 
 	export() {
