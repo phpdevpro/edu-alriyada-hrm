@@ -79,6 +79,9 @@ frappe.ui.form.on("Employee", {
 	refresh(frm) {
 		toggle_special_needs_type(frm);
 		toggle_identity_numbers(frm);
+		if (!frm.is_new() && ["HR Manager", "HR User", "System Manager"].some((r) => frappe.user.has_role(r))) {
+			frm.add_custom_button(__("Ministry (Jameah) Data"), () => show_ministry_rows(frm), __("View"));
+		}
 	},
 
 	custom_is_special_needs(frm) {
@@ -166,4 +169,34 @@ function hide_ministry_code_docnames_in_links() {
 	};
 
 	frappe.ui.form.ControlLink.prototype._ministry_code_docnames_hidden = true;
+}
+
+// What the Ministry views send for this employee, section by section.
+function show_ministry_rows(frm) {
+	frappe.call({
+		method: "medical_hrms.jameah.status.employee_view_rows",
+		args: { employee: frm.doc.name },
+		freeze: true,
+	}).then((r) => {
+		const data = r.message || {};
+		const esc = frappe.utils.escape_html;
+		let html = "";
+		if (data.excluded_reason) {
+			html = `<p class="text-muted">${esc(data.excluded_reason)}</p>`;
+		} else {
+			for (const [view, rows] of Object.entries(data.views || {})) {
+				html += `<h5 style="margin-top:14px"><code>${esc(view)}</code> (${rows.length})</h5>`;
+				if (!rows.length) {
+					html += `<p class="text-muted">${__("No rows.")}</p>`;
+					continue;
+				}
+				const cols = Object.keys(rows[0]);
+				html += `<div style="overflow-x:auto"><table class="table table-bordered table-sm" style="font-size:12px"><thead><tr>${cols
+					.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${cols
+					.map((c) => `<td>${row[c] === null ? '<span class="text-muted">—</span>' : esc(String(row[c]))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+			}
+			html = `<p class="text-muted">${__("Empty cells are sent to the Ministry as empty. Lookup columns carry the Ministry code.")}</p>` + html;
+		}
+		new frappe.ui.Dialog({ title: __("Ministry (Jameah) Data"), size: "extra-large", fields: [{ fieldtype: "HTML", options: html }] }).show();
+	});
 }

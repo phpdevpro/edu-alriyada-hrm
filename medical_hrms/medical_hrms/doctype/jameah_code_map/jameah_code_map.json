@@ -1,0 +1,184 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-10-20 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "description": "Crosswalk from a value stored by the college system (e.g. Religion 'Islam') to the official Ministry (Jameah) code. The Ministry views only use rows marked Verified.",
+ "field_order": [
+  "source_doctype",
+  "source_value",
+  "code_category",
+  "column_break_1",
+  "status",
+  "method",
+  "usage_count",
+  "section_code",
+  "jameah_code",
+  "ministry_code",
+  "ministry_name",
+  "column_break_2",
+  "suggestion",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Data",
+   "label": "Source",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1,
+   "description": "Where the value comes from, e.g. Religion, Student.id_type."
+  },
+  {
+   "fieldname": "source_value",
+   "fieldtype": "Data",
+   "label": "Source Value",
+   "reqd": 1,
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "code_category",
+   "fieldtype": "Data",
+   "label": "Ministry Code Category",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Needs Review\nVerified",
+   "default": "Needs Review",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "method",
+   "fieldtype": "Select",
+   "label": "Matched By",
+   "options": "\nCode and name\nName\nReviewed\nManual",
+   "read_only": 1,
+   "description": "Code and name / Name: matched automatically against the Ministry list. Reviewed: checked when the views were built. Manual: set by a user; never overwritten."
+  },
+  {
+   "fieldname": "usage_count",
+   "fieldtype": "Int",
+   "label": "Records Using This Value",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_code",
+   "fieldtype": "Section Break",
+   "label": "Ministry Code"
+  },
+  {
+   "fieldname": "jameah_code",
+   "fieldtype": "Link",
+   "label": "Ministry Code",
+   "options": "Jameah Ministry Code",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "ministry_code",
+   "fieldtype": "Data",
+   "label": "Code Sent to the Ministry",
+   "read_only": 1,
+   "fetch_from": "jameah_code.ministry_code"
+  },
+  {
+   "fieldname": "ministry_name",
+   "fieldtype": "Data",
+   "label": "Ministry Name",
+   "read_only": 1,
+   "fetch_from": "jameah_code.name_english"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "suggestion",
+   "fieldtype": "Small Text",
+   "label": "Suggested Codes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-20 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Medical HRMS",
+ "name": "Jameah Code Map",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  },
+  {
+   "role": "HR Manager",
+   "read": 1,
+   "write": 1,
+   "create": 0,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  },
+  {
+   "role": "Education Manager",
+   "read": 1,
+   "write": 1,
+   "create": 0,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  },
+  {
+   "role": "HR User",
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  }
+ ],
+ "sort_field": "usage_count",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "source_value",
+ "track_changes": 1
+}

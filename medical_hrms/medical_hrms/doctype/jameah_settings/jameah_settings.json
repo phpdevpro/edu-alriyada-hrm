@@ -1,0 +1,207 @@
+{
+ "actions": [],
+ "creation": "2026-10-20 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "issingle": 1,
+ "description": "Institution-level values for the Ministry (Jameah) views. A field left empty is sent to the Ministry as empty (NULL), never guessed.",
+ "field_order": [
+  "section_institution",
+  "institute",
+  "college",
+  "column_break_1",
+  "study_country",
+  "study_location_city",
+  "section_students",
+  "regular_study_type",
+  "bridging_study_type",
+  "gpa_type",
+  "column_break_2",
+  "program_period",
+  "program_period_unit",
+  "file_base_url",
+  "section_employees",
+  "employee_company",
+  "section_status",
+  "academic_summary_refreshed_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_institution",
+   "fieldtype": "Section Break",
+   "label": "Institution"
+  },
+  {
+   "fieldname": "institute",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "Educational Institution (UniversityId)",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"Coding of educational insti\"]]",
+   "description": "RCHS is P18 in the Ministry list."
+  },
+  {
+   "fieldname": "college",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "College (AdmissionCollegeId / CurrentCollegeId)",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"College Coding Guide\"]]",
+   "description": "The college code the Ministry assigned to RCHS. Confirm with the Ministry before setting."
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "study_country",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "Country of Study (CountryId)",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"Nationality\"]]"
+  },
+  {
+   "fieldname": "study_location_city",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "Study Location City (StudyLocationCityId)",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"Coding cities and governora\"]]",
+   "description": "City of the campus, used when a student has no study city of their own."
+  },
+  {
+   "fieldname": "section_students",
+   "fieldtype": "Section Break",
+   "label": "Students"
+  },
+  {
+   "fieldname": "regular_study_type",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "Study Type for Regular Students",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"Study type coding\"]]",
+   "description": "Used for StudyTypeId when the student has no study type in Student Ministry Detail and is not a bridging student."
+  },
+  {
+   "fieldname": "bridging_study_type",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "Study Type for Bridging Students",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"Study type coding\"]]",
+   "description": "Used for students with bridging (equivalent) courses."
+  },
+  {
+   "fieldname": "gpa_type",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "GPA Type (GPATypeId)",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"Cumulative GPA\"]]",
+   "description": "The grading scale used for the GPA column."
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "program_period",
+   "fieldtype": "Int",
+   "label": "Program Duration (StudyProgramPeriod)",
+   "description": "Standard duration of the program in the unit below."
+  },
+  {
+   "fieldname": "program_period_unit",
+   "fieldtype": "Link",
+   "options": "Jameah Ministry Code",
+   "label": "Program Duration Unit",
+   "link_filters": "[[\"Jameah Ministry Code\", \"code_category\", \"=\", \"Program duration coding\"]]"
+  },
+  {
+   "fieldname": "file_base_url",
+   "fieldtype": "Data",
+   "label": "File Base URL",
+   "description": "Prefix for attachment links sent to the Ministry, e.g. https://erp.example.edu.sa"
+  },
+  {
+   "fieldname": "section_employees",
+   "fieldtype": "Section Break",
+   "label": "Employees"
+  },
+  {
+   "fieldname": "employee_company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "label": "Company Reported as Employees",
+   "description": "Only employees of this company are sent. Teaching staff (linked to an Instructor) are always left out: the Ministry receives them as Faculty."
+  },
+  {
+   "fieldname": "section_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "academic_summary_refreshed_on",
+   "fieldtype": "Datetime",
+   "label": "Academic Figures Last Refreshed",
+   "read_only": 1,
+   "description": "GPA, credit hours and latest term in the Academic Details view are refreshed every hour."
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-20 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Medical HRMS",
+ "name": "Jameah Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  },
+  {
+   "role": "HR Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  },
+  {
+   "role": "Education Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  },
+  {
+   "role": "HR User",
+   "read": 1,
+   "write": 0,
+   "create": 0,
+   "delete": 0,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,4 +1,5 @@
 import frappe
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 from medical_hrms.create_child_tables import create_child_doctypes, link_tables_to_parents
@@ -63,6 +64,20 @@ CHILD_FIELD_LABELS = {
 }
 
 LOOKUP_DOCTYPE = "Jameah Ministry Code"
+
+# create_employee_from_applicant copies these from the Employee Job Applicant,
+# but Employee had no such fields, so the values were silently dropped. The
+# phone numbers are Ministry fields (HomeTelephoneNumber, WorkTelephoneNumber,
+# WorkTelephoneExtentionNumber); the rest keep the application on record.
+EMPLOYEE_EXTRA_FIELDS = [
+	{"fieldname": "custom_home_telephone_number", "fieldtype": "Data", "options": "Phone", "label": "Home Telephone Number", "insert_after": "cell_number"},
+	{"fieldname": "custom_work_telephone_number", "fieldtype": "Data", "options": "Phone", "label": "Work Telephone Number", "insert_after": "custom_home_telephone_number"},
+	{"fieldname": "custom_work_telephone_extention_number", "fieldtype": "Data", "label": "Work Telephone Extension", "insert_after": "custom_work_telephone_number"},
+	{"fieldname": "custom_application_category", "fieldtype": "Data", "label": "Application Category", "read_only": 1, "insert_after": "custom_job_applicant"},
+	{"fieldname": "custom_expected_salary", "fieldtype": "Currency", "label": "Expected Salary (Application)", "read_only": 1, "insert_after": "custom_application_category"},
+	{"fieldname": "custom_nic_passport", "fieldtype": "Data", "label": "National ID / Passport (Application)", "read_only": 1, "insert_after": "custom_expected_salary"},
+	{"fieldname": "custom_resume_attachment", "fieldtype": "Attach", "label": "Resume (Application)", "read_only": 1, "insert_after": "custom_nic_passport"},
+]
 
 ACADEMIC_EXPERIENCE_DOCTYPE = "Jameah Work Experience"
 PREVIOUS_EXPERIENCE_DOCTYPE = "Jameah Previous Work Experience"
@@ -241,6 +256,7 @@ def _apply_ministry_code_link_filters():
 def execute():
 	create_jameah_ministry_code()
 	add_jameah_fields()
+	create_custom_fields({"Employee": EMPLOYEE_EXTRA_FIELDS}, update=True)
 	create_child_doctypes()
 	link_tables_to_parents()
 	setup_ministry_lookup_fields()

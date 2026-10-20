@@ -116,6 +116,7 @@ after_install = [
 	"medical_hrms.create_jameah_doctypes.execute",
 	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",
+	"medical_hrms.jameah.execute",
 	"medical_hrms.create_institute_doctypes.execute",
 	"medical_hrms.create_facility_doctype.execute",
 	"medical_hrms.configure_jameah_master_permissions.execute",
@@ -131,6 +132,7 @@ after_migrate = [
 	"medical_hrms.create_jameah_doctypes.execute",
 	"medical_hrms.ministry_codes.sync",
 	"medical_hrms.setup_employee_ministry_expected_fields.execute",
+	"medical_hrms.jameah.execute",
 	"medical_hrms.create_institute_doctypes.execute",
 	"medical_hrms.create_facility_doctype.execute",
 	"medical_hrms.configure_jameah_master_permissions.execute",
@@ -259,6 +261,10 @@ for request_doctype in EMPLOYEE_REQUEST_DOCTYPES:
 	doc_events.setdefault(request_doctype, {})["before_validate"] = "medical_hrms.self_service.validate_employee_request"
 
 # ---------------
+
+scheduler_events = {
+	"hourly": ["medical_hrms.jameah.summary.refresh"],
+}
 
 # scheduler_events = {
 # 	"all": [

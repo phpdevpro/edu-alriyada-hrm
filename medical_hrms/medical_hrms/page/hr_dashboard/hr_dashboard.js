@@ -137,6 +137,16 @@ function render_layout(page) {
         </div>
       </section>
 
+      <section class="hrd-group" aria-labelledby="hrd-jameah-heading">
+        <h3 id="hrd-jameah-heading">Ministry (Jameah) Data</h3>
+        <p class="hrd-section-sub">What the Ministry views send for employees and students, and what still needs a code or a correction.</p>
+        <div class="hrd-module-grid">
+          <article class="hrd-module-card"><p class="hrd-module-title">Jameah Data Check</p><p class="hrd-section-sub" style="font-size:14px">Gaps, invalid codes and source problems, view by view.</p><a class="hrd-link" href="/app/jameah-data-check">Open →</a></article>
+          <article class="hrd-module-card"><p class="hrd-module-title">Code Map</p><p class="hrd-section-sub" style="font-size:14px">College values matched to official Ministry codes.</p><a class="hrd-link" href="/app/jameah-code-map">Open →</a></article>
+          <article class="hrd-module-card"><p class="hrd-module-title">Jameah Settings</p><p class="hrd-section-sub" style="font-size:14px">Institution codes used by the Ministry views.</p><a class="hrd-link" href="/app/jameah-settings">Open →</a></article>
+        </div>
+      </section>
+
       <section class="hrd-group" aria-labelledby="hrd-leave-heading">
         <h3 id="hrd-leave-heading">Leave Management</h3>
         <p class="hrd-section-sub">Define a shared policy, assign it to employees, and track individual balances.</p>

@@ -1,0 +1,1388 @@
+{
+ "1. Personal Information": [
+  {
+   "column": "ArabicFirstName",
+   "mandatory": true,
+   "type": "String",
+   "english": "First Name (Arabic)"
+  },
+  {
+   "column": "ArabicSecondName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Second Name (Arabic)"
+  },
+  {
+   "column": "ArabicThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (Arabic)"
+  },
+  {
+   "column": "ArabicFourthName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Fourth Name (Arabic)"
+  },
+  {
+   "column": "EnglishFirstName",
+   "mandatory": true,
+   "type": "String",
+   "english": "First Name (English)"
+  },
+  {
+   "column": "EnglishSecondName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Second Name (English)"
+  },
+  {
+   "column": "EnglishThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (English)"
+  },
+  {
+   "column": "EnglishFourthName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Fourth Name (English)"
+  },
+  {
+   "column": "Email",
+   "mandatory": true,
+   "type": "String",
+   "english": "E-mail"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Mobile number"
+  },
+  {
+   "column": "IdentityTypeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Identity type"
+  },
+  {
+   "column": "SpecialNeedsTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of special needs"
+  },
+  {
+   "column": "IdentityNumber",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Identity Number (civil registry)"
+  },
+  {
+   "column": "PassportNumber",
+   "mandatory": false,
+   "type": "String",
+   "english": "Passport number"
+  },
+  {
+   "column": "BorderNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Border number"
+  },
+  {
+   "column": "HomeIdentityNumber",
+   "mandatory": false,
+   "type": "String",
+   "english": "ID number in the country of origin for non-Saudis"
+  },
+  {
+   "column": "BirthPlaceId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Place of birth"
+  },
+  {
+   "column": "BirthDate",
+   "mandatory": true,
+   "type": "Gregorian Date",
+   "english": "Date of birth"
+  },
+  {
+   "column": "Gender",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Sex"
+  },
+  {
+   "column": "NationalityId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Nationality"
+  },
+  {
+   "column": "MaritalStatusId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Marital status"
+  },
+  {
+   "column": "OriginalLanguageId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Original language"
+  },
+  {
+   "column": "ReligionId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Religion"
+  },
+  {
+   "column": "SpecialNeedsId",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Special needs"
+  },
+  {
+   "column": "SpecialNeedId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of special needs"
+  },
+  {
+   "column": "LastUpdateDate",
+   "mandatory": true,
+   "type": "Gregorian Date",
+   "english": "Last update date"
+  }
+ ],
+ "2. Companion / Guardian": [
+  {
+   "column": "ArabicFirstName",
+   "mandatory": true,
+   "type": "String",
+   "english": "First Name (Arabic)"
+  },
+  {
+   "column": "ArabicSecondName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Second Name (Arabic)"
+  },
+  {
+   "column": "ArabicThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (Arabic)"
+  },
+  {
+   "column": "ArabicFourthName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Fourth Name (Arabic)"
+  },
+  {
+   "column": "EnglishFirstName",
+   "mandatory": false,
+   "type": "String",
+   "english": "First Name (English)"
+  },
+  {
+   "column": "EnglishSecondName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Second Name (English)"
+  },
+  {
+   "column": "EnglishThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (English)"
+  },
+  {
+   "column": "EnglishFourthName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Fourth Name (English)"
+  },
+  {
+   "column": "IdentityNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Identity Number (civil registry)"
+  },
+  {
+   "column": "IdentityTypeId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "ID type (civil registration type)"
+  },
+  {
+   "column": "IdentityExpiryDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Identity Expiry Date"
+  },
+  {
+   "column": "NationalityId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Nationality"
+  },
+  {
+   "column": "RelationshipTypeId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Relationship"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Mobile number"
+  }
+ ],
+ "3. Foreign Address": [
+  {
+   "column": "CountryId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country"
+  },
+  {
+   "column": "City",
+   "mandatory": false,
+   "type": "String",
+   "english": "City"
+  },
+  {
+   "column": "State",
+   "mandatory": false,
+   "type": "String",
+   "english": "State"
+  },
+  {
+   "column": "Neighborhood",
+   "mandatory": false,
+   "type": "String",
+   "english": "Neighborhood"
+  },
+  {
+   "column": "Street",
+   "mandatory": false,
+   "type": "String",
+   "english": "Street"
+  },
+  {
+   "column": "HouseNumber",
+   "mandatory": false,
+   "type": "String",
+   "english": "House number"
+  },
+  {
+   "column": "HousingStatusId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Residence status in home country"
+  },
+  {
+   "column": "PostalAddress",
+   "mandatory": false,
+   "type": "String",
+   "english": "Postal address"
+  },
+  {
+   "column": "ZipCode",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Zip Code"
+  },
+  {
+   "column": "HomeTelephoneNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Home phone number"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Mobile number"
+  }
+ ],
+ "4. Relatives": [
+  {
+   "column": "ArabicFirstName",
+   "mandatory": true,
+   "type": "String",
+   "english": "First Name (Arabic)"
+  },
+  {
+   "column": "ArabicSecondName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Second Name (Arabic)"
+  },
+  {
+   "column": "ArabicThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (Arabic)"
+  },
+  {
+   "column": "ArabicFourthName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Fourth Name (Arabic)"
+  },
+  {
+   "column": "EnglishFirstName",
+   "mandatory": false,
+   "type": "String",
+   "english": "First Name (English)"
+  },
+  {
+   "column": "EnglishSecondName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Second Name (English)"
+  },
+  {
+   "column": "EnglishThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (English)"
+  },
+  {
+   "column": "EnglishFourthName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Fourth Name (English)"
+  },
+  {
+   "column": "CountryId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country"
+  },
+  {
+   "column": "City",
+   "mandatory": false,
+   "type": "String",
+   "english": "City"
+  },
+  {
+   "column": "RelationshipId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Relationship"
+  },
+  {
+   "column": "TelephoneNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Home phone number"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Mobile number"
+  },
+  {
+   "column": "PostalAddress",
+   "mandatory": false,
+   "type": "String",
+   "english": "Postal address"
+  },
+  {
+   "column": "EmailAddress",
+   "mandatory": false,
+   "type": "String",
+   "english": "E-mail"
+  }
+ ],
+ "5. Address In the Kingdom / KSA (Local) Address": [
+  {
+   "column": "City",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "City"
+  },
+  {
+   "column": "HousingStatusId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Housing status in the Kingdom"
+  },
+  {
+   "column": "PostalAddress",
+   "mandatory": false,
+   "type": "String",
+   "english": "Postal address"
+  },
+  {
+   "column": "ZipCode",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Zip code"
+  },
+  {
+   "column": "HomeTelephoneNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Home phone number"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Mobile number"
+  },
+  {
+   "column": "StreetName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Street Name"
+  },
+  {
+   "column": "AdditionalNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Additional number"
+  },
+  {
+   "column": "BuildingNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Building number"
+  }
+ ],
+ "6. High School Certificate": [
+  {
+   "column": "CertificateTypeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Type of secondary school certificate"
+  },
+  {
+   "column": "CertificateYearHijri",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Year of obtaining the High school certificate (Hijri)"
+  },
+  {
+   "column": "CertificateSourceCityId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "City of obtaining the certificate"
+  },
+  {
+   "column": "Percentage",
+   "mandatory": true,
+   "type": "Number",
+   "english": "Percentage"
+  },
+  {
+   "column": "CertificateYearGregorian",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Year of obtaining the High school certificate (Gregorian)"
+  },
+  {
+   "column": "IsObtainedInSaudiArabia",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Was the high school diploma obtained within the Kingdom?"
+  },
+  {
+   "column": "CertificateSourceCountryCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country of obtaining the High school certificate (from outside the Kingdom)"
+  }
+ ],
+ "7. Contact": [
+  {
+   "column": "EmailAddress",
+   "mandatory": true,
+   "type": "String",
+   "english": "E-mail"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Mobile number"
+  },
+  {
+   "column": "TwitterAccount",
+   "mandatory": false,
+   "type": "String",
+   "english": "Twitter account"
+  },
+  {
+   "column": "FaceBookAccount",
+   "mandatory": false,
+   "type": "String",
+   "english": "Facebook account"
+  },
+  {
+   "column": "OtherConnectionAccounts",
+   "mandatory": false,
+   "type": "String",
+   "english": "Other social media accounts"
+  }
+ ],
+ "8. Scholarship": [
+  {
+   "column": "StudyScholarshipTypeId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Scholarship Type"
+  },
+  {
+   "column": "ScholarshipClassificationId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Scholarship Classification"
+  },
+  {
+   "column": "StudyTypeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Type of education"
+  },
+  {
+   "column": "VisaNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Visa number"
+  },
+  {
+   "column": "VisitDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Visa date"
+  }
+ ],
+ "9. Academic Details": [
+  {
+   "column": "StudentIdentityNumber",
+   "mandatory": true,
+   "type": "String",
+   "english": "Student Academic Number"
+  },
+  {
+   "column": "UniversityId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Educational institution (University)"
+  },
+  {
+   "column": "TargetScientificDegreeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic degree (Targeted degree)"
+  },
+  {
+   "column": "GrantedScientificDegreeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic degree (Awarded to the student)"
+  },
+  {
+   "column": "AdmissionCollegeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "College accepted"
+  },
+  {
+   "column": "CurrentCollegeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Current college"
+  },
+  {
+   "column": "UniversityDepartmentId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Section"
+  },
+  {
+   "column": "UniversityMajorId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "General Specialization (Main)"
+  },
+  {
+   "column": "SaudiMajorCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Specialization according to Saudi classification"
+  },
+  {
+   "column": "SaudiEducationLevelCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Educational level according to Saudi classification"
+  },
+  {
+   "column": "UniversityMinorId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Subspecialty"
+  },
+  {
+   "column": "StudyProgramPeriod",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Duration of study program"
+  },
+  {
+   "column": "StudyProgramPeriodUnitId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Program duration unit"
+  },
+  {
+   "column": "RequestedCreditHoursCount",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Number of credit hours required"
+  },
+  {
+   "column": "RegisteredCreditHoursCount",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Number of registered academic units"
+  },
+  {
+   "column": "PassedCreditHoursCount",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Number of credit hours passed"
+  },
+  {
+   "column": "RemainingCreditHoursCount",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Number of remaining credit hours"
+  },
+  {
+   "column": "AcademicStatusId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic status (general status)"
+  },
+  {
+   "column": "StudyTypeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Study type"
+  },
+  {
+   "column": "ScholarshipTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Scholarship Type"
+  },
+  {
+   "column": "CurrentAcademicYeardate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Date of the current academic year (AD)"
+  },
+  {
+   "column": "ScientificDegreeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic degree"
+  },
+  {
+   "column": "StudentRewardAmount",
+   "mandatory": false,
+   "type": "Number",
+   "english": "Student reward"
+  },
+  {
+   "column": "IsLastAcademicDataRecord",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Is it the Latest academic data record"
+  },
+  {
+   "column": "RegisrationStatusId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Registration status"
+  },
+  {
+   "column": "CurrentAcademicYearId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Academic year (AD)"
+  },
+  {
+   "column": "AdmissionHijriYear",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Year of joining (Hijri)"
+  },
+  {
+   "column": "CurrentYear",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Current academic year (AD)"
+  },
+  {
+   "column": "AdmissionGregorianYear",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Year of enrollment (AD)"
+  },
+  {
+   "column": "GraduationYear",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Graduation year"
+  },
+  {
+   "column": "GraduationSemesterTypeId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Graduation class"
+  },
+  {
+   "column": "SpecialityClassificationCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Specialty classification code"
+  },
+  {
+   "column": "AttendanceSemesterTypeId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Attendance semester"
+  },
+  {
+   "column": "CurrentSemesterTypeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Current semester"
+  },
+  {
+   "column": "GPATypeId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "GPA Type"
+  },
+  {
+   "column": "GPA",
+   "mandatory": true,
+   "type": "Number",
+   "english": "GPA"
+  },
+  {
+   "column": "CurrentSemesterAssesmentId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Student evaluation in the semester"
+  },
+  {
+   "column": "WarningCount",
+   "mandatory": false,
+   "type": "Number",
+   "english": "Number of academic warnings"
+  },
+  {
+   "column": "AccumulatedAssesmentId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Student's grade in the academic degree (overall student grade)"
+  },
+  {
+   "column": "IsRewardReceivedForCurrentSemester",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Student reward"
+  },
+  {
+   "column": "StudyLocationCityId",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "City (geographical location of study)"
+  },
+  {
+   "column": "CountryId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country"
+  },
+  {
+   "column": "GraduationDate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Graduation date"
+  },
+  {
+   "column": "SummerSemesterRegistrationStatus",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Summer Semester Registration Status"
+  },
+  {
+   "column": "IsTransferred",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Is the student Transferred from one educational institution to another"
+  },
+  {
+   "column": "IsAccommodationInUniversity",
+   "mandatory": false,
+   "type": "Boolean",
+   "english": "Place of residence"
+  },
+  {
+   "column": "IsMajorEducational",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Specialization classification"
+  },
+  {
+   "column": "MajorTypeId",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Field of study"
+  },
+  {
+   "column": "AcceptanceDate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Date of student acceptance to the university"
+  },
+  {
+   "column": "DisclaimerDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Release Date"
+  },
+  {
+   "column": "DisclaimerDecisionOrBarginNumber",
+   "mandatory": false,
+   "type": "String",
+   "english": "Clearance decision or transaction number"
+  },
+  {
+   "column": "DateOfLastUpdateOnAcademicStatus",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Date of last update of academic status"
+  },
+  {
+   "column": "HasScholarship",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Does the student have a scholarship?"
+  },
+  {
+   "column": "ScholarshipClassificationCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Scholarship Classification"
+  },
+  {
+   "column": "AdmissionDate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Date of joining (AD)"
+  },
+  {
+   "column": "HasThesis",
+   "mandatory": false,
+   "type": "Boolean",
+   "english": "Has Thesis?"
+  },
+  {
+   "column": "ThesisTitle",
+   "mandatory": false,
+   "type": "String",
+   "english": "Thesis Title"
+  }
+ ],
+ "10. Attachments": [
+  {
+   "column": "AttachmentTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Attachment type"
+  },
+  {
+   "column": "AttachmentURL",
+   "mandatory": false,
+   "type": "String",
+   "english": "Attached file link"
+  },
+  {
+   "column": "AttachmentTitle",
+   "mandatory": false,
+   "type": "String",
+   "english": "Attachment name"
+  }
+ ],
+ "Employee Personal Information": [
+  {
+   "column": "ArabicFirstName",
+   "mandatory": true,
+   "type": "string",
+   "english": "First Name (Arabic)"
+  },
+  {
+   "column": "ArabicSecondName",
+   "mandatory": true,
+   "type": "string",
+   "english": "Second Name (Arabic)"
+  },
+  {
+   "column": "ArabicThirdName",
+   "mandatory": false,
+   "type": "string",
+   "english": "Third Name (Arabic)"
+  },
+  {
+   "column": "ArabicFourthName",
+   "mandatory": true,
+   "type": "string",
+   "english": "Fourth Name (Arabic)"
+  },
+  {
+   "column": "EnglishFirstName",
+   "mandatory": true,
+   "type": "string",
+   "english": "First Name (English)"
+  },
+  {
+   "column": "EnglishSecondName",
+   "mandatory": true,
+   "type": "string",
+   "english": "Second Name (English)"
+  },
+  {
+   "column": "EnglishThirdName",
+   "mandatory": false,
+   "type": "string",
+   "english": "Third Name (English)"
+  },
+  {
+   "column": "EnglishFourthName",
+   "mandatory": true,
+   "type": "string",
+   "english": "Fourth Name (English)"
+  },
+  {
+   "column": "IdentityTypeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Identity type"
+  },
+  {
+   "column": "SpecialNeedsTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of special needs"
+  },
+  {
+   "column": "IdentityNumber",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Identity Civil Registry in the Kingdom"
+  },
+  {
+   "column": "BirthPlace",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "place of birth"
+  },
+  {
+   "column": "GregorianBirthDate",
+   "mandatory": true,
+   "type": "Gregorian Date",
+   "english": "date of birth"
+  },
+  {
+   "column": "PassportNumber",
+   "mandatory": false,
+   "type": "string",
+   "english": "Passport number"
+  },
+  {
+   "column": "OriginalHomeIDNumber",
+   "mandatory": false,
+   "type": "string",
+   "english": "ID number in the country of origin for non-Saudis"
+  },
+  {
+   "column": "IsMaleGender",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Sex"
+  },
+  {
+   "column": "NationalityCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Nationality"
+  },
+  {
+   "column": "MaritalStatusCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "marital status"
+  },
+  {
+   "column": "ReligionCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Religion"
+  },
+  {
+   "column": "PostalAddress",
+   "mandatory": false,
+   "type": "string",
+   "english": "Postal address"
+  },
+  {
+   "column": "CityCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "City (geographical place of business)"
+  },
+  {
+   "column": "ZipCode",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "zip code"
+  },
+  {
+   "column": "Email",
+   "mandatory": true,
+   "type": "string",
+   "english": "e-mail"
+  },
+  {
+   "column": "HomeTelephoneNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Home phone number"
+  },
+  {
+   "column": "WorkTelephoneNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Business phone number"
+  },
+  {
+   "column": "WorkTelephoneExtentionNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Extension number"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Mobile number"
+  },
+  {
+   "column": "IsSpecialNeeds",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Special needs"
+  },
+  {
+   "column": "SpecialNeedCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of special needs"
+  },
+  {
+   "column": "LastUpdateDate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Last update date"
+  }
+ ],
+ "Employee Academic Qualifications": [
+  {
+   "column": "IsLastAcademicDataRecord",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Latest academic data record"
+  },
+  {
+   "column": "ScientificDegreeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic qualification"
+  },
+  {
+   "column": "MajorCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "General Specialization (Main)"
+  },
+  {
+   "column": "MinorCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Subspecialty"
+  },
+  {
+   "column": "AssessmentTypeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Appreciation"
+  },
+  {
+   "column": "GPA",
+   "mandatory": true,
+   "type": "Number",
+   "english": "Graduation rate"
+  },
+  {
+   "column": "GPATypeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Rate type"
+  },
+  {
+   "column": "StudyTypeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Study system"
+  },
+  {
+   "column": "GraduateFrom",
+   "mandatory": true,
+   "type": "string",
+   "english": "Graduation Place"
+  },
+  {
+   "column": "Faculty",
+   "mandatory": true,
+   "type": "string",
+   "english": "College"
+  },
+  {
+   "column": "DateOfScientificDegree",
+   "mandatory": true,
+   "type": "Gregorian Date",
+   "english": "Date of obtaining the qualification"
+  },
+  {
+   "column": "GraduationYear",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Graduation year AD"
+  },
+  {
+   "column": "City",
+   "mandatory": true,
+   "type": "string",
+   "english": "The city"
+  },
+  {
+   "column": "CountryCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Country (Graduation Country)"
+  }
+ ],
+ "Employee Academic Experience": [
+  {
+   "column": "IsLatestWorkExperienceRecord",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Latest record of work experience"
+  },
+  {
+   "column": "CurrentAcademicYeardate",
+   "mandatory": true,
+   "type": "Gregorian Date",
+   "english": "School year history"
+  },
+  {
+   "column": "EmploymentStatusCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Employee's job status"
+  },
+  {
+   "column": "profession",
+   "mandatory": false,
+   "type": "string",
+   "english": "Job Title"
+  },
+  {
+   "column": "InstituteCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Educational entity"
+  },
+  {
+   "column": "LocationCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Geographical work location"
+  },
+  {
+   "column": "SectionCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic Department"
+  },
+  {
+   "column": "EmployeeNumber",
+   "mandatory": false,
+   "type": "string",
+   "english": "Job Number"
+  },
+  {
+   "column": "ProfessionRankCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Job rank"
+  },
+  {
+   "column": "HiringDate",
+   "mandatory": false,
+   "type": "Gregorian Date",
+   "english": "Date of appointment to the rank"
+  },
+  {
+   "column": "StartWorkingDate",
+   "mandatory": false,
+   "type": "Gregorian Date",
+   "english": "Start date"
+  },
+  {
+   "column": "EndWorkingDate",
+   "mandatory": false,
+   "type": "Gregorian Date",
+   "english": "End of work date"
+  },
+  {
+   "column": "FunctionalTasks",
+   "mandatory": false,
+   "type": "string",
+   "english": "Job Duties"
+  },
+  {
+   "column": "AccommodationCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Housing"
+  }
+ ],
+ "Employee Previous Experience": [
+  {
+   "column": "Profession",
+   "mandatory": false,
+   "type": "string",
+   "english": "Job Title"
+  },
+  {
+   "column": "OrganizationName",
+   "mandatory": false,
+   "type": "string",
+   "english": "Name of educational institution/company"
+  },
+  {
+   "column": "City",
+   "mandatory": false,
+   "type": "string",
+   "english": "The city"
+  },
+  {
+   "column": "CountryCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country"
+  },
+  {
+   "column": "Department",
+   "mandatory": false,
+   "type": "string",
+   "english": "College / Administration"
+  },
+  {
+   "column": "Section",
+   "mandatory": false,
+   "type": "string",
+   "english": "Section"
+  },
+  {
+   "column": "StartWorkDate",
+   "mandatory": false,
+   "type": "Gregorian Date",
+   "english": "Start date"
+  },
+  {
+   "column": "EndWorkDate",
+   "mandatory": false,
+   "type": "Gregorian Date",
+   "english": "End of work date"
+  },
+  {
+   "column": "FunctionalTasks",
+   "mandatory": false,
+   "type": "string",
+   "english": "Job Duties"
+  }
+ ],
+ "Employee Professional Certificates & Training Courses": [
+  {
+   "column": "CourseName",
+   "mandatory": false,
+   "type": "string",
+   "english": "Course Name"
+  },
+  {
+   "column": "CourseType",
+   "mandatory": false,
+   "type": "string",
+   "english": "Type"
+  },
+  {
+   "column": "Issuer",
+   "mandatory": false,
+   "type": "string",
+   "english": "Issuing Authority"
+  },
+  {
+   "column": "CourseDate",
+   "mandatory": false,
+   "type": "Gregorian Date",
+   "english": "Course history"
+  },
+  {
+   "column": "CoursePeriod",
+   "mandatory": false,
+   "type": "string",
+   "english": "Course duration"
+  },
+  {
+   "column": "CourseCity",
+   "mandatory": false,
+   "type": "string",
+   "english": "The city"
+  },
+  {
+   "column": "CourseCountry",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country"
+  }
+ ]
+}

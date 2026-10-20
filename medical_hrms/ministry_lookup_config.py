@@ -26,7 +26,7 @@ EMPLOYEE_EDUCATION_MINISTRY_FIELDS = [
 	{"fieldname": "custom_ministry_scientific_degree", "label": "Academic Qualification", "category": "Coding of academic degrees", "insert_after": "qualification"},
 	{"fieldname": "custom_ministry_major", "label": "General Specialization", "category": "Specialization Coding Guide", "insert_after": "custom_ministry_scientific_degree"},
 	{"fieldname": "custom_ministry_minor", "label": "Subspecialty", "category": "Specialization Coding Guide", "insert_after": "custom_ministry_major"},
-	{"fieldname": "custom_ministry_assessment_type", "label": "Appreciation", "category": "Cumulative GPA", "insert_after": "custom_ministry_minor"},
+	{"fieldname": "custom_ministry_assessment_type", "label": "Appreciation", "category": "Student Evaluation Coding", "insert_after": "custom_ministry_minor"},
 	{"fieldname": "custom_ministry_gpa_type", "label": "GPA Type", "category": "Cumulative GPA", "insert_after": "custom_ministry_assessment_type"},
 	{"fieldname": "custom_ministry_study_type", "label": "Study Type", "category": "Study type coding", "insert_after": "custom_ministry_gpa_type"},
 	{"fieldname": "custom_ministry_country", "label": "Graduation Country/Nationality", "category": "Nationality", "insert_after": "custom_ministry_study_type"},
@@ -37,7 +37,7 @@ JAMEAH_ACADEMIC_QUALIFICATION_MINISTRY_FIELDS = [
 	{"fieldname": "specialization", "label": "Specialization", "category": "Specialization Coding Guide"},
 	{"fieldname": "country", "label": "Country", "category": "Nationality"},
 	{"fieldname": "minor", "label": "Subspecialty", "category": "Specialization Coding Guide"},
-	{"fieldname": "assessment_type", "label": "Appreciation", "category": "Cumulative GPA"},
+	{"fieldname": "assessment_type", "label": "Appreciation", "category": "Student Evaluation Coding"},
 	{"fieldname": "gpa_type", "label": "Rate Type", "category": "Cumulative GPA"},
 	{"fieldname": "study_type", "label": "Study Type", "category": "Study type coding"},
 ]
