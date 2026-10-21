@@ -84,11 +84,13 @@ def get_hr_doctype_counts():
         # "Jameah Facility",
     ]
 
-    counts = {}
+    counts, pending = {}, {}
     for dt in doctypes:
         try:
             counts[dt] = frappe.db.count(dt)
+            # Every request type names its waiting steps "Pending ..." (Pending HR, Pending Manager ...).
+            pending[dt] = frappe.db.count(dt, {"status": ["like", "Pending%"]}) if frappe.get_meta(dt).has_field("status") else 0
         except Exception:
-            counts[dt] = 0
+            counts[dt] = pending[dt] = 0
 
-    return {"status": "success", "counts": counts}
+    return {"status": "success", "counts": counts, "pending": pending}

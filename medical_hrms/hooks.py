@@ -25,10 +25,14 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/medical_hrms/css/workspace_theme.css?v=2"
+app_include_css = [
+	"/assets/medical_hrms/css/workspace_theme.css?v=2",
+	"/assets/medical_hrms/css/hr_portal.css?v=1",  # HR / Employee Portal shell (hr_portal.js)
+]
 app_include_js = [
 	"/assets/medical_hrms/js/workspace_theme.js?v=2",
 	"/assets/medical_hrms/js/employee_navigation.js?v=1",
+	"/assets/medical_hrms/js/hr_portal.js?v=1",  # MhPortal: rail + top bar around the HR and Employee pages
 ]
 
 # include js, css files in header of web template

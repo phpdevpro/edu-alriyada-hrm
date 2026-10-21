@@ -1,0 +1,216 @@
+HR Portal,بوابة الموارد البشرية
+Employee Requests,طلبات الموظفين
+HR Transactions,معاملات الموارد البشرية
+Hiring & Records,التوظيف والسجلات
+Job Applicants,المتقدمون للوظائف
+Medical Licenses,التراخيص الطبية
+Academic & Ministry,الأكاديمي والوزارة
+Academic Presence,الحضور الأكاديمي
+Proctor Schedules,جداول المراقبين
+Students on Campus,الطلاب في الحرم الجامعي
+Faculty After 4 PM,أعضاء هيئة التدريس بعد الساعة 4 مساءً
+Ministry (Jameah),الوزارة (جامعة)
+Jameah Data Check,فحص بيانات جامعة
+Code Map,مطابقة الرموز
+Jameah Settings,إعدادات جامعة
+HR Workspace,مساحة عمل الموارد البشرية
+Employee Portal,بوابة الموظف
+Permission Request,طلب استئذان
+Remote Work,العمل عن بُعد
+Request Leave,طلب إجازة
+Return from Leave,العودة من الإجازة
+Salary Certificate,شهادة راتب
+Overtime,العمل الإضافي
+Medical Allowance,بدل العلاج
+Company Car,سيارة الشركة
+Update My Data,تحديث بياناتي
+My Leave,إجازاتي
+Recent Requests,أحدث الطلبات
+Attendance Requests,طلبات الحضور
+Switch to {0},التبديل إلى {0}
+Short permissions and time away.,الاستئذانات القصيرة والغياب المؤقت.
+Remote Work Request,طلب عمل عن بُعد
+Work-from-home days.,أيام العمل من المنزل.
+Leave Plan Request,طلب خطة إجازة
+Planned leave for the year.,الإجازات المخطط لها خلال العام.
+Leave Return Request,طلب عودة من إجازة
+Return from leave and medical clearance.,العودة من الإجازة والإفادة الطبية.
+Salary Certificate Request,طلب شهادة راتب
+Official salary certificates.,شهادات الراتب الرسمية.
+Pre Approved Overtime Request,طلب عمل إضافي معتمد مسبقًا
+Overtime approved in advance.,العمل الإضافي المعتمد مسبقًا.
+Employee Training Request,طلب تدريب موظف
+Courses and professional training.,الدورات والتدريب المهني.
+Children Medical Allowance Request,طلب بدل علاج الأبناء
+Medical allowance claims for children.,مطالبات بدل علاج الأبناء.
+Company Car Request,طلب سيارة الشركة
+Company vehicles.,سيارات الشركة.
+Contract Renewal Request,طلب تجديد عقد
+Contract renewals.,تجديد العقود.
+Employee Data Update Request,طلب تحديث بيانات موظف
+Corrections to personal records.,تصحيح السجلات الشخصية.
+Leave requests and approvals.,طلبات الإجازة واعتمادها.
+Attendance corrections.,تصحيحات الحضور.
+Expense claims and advances.,مطالبات المصروفات والسلف.
+Business travel and its costs.,سفر العمل وتكاليفه.
+Resignations and exit steps.,الاستقالات وإجراءات إنهاء الخدمة.
+Final settlement on leaving.,التسوية النهائية عند ترك العمل.
+Employee master and Ministry fields.,بيانات الموظفين الأساسية وحقول الوزارة.
+Licences and their expiry dates.,التراخيص وتواريخ انتهائها.
+Job Application Link,رابط طلب التوظيف
+Links applicants use to apply.,الروابط التي يستخدمها المتقدمون للتقديم.
+Review applicants and create employees.,مراجعة المتقدمين وإنشاء سجلات الموظفين.
+The starter policies allocate annual leave only. Medical leave has a separate sick-year basis.,السياسات المبدئية تخصص الإجازة السنوية فقط. للإجازة المرضية سنة مرضية مستقلة.
+Leave Policy Assignment,تعيين سياسة الإجازات
+Assign a shared policy to employees and track its effective dates.,عيّن سياسة مشتركة للموظفين وتابع تواريخ سريانها.
+Assign leave policies to multiple employees together.,عيّن سياسات الإجازات لعدة موظفين معًا.
+Review each employee’s allocated days and carry-forward balances.,راجع الأيام المخصصة لكل موظف والأرصدة المرحّلة.
+Manage the leave categories used in your policies.,أدر فئات الإجازات المستخدمة في سياساتك.
+Define the dates of your organization’s leave year.,حدّد تواريخ سنة الإجازات في مؤسستك.
+Monthly Limits,الحدود الشهرية
+Open HR Settings → Employee Monthly Limits to configure half-day and work-from-home limits.,افتح إعدادات الموارد البشرية ← الحدود الشهرية للموظفين لضبط حدود نصف اليوم والعمل من المنزل.
+"Every teaching session by faculty member, room and mode.",كل محاضرة حسب عضو هيئة التدريس والقاعة ونمط التدريس.
+"Exam supervision assignments by date, time and room.",تكليفات مراقبة الاختبارات حسب التاريخ والوقت والقاعة.
+Expected and present students in each hour of the day.,الطلاب المتوقعون والحاضرون في كل ساعة من اليوم.
+"Faculty on campus after 4:00 PM each day, teaching or proctoring.",أعضاء هيئة التدريس الموجودون في الحرم بعد الساعة 4:00 مساءً يوميًا، للتدريس أو المراقبة.
+"Gaps, invalid codes and source problems, view by view.",النواقص والرموز غير الصالحة ومشكلات المصدر، لكل عرض على حدة.
+College values matched to official Ministry codes.,قيم الكلية المطابقة لرموز الوزارة الرسمية.
+Institution codes used by the Ministry views.,رموز المؤسسة المستخدمة في عروض الوزارة.
+"Headcount, requests waiting for a decision and licences on file.",عدد الموظفين والطلبات المنتظرة للقرار والتراخيص المسجلة.
+Total Employees,إجمالي الموظفين
+Employee records,سجلات الموظفين
+Pending Training,طلبات تدريب معلقة
+Training requests waiting,طلبات تدريب بانتظار القرار
+Pending Allowance,طلبات بدل معلقة
+Medical allowance claims waiting,مطالبات بدل العلاج بانتظار القرار
+Active Licenses,التراخيص السارية
+Medical licences in force,التراخيص الطبية السارية
+Requests employees send from their portal. The amber figure is how many wait for a decision.,الطلبات التي يرسلها الموظفون من بوابتهم. الرقم البرتقالي هو عدد الطلبات المنتظرة للقرار.
+"Define a shared policy, assign it to employees, and track individual balances.",حدّد سياسة مشتركة، وعيّنها للموظفين، وتابع الأرصدة الفردية.
+Annual Leave,الإجازة السنوية
+The 21-day and 30-day draft policies cover annual leave only. Assign the appropriate policy after checking service length and contract terms.,مسودتا سياسة 21 يومًا و30 يومًا تشملان الإجازة السنوية فقط. عيّن السياسة المناسبة بعد التحقق من مدة الخدمة وشروط العقد.
+Review Annual Policies,مراجعة سياسات الإجازة السنوية
+Medical / Sick Leave,الإجازة المرضية
+"Separate from annual leave. Review and submit the Medical Leave policy, then activate each employee’s sick year from the first illness date. Requests must stay within the configured pay stages.",منفصلة عن الإجازة السنوية. راجع سياسة الإجازة المرضية واعتمدها، ثم فعّل السنة المرضية لكل موظف من تاريخ أول مرض. يجب أن تبقى الطلبات ضمن مراحل الأجر المحددة.
+Review Medical Policy,مراجعة سياسة الإجازة المرضية
+Activate Medical Leave Year,تفعيل سنة الإجازة المرضية
+"No default casual-leave allowance has been assigned. This is a separate company-policy decision, not part of the 21 annual days. Monthly short-permission rules are also separate.",لم يُخصص رصيد افتراضي للإجازة العارضة. هذا قرار مستقل من سياسة الشركة وليس جزءًا من الأيام السنوية الـ21. قواعد الاستئذان الشهري منفصلة أيضًا.
+Review Company Settings,مراجعة إعدادات الشركة
+"Leave, attendance, expenses, travel and leaving.",الإجازات والحضور والمصروفات والسفر وإنهاء الخدمة.
+Records & Hiring,السجلات والتوظيف
+"Employee records, medical licences and recruitment.",سجلات الموظفين والتراخيص الطبية والتوظيف.
+Academic Schedules & Presence,الجداول الأكاديمية والحضور
+"Faculty and proctor timetables, and who is on campus, from the class timetables and recorded attendance.",جداول أعضاء هيئة التدريس والمراقبين، ومن يوجد في الحرم، من جداول الشعب والحضور المسجل.
+Ministry (Jameah) Data,بيانات الوزارة (جامعة)
+"What the Ministry views send for employees and students, and what still needs a code or a correction.",ما ترسله عروض الوزارة عن الموظفين والطلاب، وما لا يزال يحتاج إلى رمز أو تصحيح.
+"Confirm the first illness date. This creates separate medical allocations for one year, without changing annual leave. Review the medical policy, leave types and payroll settings first.",أكّد تاريخ أول مرض. سيُنشئ ذلك أرصدة مرضية مستقلة لمدة سنة دون تغيير الإجازة السنوية. راجع أولًا سياسة الإجازة المرضية وأنواع الإجازات وإعدادات الرواتب.
+First Sick-leave Date,تاريخ أول إجازة مرضية
+Activate Medical Year,تفعيل السنة المرضية
+Medical leave year activated: {0} to {1}.,تم تفعيل سنة الإجازة المرضية: من {0} إلى {1}.
+{0} waiting for a decision,{0} بانتظار القرار
+1 request is waiting for review,طلب واحد بانتظار المراجعة
+{0} requests are waiting for review,{0} طلبات بانتظار المراجعة
+Open the list below to see each type,افتح القائمة أدناه لعرض كل نوع
+No requests waiting for review,لا توجد طلبات بانتظار المراجعة
+Everything employees sent has a decision.,جميع ما أرسله الموظفون صدر فيه قرار.
+Request short permission or time away,اطلب استئذانًا قصيرًا أو غيابًا مؤقتًا
+Request remote work for specific dates,اطلب العمل عن بُعد في تواريخ محددة
+Apply for leave and track your approval,قدّم طلب إجازة وتابع اعتماده
+Confirm your return and medical clearance,أكّد عودتك والإفادة الطبية
+Request an official salary certificate,اطلب شهادة راتب رسمية
+Request overtime pre-approval,اطلب اعتمادًا مسبقًا للعمل الإضافي
+Request professional training,اطلب تدريبًا مهنيًا
+Submit a child medical allowance claim,قدّم مطالبة بدل علاج لأحد الأبناء
+Request a company vehicle,اطلب سيارة من الشركة
+Request a personal-record correction,اطلب تصحيح بياناتك الشخصية
+Department: —,القسم: —
+Employee: —,الموظف: —
+Designation: —,المسمى الوظيفي: —
+Your requests and leave at a glance.,طلباتك وإجازاتك بنظرة سريعة.
+All requests you sent,جميع الطلبات التي أرسلتها
+"Approved, completed or issued",معتمدة أو مكتملة أو صادرة
+Leave you applied for,الإجازات التي طلبتها
+Loading your leave balances...,جارٍ تحميل أرصدة إجازاتك...
+Employee Services,خدمات الموظفين
+Create and track your HR requests.,أنشئ طلباتك لدى الموارد البشرية وتابعها.
+My Employee Profile,ملفي الوظيفي
+No requests yet.,لا توجد طلبات بعد.
+Your user account is not linked to an Employee record. Please contact HR.,حسابك غير مرتبط بسجل موظف. يرجى التواصل مع الموارد البشرية.
+AM / PM,ص / م
+This request is linked to your login automatically. Approval and clearance decisions are handled by HR.,يرتبط هذا الطلب بحسابك تلقائيًا. قرارات الاعتماد والإفادة تتولاها الموارد البشرية.
+Annual and medical/sick leave use separate entitlements. Select the correct leave type; ask HR which medical pay category applies. No default casual-leave allowance is included.,للإجازة السنوية والإجازة المرضية رصيدان منفصلان. اختر نوع الإجازة الصحيح، واسأل الموارد البشرية عن فئة الأجر المرضي المطبقة. لا يوجد رصيد افتراضي للإجازة العارضة.
+Send Request,إرسال الطلب
+Save Draft,حفظ كمسودة
+"Select the hour, minute, and AM/PM for {0}.",اختر الساعة والدقيقة وص/م لـ {0}.
+Request sent for review,أُرسل الطلب للمراجعة
+Draft saved,تم حفظ المسودة
+Use Update My Data to request a correction from HR.,استخدم «تحديث بياناتي» لطلب تصحيح من الموارد البشرية.
+No requests yet. Choose a service above to get started.,لا توجد طلبات بعد. اختر خدمة من الأعلى للبدء.
+{0}: {1} days left,{0}: متبقٍ {1} يوم
+No leave allocation yet - contact HR to set your entitlement.,لا يوجد رصيد إجازات بعد - تواصل مع الموارد البشرية لتحديد استحقاقك.
+1 of your requests is waiting for a decision,أحد طلباتك بانتظار القرار
+{0} of your requests are waiting for a decision,{0} من طلباتك بانتظار القرار
+Nothing waiting for a decision,لا يوجد ما ينتظر القرار
+Employee profile not found.,لم يُعثر على ملف الموظف.
+No employee record is linked to your login.,لا يوجد سجل موظف مرتبط بحسابك.
+Employee: {0},الموظف: {0}
+Designation: {0},المسمى الوظيفي: {0}
+Department: {0},القسم: {0}
+Holiday calendar setup needed,يلزم إعداد تقويم العطلات
+used / pending,مستخدم / معلق
+Monthly limit not enabled,الحد الشهري غير مفعّل
+allowed,مسموح
+remaining,متبقٍ
+My Leave Balances,أرصدة إجازاتي
+No active leave allocations. Contact HR to configure your entitlement.,لا توجد أرصدة إجازات سارية. تواصل مع الموارد البشرية لضبط استحقاقك.
+Balances follow your active allocations; pending requests are shown separately.,الأرصدة تتبع مخصصاتك السارية، والطلبات المعلقة تظهر منفصلة.
+Monthly Usage,الاستخدام الشهري
+Half-day requests,طلبات نصف اليوم
+Work-from-home working days,أيام العمل من المنزل
+"Every teaching session by faculty member, from the published class timetables.",كل محاضرة حسب عضو هيئة التدريس، من جداول الشعب المنشورة.
+Teaching Hours,ساعات التدريس
+On-campus Sessions,محاضرات حضورية
+No teaching sessions in this period.,لا توجد محاضرات في هذه الفترة.
+Exam supervision assignments from Exam Committees.,تكليفات مراقبة الاختبارات من لجان الاختبارات.
+No proctoring assignments in this period. Proctors appear here once exams and exam committees are set up.,لا توجد تكليفات مراقبة في هذه الفترة. يظهر المراقبون هنا بعد إعداد الاختبارات ولجانها.
+"Students per hour in on-campus classes. Present and absent come from recorded attendance; ""not recorded"" means attendance wasn't taken yet.",عدد الطلاب في كل ساعة في المحاضرات الحضورية. الحضور والغياب من سجلات الحضور، و«غير مسجل» يعني أن الحضور لم يُرصد بعد.
+Expected,المتوقع
+Not Recorded,غير مسجل
+On-campus Classes,محاضرات حضورية
+Students Expected,الطلاب المتوقعون
+Students Present,الطلاب الحاضرون
+Busiest Hour,أكثر الساعات ازدحامًا
+No on-campus classes on this date.,لا توجد محاضرات حضورية في هذا التاريخ.
+"Faculty on campus after the cut-off time each day (HR Settings, default 4:00 PM). Attendance-device logs are used when available; otherwise in-person teaching or proctoring, confirmed when class attendance was recorded.",أعضاء هيئة التدريس الموجودون في الحرم بعد وقت القطع يوميًا (إعدادات الموارد البشرية، الافتراضي 4:00 مساءً). تُستخدم سجلات أجهزة الحضور عند توفرها، وإلا فالتدريس أو المراقبة الحضورية، مؤكدة عند رصد حضور الشعبة.
+On Campus Until,في الحرم حتى
+Evidence,الدليل
+Person-days,أيام العمل الفردية
+No faculty on campus after 4 PM in this period.,لا يوجد أعضاء هيئة تدريس في الحرم بعد الساعة 4 مساءً في هذه الفترة.
+"From the published class timetables, exam committees and recorded attendance",من جداول الشعب المنشورة ولجان الاختبارات والحضور المسجل
+Export (Excel CSV),تصدير (Excel CSV)
+{0} class session(s) fall outside 07:00–22:00 and are not shown in the hourly table (check the timetable): ,{0} محاضرة خارج الفترة 07:00–22:00 ولا تظهر في الجدول بالساعة (راجع الجدول الدراسي): 
+No regular classes on: ,لا توجد محاضرات منتظمة في: 
+"No Academic Holiday List is set, so official holidays are not excluded. Set it in HR Settings > Academic Schedules & Presence.",لم تُحدد قائمة العطلات الأكاديمية، لذا لا تُستبعد العطلات الرسمية. حدّدها في إعدادات الموارد البشرية > الجداول الأكاديمية والحضور.
+Cut-off time: {0}. Change it in HR Settings > Academic Schedules & Presence.,وقت القطع: {0}. غيّره في إعدادات الموارد البشرية > الجداول الأكاديمية والحضور.
+"No attendance-device logs in this period, so times come from the timetable and class attendance. Once devices are connected, actual check-out times are used automatically.",لا توجد سجلات أجهزة حضور في هذه الفترة، لذا تُؤخذ الأوقات من الجدول الدراسي وحضور الشعب. عند ربط الأجهزة تُستخدم أوقات الانصراف الفعلية تلقائيًا.
+Nothing to export for this period.,لا يوجد ما يُصدَّر لهذه الفترة.
+What the Ministry views would send right now,ما سترسله عروض الوزارة الآن
+Refresh Academic Figures,تحديث الأرقام الأكاديمية
+Queued. GPA and credit hours update in a few minutes.,تمت الجدولة. سيتحدث المعدل والساعات المعتمدة خلال دقائق.
+Invalid Ministry codes sent,رموز وزارة غير صالحة مُرسلة
+Values waiting for a Ministry code,قيم بانتظار رمز الوزارة
+Settings not filled,إعدادات غير مكتملة
+Mandatory columns with gaps,أعمدة إلزامية بها نواقص
+"Academic figures (GPA, credit hours) last refreshed",آخر تحديث للأرقام الأكاديمية (المعدل والساعات المعتمدة)
+Teaching staff left out of the Employee views (sent as Faculty),أعضاء هيئة التدريس المستبعدون من عروض الموظفين (يُرسلون كهيئة تدريس)
+Settings to fill,إعدادات يجب تعبئتها
+"Until these are set, the matching columns are sent empty.",إلى أن تُضبط هذه الإعدادات، تُرسل الأعمدة المقابلة فارغة.
+"Open a row, pick the Ministry code and set Status to Verified. Until then the value is sent empty.",افتح الصف، واختر رمز الوزارة، واجعل الحالة «تم التحقق». حتى ذلك الحين تُرسل القيمة فارغة.
+Ministry list,قائمة الوزارة
+Invalid codes,رموز غير صالحة
+Mandatory gaps,نواقص إلزامية
+graduates,الخريجون
+Source data to correct,بيانات المصدر المطلوب تصحيحها
+The views send these as they are (or empty); fix them in the source records.,ترسلها العروض كما هي (أو فارغة)؛ صحّحها في السجلات المصدرية.
+Checking the Ministry views…,جارٍ فحص عروض الوزارة…
+Open,افتح,Open a page

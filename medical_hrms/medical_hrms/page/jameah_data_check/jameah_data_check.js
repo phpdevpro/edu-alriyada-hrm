@@ -2,33 +2,38 @@
 // medical_hrms.jameah.status.get_status.
 frappe.pages["jameah-data-check"].on_page_load = function (wrapper) {
 	const page = frappe.ui.make_app_page({ parent: wrapper, title: __("Jameah Data Check"), single_column: true });
+	MhPortal.mount(page, { portal: "hr", active: "jameah-data-check", crumb: __("Jameah Data Check") });
 	const esc = frappe.utils.escape_html;
+	$(page.body).append(MhPortal.head({
+		icon: "fa-building-columns", eyebrow: __("Ministry (Jameah) Data"), title: __("Jameah Data Check"),
+		meta: [{ icon: "fa-circle-info", text: __("What the Ministry views would send right now") }],
+		actions: [
+			{ label: __("Code Map"), icon: "fa-right-left", onClick: () => frappe.set_route("List", "Jameah Code Map", { status: "Needs Review" }) },
+			{ label: __("Jameah Settings"), icon: "fa-gear", onClick: () => frappe.set_route("Form", "Jameah Settings") },
+			{ label: __("Refresh Academic Figures"), icon: "fa-graduation-cap", onClick: () =>
+				frappe.call({ method: "medical_hrms.jameah.summary.refresh_now" }).then(() =>
+					frappe.show_alert({ message: __("Queued. GPA and credit hours update in a few minutes."), indicator: "green" })) },
+			{ label: __("Refresh"), icon: "fa-rotate", primary: true, id: "jdc-refresh", onClick: () => load() },
+		],
+	}));
 	const $body = $(`<div class="jdc"></div>`).appendTo(page.body);
 	$body.before(`<style>
-		.jdc { padding: 8px 0 32px; }
-		.jdc h3 { font-size: 16px; margin: 24px 0 8px; }
-		.jdc .jdc-sub { color: var(--text-muted); margin: 0 0 10px; }
-		.jdc table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--card-bg); }
-		.jdc th, .jdc td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--border-color); vertical-align: top; }
-		.jdc th { background: var(--subtle-fg); white-space: nowrap; }
-		.jdc .jdc-ok { color: var(--green-600); font-weight: 600; }
-		.jdc .jdc-warn { color: var(--orange-600); font-weight: 600; }
-		.jdc .jdc-bad { color: var(--red-600); font-weight: 600; }
-		.jdc-cards { display: flex; flex-wrap: wrap; gap: 10px; }
-		.jdc-card { flex: 1 1 180px; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 14px; background: var(--card-bg); }
-		.jdc-card strong { display: block; font-size: 24px; }
-		.jdc-wrap { overflow-x: auto; }
+		.jdc { padding: 0 0 32px; }
+		.jdc h3 { font: 600 19px/1.3 var(--f-display); color: var(--text-primary); margin: 30px 0 6px; }
+		.jdc .jdc-sub { color: var(--text-secondary); margin: 0 0 12px; font-size: 14px; }
+		.jdc table code { font-size: 12.5px; color: var(--primary-dark); background: var(--lighter); padding: 2px 6px; border-radius: 6px; }
+		[data-theme="dark"] .jdc table code { color: var(--primary); }
+		.jdc .jdc-ok { color: var(--success); font-weight: 600; }
+		.jdc .jdc-warn { color: var(--warning); font-weight: 600; }
+		.jdc .jdc-bad { color: var(--error); font-weight: 600; }
+		.jdc-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; }
+		.jdc-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px 24px; box-shadow: var(--shadow-sm); color: var(--text-secondary); font-size: 13.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
+		.jdc-card strong { display: block; font: 700 36px/1.1 var(--f-display); margin-bottom: 12px; letter-spacing: -.02em; text-transform: none; }
+		.jdc ul { margin: 0; padding-inline-start: 20px; color: var(--text-primary); }
 	</style>`);
 
-	page.set_primary_action(__("Refresh"), () => load(), "refresh");
-	page.add_inner_button(__("Jameah Settings"), () => frappe.set_route("Form", "Jameah Settings"));
-	page.add_inner_button(__("Code Map"), () => frappe.set_route("List", "Jameah Code Map", { status: "Needs Review" }));
-	page.add_inner_button(__("Refresh Academic Figures"), () =>
-		frappe.call({ method: "medical_hrms.jameah.summary.refresh_now" }).then(() =>
-			frappe.show_alert({ message: __("Queued. GPA and credit hours update in about a minute."), indicator: "green" })));
-
 	function table(head, rows) {
-		return `<div class="jdc-wrap"><table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>
+		return `<div class="jdc-wrap mhp-tablewrap"><table class="mhp-table"><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>
 			<tbody>${rows.join("")}</tbody></table></div>`;
 	}
 
@@ -69,7 +74,7 @@ frappe.pages["jameah-data-check"].on_page_load = function (wrapper) {
 	}
 
 	function load() {
-		$body.html(`<p class="text-muted">${__("Checking the Ministry views…")}</p>`);
+		$body.html(`<div class="mhp-empty"><i class="fa-solid fa-magnifying-glass-chart"></i>${__("Checking the Ministry views…")}</div>`);
 		frappe.call({ method: "medical_hrms.jameah.status.get_status", freeze: false }).then((r) => render(r.message || {}));
 	}
 	load();

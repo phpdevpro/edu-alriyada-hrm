@@ -1,4 +1,8 @@
 (() => {
+const METHOD = "medical_hrms.medical_hrms.page.hr_dashboard.hr_dashboard.";
+const esc = (value) => frappe.utils.escape_html(String(value ?? ""));
+const slug = (doctype) => frappe.router.slug(doctype);
+
 frappe.pages["hr-dashboard"].on_page_load = function (wrapper) {
   const page = frappe.ui.make_app_page({
     parent: wrapper,
@@ -14,182 +18,148 @@ frappe.pages["hr-dashboard"].on_page_load = function (wrapper) {
     return;
   }
 
+  MhPortal.mount(page, { portal: "hr", active: "dashboard", crumb: __("Dashboard") });
   render_layout(page);
   load_data();
 };
 
+// [title, doctype, icon, tone, description]
+const REQUESTS = [
+  [__("Permission Request"), "Permission Request", "fa-clock", "", __("Short permissions and time away.")],
+  [__("Remote Work Request"), "Remote Work Request", "fa-laptop-house", "sky", __("Work-from-home days.")],
+  [__("Leave Plan Request"), "Leave Plan Request", "fa-calendar-week", "", __("Planned leave for the year.")],
+  [__("Leave Return Request"), "Leave Return Request", "fa-rotate-left", "violet", __("Return from leave and medical clearance.")],
+  [__("Salary Certificate Request"), "Salary Certificate Request", "fa-file-invoice", "", __("Official salary certificates.")],
+  [__("Pre Approved Overtime Request"), "Pre Approved Overtime Request", "fa-business-time", "amber", __("Overtime approved in advance.")],
+  [__("Employee Training Request"), "Employee Training Request", "fa-chalkboard", "sky", __("Courses and professional training.")],
+  [__("Children Medical Allowance Request"), "Children Medical Allowance Request", "fa-hand-holding-medical", "rose", __("Medical allowance claims for children.")],
+  [__("Company Car Request"), "Company Car Request", "fa-car", "", __("Company vehicles.")],
+  [__("Contract Renewal Request"), "Contract Renewal Request", "fa-file-signature", "violet", __("Contract renewals.")],
+  [__("Employee Data Update Request"), "Employee Data Update Request", "fa-user-pen", "amber", __("Corrections to personal records.")],
+];
+
+const CORE = [
+  [__("Leave Application"), "Leave Application", "fa-calendar-check", "", __("Leave requests and approvals.")],
+  [__("Attendance Request"), "Attendance Request", "fa-user-check", "sky", __("Attendance corrections.")],
+  [__("Expense Claim"), "Expense Claim", "fa-receipt", "amber", __("Expense claims and advances.")],
+  [__("Travel Request"), "Travel Request", "fa-plane", "violet", __("Business travel and its costs.")],
+  [__("Employee Separation"), "Employee Separation", "fa-door-open", "rose", __("Resignations and exit steps.")],
+  [__("Full and Final Statement"), "Full and Final Statement", "fa-file-contract", "", __("Final settlement on leaving.")],
+];
+
+const RECORDS = [
+  [__("Employees"), "Employee", "fa-users", "", __("Employee master and Ministry fields.")],
+  [__("Medical Licenses"), "Employee Medical License", "fa-id-card-clip", "sky", __("Licences and their expiry dates.")],
+  [__("Job Application Link"), "Job Application Link", "fa-link", "violet", __("Links applicants use to apply.")],
+  [__("Job Applicants"), "Employee Job Applicant", "fa-id-badge", "amber", __("Review applicants and create employees.")],
+];
+
+const LEAVE = [
+  [__("Leave Policy"), "leave-policy", "fa-book", __("The starter policies allocate annual leave only. Medical leave has a separate sick-year basis.")],
+  [__("Leave Policy Assignment"), "leave-policy-assignment", "fa-user-tag", __("Assign a shared policy to employees and track its effective dates.")],
+  [__("Leave Control Panel"), "leave-control-panel", "fa-sliders", __("Assign leave policies to multiple employees together.")],
+  [__("Leave Allocation"), "leave-allocation", "fa-scale-balanced", __("Review each employee’s allocated days and carry-forward balances.")],
+  [__("Leave Type"), "leave-type", "fa-tags", __("Manage the leave categories used in your policies.")],
+  [__("Leave Period"), "leave-period", "fa-calendar", __("Define the dates of your organization’s leave year.")],
+  [__("Monthly Limits"), "hr-settings", "fa-gauge", __("Open HR Settings → Employee Monthly Limits to configure half-day and work-from-home limits.")],
+];
+
+const PRESENCE = [
+  [__("Faculty Schedules"), "hr-academic-presence/faculty", "fa-person-chalkboard", "", __("Every teaching session by faculty member, room and mode.")],
+  [__("Proctor Schedules"), "hr-academic-presence/proctors", "fa-user-shield", "violet", __("Exam supervision assignments by date, time and room.")],
+  [__("Students on Campus"), "hr-academic-presence/students", "fa-user-graduate", "sky", __("Expected and present students in each hour of the day.")],
+  [__("Faculty After 4 PM"), "hr-academic-presence/after_hours", "fa-moon", "amber", __("Faculty on campus after 4:00 PM each day, teaching or proctoring.")],
+];
+
+const JAMEAH = [
+  [__("Jameah Data Check"), "jameah-data-check", "fa-clipboard-check", "", __("Gaps, invalid codes and source problems, view by view.")],
+  [__("Code Map"), "jameah-code-map", "fa-right-left", "violet", __("College values matched to official Ministry codes.")],
+  [__("Jameah Settings"), "jameah-settings", "fa-gear", "amber", __("Institution codes used by the Ministry views.")],
+];
+
+function tile(title, route, icon, tone, description, doctype) {
+  const counts = doctype ? `<span class="mhp-pill hrd-pending" title="${esc(__("Waiting for a decision"))}"><span data-pending-for="${esc(doctype)}">0</span> ${esc(__("pending"))}</span>
+    <span class="mhp-pill"><span class="hrd-count" data-count-for="${esc(doctype)}">0</span> ${esc(__("total"))}</span>` : "";
+  return `<article class="mhp-tile">
+    <div class="mhp-tile-top"><span class="mhp-tile-icon ${esc(tone)}"><i class="fa-solid ${esc(icon)}" aria-hidden="true"></i></span>
+      <div><h4>${esc(title)}</h4><p>${esc(description)}</p></div></div>
+    <div class="mhp-tile-foot"><div class="mhp-stack" style="flex-direction:row;gap:6px;flex-wrap:wrap">${counts}</div>
+      <a class="mhp-link" href="/app/${esc(route)}">${esc(__("Open", null, "Open a page"))} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+  </article>`;
+}
+
+// withCounts: only the request types have pending / total figures (get_hr_doctype_counts).
+const doctypeTiles = (items, withCounts) => items.filter(([, doctype]) => frappe.model.can_read(doctype))
+  .map(([title, doctype, icon, tone, description]) => tile(title, slug(doctype), icon, tone, description, withCounts ? doctype : null)).join("");
+
 function render_layout(page) {
-  $(page.body).html(`
-    <style>
-      .hrd-wrap { max-width: 1320px; margin: 0 auto; padding: 16px 8px 36px; }
-      .hrd-hero {
-        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
-        color: #fff;
-        border-radius: 20px;
-        padding: 28px 34px;
-        box-shadow: 0 14px 24px rgba(0,0,0,.12);
-        margin-bottom: 24px;
-      }
-      .hrd-hero h1 { margin: 0 0 6px; font-size: 40px; font-weight: 700; color:#fff; }
-      .hrd-hero p { margin: 0; opacity: .95; font-size: 17px; }
-      .hrd-user { margin-top: 10px; display:flex; gap: 16px; font-size: 15px; }
+  const name = frappe.session.user_fullname || frappe.session.user;
+  const role = frappe.user.has_role("HR Manager") ? __("HR Manager") : __("HR User");
+  const company = frappe.defaults.get_user_default("Company") || frappe.defaults.get_global_default("company") || "";
+  const image = (frappe.user_info(frappe.session.user) || {}).image;
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((s) => s[0].toUpperCase()).join("");
 
-      .hrd-stats { display:grid; grid-template-columns: repeat(4, minmax(200px, 1fr)); gap: 18px; margin-bottom: 26px; }
-      .hrd-stat {
-        background:#fff; border-radius:14px; padding:20px 22px; border-left: 5px solid #14b8a6;
-        box-shadow: 0 8px 16px rgba(0,0,0,.08);
-      }
-      .hrd-stat .value { font-size:42px; font-weight:700; color:#0f172a; line-height:1; margin: 8px 0 8px; }
-      .hrd-stat .label { color:#475569; font-size:14px; text-transform:uppercase; letter-spacing:.4px; }
-
-      .hrd-section-title { margin: 10px 0 8px; font-size:34px; font-weight:700; color:#0f172a; }
-      .hrd-section-sub { margin: 0 0 14px; color:#475569; font-size:18px; }
-
-      .hrd-cards { display:grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); gap: 18px; }
-      .hrd-card {
-        background:#fff; border-radius:16px; border-top:4px solid #34d399; padding:24px;
-        box-shadow: 0 8px 16px rgba(0,0,0,.08); min-height: 220px;
-        display:flex; flex-direction:column; justify-content:space-between;
-      }
-      .hrd-card h3 { margin: 0 0 8px; font-size:22px; color:#0f172a; }
-      .hrd-card p { margin: 0 0 14px; color:#475569; font-size:16px; }
-      .hrd-btn {
-        display:inline-block; text-decoration:none; font-weight:600; font-size:14px;
-        padding:8px 14px; border-radius:999px; background:#ecfeff; color:#0f766e; border:1px solid #99f6e4;
-      }
-
-      .hrd-module-grid { display:grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 14px; }
-      .hrd-module-card {
-        background:#fff; border:1px solid #dbe5ef; border-radius:14px; padding:16px;
-        box-shadow: 0 6px 12px rgba(0,0,0,.05); transition: .2s ease;
-      }
-      .hrd-module-card:hover { transform: translateY(-2px); box-shadow: 0 10px 16px rgba(0,0,0,.08); }
-      .hrd-module-title { font-size:16px; font-weight:700; color:#0f172a; margin: 0 0 8px; }
-      .hrd-module-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-      .hrd-count { font-size:13px; color:#0f766e; background:#ecfeff; border:1px solid #99f6e4; padding:2px 10px; border-radius:999px; }
-      .hrd-link { font-size:13px; font-weight:600; color:#0f766e; text-decoration:none; }
-      .hrd-link:hover { text-decoration:underline; }
-
-      .hrd-group { margin-top: 28px; }
-      .hrd-group h3 { margin: 0 0 10px; font-size:22px; color:#0f172a; }
-
-      @media (max-width: 1200px) {
-        .hrd-stats { grid-template-columns: repeat(2, minmax(200px, 1fr)); }
-        .hrd-cards { grid-template-columns: repeat(2, minmax(240px, 1fr)); }
-        .hrd-module-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
-      }
-      @media (max-width: 760px) {
-        .hrd-hero h1 { font-size: 32px; }
-        .hrd-stats, .hrd-cards { grid-template-columns: 1fr; }
-        .hrd-module-grid { grid-template-columns: 1fr; }
-      }
-    </style>
-
-    <div class="hrd-wrap">
-      <div class="hrd-hero">
-        <h1>Welcome back, HR Team</h1>
-        <p>Manage employee services, approvals, compliance, and payroll-impact requests from one place.</p>
-        <div class="hrd-user"><span id="hrd-user-email">-</span><span id="hrd-user-role">-</span></div>
+  const $wrap = $('<div class="hrd-wrap"></div>');
+  $wrap.append(MhPortal.head({
+    image, initials, eyebrow: __("HR Portal"), title: name, titleId: "hrd-title",
+    meta: [{ icon: "fa-user-tie", text: role, id: "hrd-user-role" }, { icon: "fa-envelope", text: frappe.session.user, id: "hrd-user-email" },
+      ...(company ? [{ icon: "fa-building", text: company }] : [])],
+  }));
+  $wrap.append('<div id="hrd-banner"></div>');
+  $wrap.append(`
+    <section class="mhp-section">
+      ${MhPortal.sectionHead("fa-chart-line", __("Today at a Glance"), __("Headcount, requests waiting for a decision and licences on file."))}
+      <div class="mhp-stats">
+        ${MhPortal.stat({ id: "stat-employees", icon: "fa-users", label: __("Total Employees"), note: __("Employee records") })}
+        ${MhPortal.stat({ id: "stat-training", icon: "fa-chalkboard", tone: "amber", label: __("Pending Training"), note: __("Training requests waiting") })}
+        ${MhPortal.stat({ id: "stat-allowance", icon: "fa-hand-holding-medical", tone: "violet", label: __("Pending Allowance"), note: __("Medical allowance claims waiting") })}
+        ${MhPortal.stat({ id: "stat-license", icon: "fa-id-card-clip", tone: "sky", label: __("Active Licenses"), note: __("Medical licences in force") })}
       </div>
+    </section>
 
-      <div class="hrd-stats">
-        <div class="hrd-stat"><div class="value" id="stat-employees">0</div><div class="label">Total Employees</div></div>
-        <div class="hrd-stat"><div class="value" id="stat-training">0</div><div class="label">Pending Training</div></div>
-        <div class="hrd-stat"><div class="value" id="stat-allowance">0</div><div class="label">Pending Allowance</div></div>
-        <div class="hrd-stat"><div class="value" id="stat-license">0</div><div class="label">Active Licenses</div></div>
+    <section class="mhp-section">
+      ${MhPortal.sectionHead("fa-inbox", __("Employee Requests"), __("Requests employees send from their portal. The amber figure is how many wait for a decision."))}
+      <div class="mhp-grid" id="hrd-requests-grid">${doctypeTiles(REQUESTS, true)}</div>
+    </section>
+
+    <section class="mhp-section">
+      ${MhPortal.sectionHead("fa-umbrella-beach", __("Leave Management"), __("Define a shared policy, assign it to employees, and track individual balances."))}
+      <div class="mhp-grid wide" style="margin-bottom:18px">
+        <article class="mhp-card"><h3><i class="fa-solid fa-sun" aria-hidden="true"></i>${esc(__("Annual Leave"))}</h3><p>${esc(__("The 21-day and 30-day draft policies cover annual leave only. Assign the appropriate policy after checking service length and contract terms."))}</p><a class="mhp-btn soft" href="/app/leave-policy">${esc(__("Review Annual Policies"))}</a></article>
+        <article class="mhp-card"><h3><i class="fa-solid fa-notes-medical" aria-hidden="true"></i>${esc(__("Medical / Sick Leave"))}</h3><p>${esc(__("Separate from annual leave. Review and submit the Medical Leave policy, then activate each employee’s sick year from the first illness date. Requests must stay within the configured pay stages."))}</p>
+          <div class="mhp-head-actions"><a class="mhp-btn soft" href="/app/leave-policy">${esc(__("Review Medical Policy"))}</a><button class="mhp-btn primary" id="hrd-activate-medical" type="button">${esc(__("Activate Medical Leave Year"))}</button></div></article>
+        <article class="mhp-card"><h3><i class="fa-solid fa-mug-hot" aria-hidden="true"></i>${esc(__("Casual Leave"))}</h3><p>${esc(__("No default casual-leave allowance has been assigned. This is a separate company-policy decision, not part of the 21 annual days. Monthly short-permission rules are also separate."))}</p><a class="mhp-btn soft" href="/app/hr-settings">${esc(__("Review Company Settings"))}</a></article>
       </div>
+      <div class="mhp-grid" id="hrd-leave-management">${LEAVE.map(([title, route, icon, description]) => tile(title, route, icon, "", description)).join("")}</div>
+    </section>
 
-      <h2 class="hrd-section-title">HR Operations</h2>
-      <p class="hrd-section-sub">Process requests, track compliance, and manage employee lifecycle activities.</p>
+    <section class="mhp-section">
+      ${MhPortal.sectionHead("fa-briefcase", __("HR Transactions"), __("Leave, attendance, expenses, travel and leaving."))}
+      <div class="mhp-grid" id="hrd-core-grid">${doctypeTiles(CORE)}</div>
+    </section>
 
-      <div class="hrd-cards">
-        <div class="hrd-card">
-          <div>
-            <h3>Employee Services</h3>
-            <p>Handle permission, remote work, return-from-leave, and salary certificate requests.</p>
-          </div>
-          <a class="hrd-btn" href="/app/medical-hrms">Open HR Workspace</a>
-        </div>
-        <div class="hrd-card">
-          <div>
-            <h3>Financial Requests</h3>
-            <p>Review training, overtime, allowance, and company car requests before finance handoff.</p>
-          </div>
-          <a class="hrd-btn" href="/app/employee-training-request">Open Training Requests</a>
-        </div>
-        <div class="hrd-card">
-          <div>
-            <h3>Compliance & Records</h3>
-            <p>Maintain medical licenses and employee data updates with auditable status history.</p>
-          </div>
-          <a class="hrd-btn" href="/app/employee-medical-license">Open Medical Licenses</a>
-        </div>
-      </div>
+    <section class="mhp-section">
+      ${MhPortal.sectionHead("fa-folder-open", __("Records & Hiring"), __("Employee records, medical licences and recruitment."))}
+      <div class="mhp-grid" id="hrd-compliance-grid">${doctypeTiles(RECORDS)}</div>
+    </section>
 
-      <section class="hrd-group" aria-labelledby="hrd-academic-heading">
-        <h3 id="hrd-academic-heading">Academic Schedules &amp; Presence</h3>
-        <p class="hrd-section-sub">Faculty and proctor timetables, and who is on campus, from the class timetables and recorded attendance.</p>
-        <div class="hrd-module-grid">
-          <article class="hrd-module-card"><p class="hrd-module-title">Faculty Schedules</p><p class="hrd-section-sub" style="font-size:14px">Every teaching session by faculty member, room and mode.</p><a class="hrd-link" href="/app/hr-academic-presence/faculty">Open →</a></article>
-          <article class="hrd-module-card"><p class="hrd-module-title">Proctor Schedules</p><p class="hrd-section-sub" style="font-size:14px">Exam supervision assignments by date, time and room.</p><a class="hrd-link" href="/app/hr-academic-presence/proctors">Open →</a></article>
-          <article class="hrd-module-card"><p class="hrd-module-title">Students on Campus</p><p class="hrd-section-sub" style="font-size:14px">Expected and present students in each hour of the day.</p><a class="hrd-link" href="/app/hr-academic-presence/students">Open →</a></article>
-          <article class="hrd-module-card"><p class="hrd-module-title">Faculty After 4 PM</p><p class="hrd-section-sub" style="font-size:14px">Faculty on campus after 4:00 PM each day, teaching or proctoring.</p><a class="hrd-link" href="/app/hr-academic-presence/after_hours">Open →</a></article>
-        </div>
-      </section>
+    <section class="mhp-section" aria-labelledby="hrd-academic-heading">
+      ${MhPortal.sectionHead("fa-chalkboard-user", __("Academic Schedules & Presence"), __("Faculty and proctor timetables, and who is on campus, from the class timetables and recorded attendance."))}
+      <div class="mhp-grid">${PRESENCE.map(([title, route, icon, tone, description]) => tile(title, route, icon, tone, description)).join("")}</div>
+    </section>
 
-      <section class="hrd-group" aria-labelledby="hrd-jameah-heading">
-        <h3 id="hrd-jameah-heading">Ministry (Jameah) Data</h3>
-        <p class="hrd-section-sub">What the Ministry views send for employees and students, and what still needs a code or a correction.</p>
-        <div class="hrd-module-grid">
-          <article class="hrd-module-card"><p class="hrd-module-title">Jameah Data Check</p><p class="hrd-section-sub" style="font-size:14px">Gaps, invalid codes and source problems, view by view.</p><a class="hrd-link" href="/app/jameah-data-check">Open →</a></article>
-          <article class="hrd-module-card"><p class="hrd-module-title">Code Map</p><p class="hrd-section-sub" style="font-size:14px">College values matched to official Ministry codes.</p><a class="hrd-link" href="/app/jameah-code-map">Open →</a></article>
-          <article class="hrd-module-card"><p class="hrd-module-title">Jameah Settings</p><p class="hrd-section-sub" style="font-size:14px">Institution codes used by the Ministry views.</p><a class="hrd-link" href="/app/jameah-settings">Open →</a></article>
-        </div>
-      </section>
+    <section class="mhp-section" aria-labelledby="hrd-jameah-heading">
+      ${MhPortal.sectionHead("fa-building-columns", __("Ministry (Jameah) Data"), __("What the Ministry views send for employees and students, and what still needs a code or a correction."))}
+      <div class="mhp-grid">${JAMEAH.map(([title, route, icon, tone, description]) => tile(title, route, icon, tone, description)).join("")}</div>
+    </section>`);
+  $(page.body).html($wrap);
 
-      <section class="hrd-group" aria-labelledby="hrd-leave-heading">
-        <h3 id="hrd-leave-heading">Leave Management</h3>
-        <p class="hrd-section-sub">Define a shared policy, assign it to employees, and track individual balances.</p>
-        <div class="hrd-cards" style="margin-bottom:18px">
-          <article class="hrd-card"><h3>Annual Leave</h3><p>The 21-day and 30-day draft policies cover annual leave only. Assign the appropriate policy after checking service length and contract terms.</p><a class="hrd-btn" href="/app/leave-policy">Review Annual Policies</a></article>
-          <article class="hrd-card"><h3>Medical / Sick Leave</h3><p>Separate from annual leave. Review and submit the Medical Leave policy, then activate each employee’s sick year from the first illness date. Requests must stay within the configured pay stages.</p><a class="hrd-btn" href="/app/leave-policy">Review Medical Policy</a><button class="hrd-btn" id="hrd-activate-medical" type="button" style="margin-top:8px">Activate Medical Leave Year</button></article>
-          <article class="hrd-card"><h3>Casual Leave</h3><p>No default casual-leave allowance has been assigned. This is a separate company-policy decision, not part of the 21 annual days. Monthly short-permission rules are also separate.</p><a class="hrd-btn" href="/app/hr-settings">Review Company Settings</a></article>
-        </div>
-        <div class="hrd-module-grid" id="hrd-leave-management"></div>
-      </section>
-
-      <div class="hrd-group">
-        <h3>Employee Request Management</h3>
-        <div class="hrd-module-grid" id="hrd-requests-grid"></div>
-      </div>
-
-      <div class="hrd-group">
-        <h3>Core HR Transactions</h3>
-        <div class="hrd-module-grid" id="hrd-core-grid"></div>
-      </div>
-
-      <div class="hrd-group">
-        <h3>Compliance & Employee Records</h3>
-        <div class="hrd-module-grid" id="hrd-compliance-grid"></div>
-      </div>
-
-     
-    </div>
-  `);
-
-
-  //  <div class="hrd-group">
-  //       <h3>Jameah Master Data</h3>
-  //       <div class="hrd-module-grid" id="hrd-master-grid"></div>
-  //     </div>
-  render_doctype_cards();
-  render_hr_leave_management();
   $("#hrd-activate-medical").toggle(frappe.session.user === "Administrator" || frappe.user.has_role("HR Manager") || frappe.user.has_role("System Manager")).on("click", () => {
     let saving = false;
     const dialog = new frappe.ui.Dialog({
       title: __("Activate Medical Leave Year"),
       fields: [
-        {fieldtype: "HTML", options: "<p>Confirm the first illness date. This creates separate medical allocations for one year, without changing annual leave. Review the medical policy, leave types and payroll settings first.</p>"},
+        {fieldtype: "HTML", options: `<p>${__("Confirm the first illness date. This creates separate medical allocations for one year, without changing annual leave. Review the medical policy, leave types and payroll settings first.")}</p>`},
         {fieldname: "employee", label: __("Employee"), fieldtype: "Link", options: "Employee", reqd: 1, get_query: () => ({filters: {status: "Active"}})},
         {fieldname: "first_sick_date", label: __("First Sick-leave Date"), fieldtype: "Date", reqd: 1},
       ],
@@ -209,86 +179,24 @@ function render_layout(page) {
   });
 }
 
-function render_hr_leave_management() {
-  const items = [
-    ["Leave Policy", "leave-policy", "The starter policies allocate annual leave only. Medical leave has a separate sick-year basis."],
-    ["Leave Policy Assignment", "leave-policy-assignment", "Assign a shared policy to employees and track its effective dates."],
-    ["Leave Control Panel", "leave-control-panel", "Assign leave policies to multiple employees together."],
-    ["Leave Allocation", "leave-allocation", "Review each employee’s allocated days and carry-forward balances."],
-    ["Leave Type", "leave-type", "Manage the leave categories used in your policies."],
-    ["Leave Period", "leave-period", "Define the dates of your organization’s leave year."],
-    ["Monthly Limits", "hr-settings", "Open HR Settings → Employee Monthly Limits to configure half-day and work-from-home limits."],
-  ];
-  const esc = frappe.utils.escape_html;
-  $("#hrd-leave-management").html(items.map(([title, route, description]) => `
-    <article class="hrd-module-card">
-      <h4 class="hrd-module-title">${esc(__(title))}</h4>
-      <p class="text-muted">${esc(__(description))}</p>
-      <a class="hrd-btn" href="/app/${route}" aria-label="${esc(__("Open {0}", [__(title)]))}">${esc(__("Open"))}</a>
-    </article>
-  `).join(""));
-}
-
-function render_doctype_cards() {
-  const requestDoctypes = [
-    ["Permission Request", "permission-request"],
-    ["Remote Work Request", "remote-work-request"],
-    ["Leave Plan Request", "leave-plan-request"],
-    ["Leave Return Request", "leave-return-request"],
-    ["Salary Certificate Request", "salary-certificate-request"],
-    ["Pre Approved Overtime Request", "pre-approved-overtime-request"],
-    ["Employee Training Request", "employee-training-request"],
-    ["Children Medical Allowance Request", "children-medical-allowance-request"],
-    ["Company Car Request", "company-car-request"],
-    ["Contract Renewal Request", "contract-renewal-request"],
-    ["Employee Data Update Request", "employee-data-update-request"],
-  ];
-
-  const complianceDoctypes = [
-    ["Employee Medical License", "employee-medical-license"],
-    ["Employee", "employee"],
-  ];
-
-  const coreDoctypes = [
-    ["Leave Application", "leave-application"],
-    ["Attendance Request", "attendance-request"],
-    ["Expense Claim", "expense-claim"],
-    ["Travel Request", "travel-request"],
-    ["Employee Separation", "employee-separation"],
-    ["Full and Final Statement", "full-and-final-statement"],
-  ];
-
-  fillGrid("#hrd-requests-grid", requestDoctypes);
-  fillGrid("#hrd-core-grid", coreDoctypes);
-  fillGrid("#hrd-compliance-grid", complianceDoctypes);
-}
-
-function fillGrid(selector, items) {
-  const html = items.map(([title, route, doctypeKey]) => `
-    <div class="hrd-module-card" data-dt="${frappe.utils.escape_html(doctypeKey || title)}">
-      <div class="hrd-module-title">${frappe.utils.escape_html(title)}</div>
-      <div class="hrd-module-meta">
-        <span class="hrd-count" data-count-for="${frappe.utils.escape_html(doctypeKey || title)}">0</span>
-        <a class="hrd-link" href="/app/${route}">Open</a>
-      </div>
-    </div>
-  `).join("");
-  $(selector).html(html);
+function render_banner(pending) {
+  const waiting = REQUESTS.map(([title, doctype]) => [title, doctype, pending[doctype] || 0]).filter(([, , n]) => n > 0);
+  const total = waiting.reduce((n, [, , count]) => n + count, 0);
+  const body = waiting.length ? `<div class="mhp-rows">${waiting.map(([title, doctype, count]) => `
+    <div class="mhp-row"><div><b>${esc(title)}</b><small>${esc(__("{0} waiting for a decision", [count]))}</small></div>
+      <a class="mhp-link" href="/app/${slug(doctype)}?status=${encodeURIComponent("[\"like\",\"Pending%\"]")}">${esc(__("Review"))} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>`).join("")}</div>` : "";
+  $("#hrd-banner").html(MhPortal.banner(total ? {
+    icon: "fa-inbox", tone: "warn",
+    title: total === 1 ? __("1 request is waiting for review") : __("{0} requests are waiting for review", [total]),
+    text: __("Open the list below to see each type"), body,
+  } : {
+    icon: "fa-circle-check", title: __("No requests waiting for review"), text: __("Everything employees sent has a decision."),
+  }));
 }
 
 function load_data() {
   frappe.call({
-    method: "medical_hrms.medical_hrms.page.hr_dashboard.hr_dashboard.get_logged_in_user_details",
-    callback: function (r) {
-      const u = r?.message?.user;
-      if (!u) return;
-      $("#hrd-user-email").text(`✉ ${u.email || "-"}`);
-      $("#hrd-user-role").text(`👤 ${u.role || "HR User"}`);
-    },
-  });
-
-  frappe.call({
-    method: "medical_hrms.medical_hrms.page.hr_dashboard.hr_dashboard.get_hr_dashboard_stats",
+    method: METHOD + "get_hr_dashboard_stats",
     callback: function (r) {
       const s = r?.message?.stats || {};
       $("#stat-employees").text(s.total_employees ?? 0);
@@ -299,12 +207,15 @@ function load_data() {
   });
 
   frappe.call({
-    method: "medical_hrms.medical_hrms.page.hr_dashboard.hr_dashboard.get_hr_doctype_counts",
+    method: METHOD + "get_hr_doctype_counts",
     callback: function (r) {
       const counts = r?.message?.counts || {};
+      const pending = r?.message?.pending || {};
       Object.keys(counts).forEach((dt) => {
         $(`[data-count-for="${dt}"]`).text(counts[dt] ?? 0);
+        $(`[data-pending-for="${dt}"]`).text(pending[dt] ?? 0).closest(".hrd-pending").toggleClass("amber", (pending[dt] || 0) > 0);
       });
+      render_banner(pending);
     },
   });
 }

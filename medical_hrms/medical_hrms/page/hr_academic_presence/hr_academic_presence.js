@@ -50,6 +50,7 @@ const TABS = {
 
 frappe.pages["hr-academic-presence"].on_page_load = function (wrapper) {
 	const page = frappe.ui.make_app_page({ parent: wrapper, title: __("Academic Schedules & Presence"), single_column: true });
+	MhPortal.mount(page, { portal: "hr", active: "presence-faculty", crumb: TABS.faculty.label });
 	wrapper.presence = new AcademicPresence(page);
 };
 
@@ -63,49 +64,55 @@ class AcademicPresence {
 		this.page = page;
 		$(page.body).html(`
 			<style>
-				.ap-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 16px; }
-				.ap-tab { border:1px solid #99f6e4; background:#fff; color:#0f766e; border-radius:999px; padding:7px 16px; font-weight:600; }
-				.ap-tab.active { background:#0f766e; color:#fff; border-color:#0f766e; }
-				.ap-hint { color:#475569; margin:0 0 12px; }
-				.ap-filters { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin-bottom:14px; }
-				.ap-filters .frappe-control { margin-bottom:0; min-width:180px; }
-				.ap-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:12px; margin-bottom:16px; }
-				.ap-stat { background:#fff; border-radius:12px; padding:14px 16px; border-left:4px solid #14b8a6; box-shadow:0 4px 10px rgba(0,0,0,.06); }
-				.ap-stat .value { font-size:26px; font-weight:700; color:#0f172a; }
-				.ap-stat .label { color:#475569; font-size:12px; text-transform:uppercase; letter-spacing:.3px; }
-				.ap-table-wrap { overflow-x:auto; background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.06); }
-				.ap-table { width:100%; border-collapse:collapse; font-size:13px; }
-				.ap-table th { background:#f1f5f9; text-align:left; padding:9px 10px; white-space:nowrap; position:sticky; top:0; }
-				.ap-table td { padding:8px 10px; border-top:1px solid #e2e8f0; vertical-align:top; }
-				.ap-empty { padding:28px; text-align:center; color:#64748b; }
-				.ap-note { margin-top:10px; color:#92400e; background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:8px 12px; }
-				.ap-bar { display:inline-block; height:8px; border-radius:4px; background:#14b8a6; vertical-align:middle; margin-right:6px; }
+				.mhap-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
+				.mhap-tab { all:unset; cursor:pointer; border:1px solid var(--line); background:var(--surface); color:var(--text-secondary); border-radius:999px; padding:9px 18px; font-weight:600; font-size:14px; }
+				.mhap-tab:hover { border-color:var(--primary); color:var(--primary); }
+				.mhap-tab:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+				.mhap-tab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+				[data-theme="dark"] .mhap-tab.active { color:#04201c; }
+				.mhap-hint { color:var(--text-secondary); margin:0 0 16px; font-size:15px; max-width:90ch; }
+				.mhap-filters { display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; margin-bottom:20px; padding:16px 18px 6px; }
+				.mhap-filters .frappe-control { margin-bottom:10px; min-width:200px; }
+				.mhap-stats { margin-bottom:22px; }
+				.mhap-table th { position:sticky; top:0; }
+				.mhap-empty { padding:30px; text-align:center; color:var(--text-tertiary); background:var(--surface); }
+				.mhap-extra { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+				.mhap-note { color:var(--amber-fg); background:var(--amber-bg); border-radius:12px; padding:11px 14px; font-size:13.5px; }
+				.mhap-bar { display:inline-block; height:8px; border-radius:4px; background:var(--accent); vertical-align:middle; margin-inline-end:6px; }
 			</style>
-			<div class="ap-tabs"></div>
-			<p class="ap-hint"></p>
-			<div class="ap-filters"></div>
-			<div class="ap-stats"></div>
-			<div class="ap-table-wrap"></div>
-			<div class="ap-extra"></div>
+			<div class="mhap-head"></div>
+			<div class="mhap-tabs" role="tablist"></div>
+			<p class="mhap-hint"></p>
+			<div class="mhap-filters mhp-card"></div>
+			<div class="mhap-stats mhp-stats"></div>
+			<div class="mhap-table-wrap mhp-tablewrap"></div>
+			<div class="mhap-extra"></div>
 		`);
 		this.$ = (selector) => $(page.body).find(selector);
-		this.$(".ap-tabs").html(Object.entries(TABS).map(([key, tab]) =>
-			`<button class="ap-tab" data-tab="${key}">${esc(tab.label)}</button>`).join(""));
-		this.$(".ap-tabs").on("click", ".ap-tab", (e) => frappe.set_route("hr-academic-presence", $(e.currentTarget).data("tab")));
-		page.set_primary_action(__("Export (Excel CSV)"), () => this.export(), "download");
-		page.set_secondary_action(__("Refresh"), () => this.load());
+		this.$(".mhap-tabs").html(Object.entries(TABS).map(([key, tab]) =>
+			`<button class="mhap-tab" data-tab="${key}">${esc(tab.label)}</button>`).join(""));
+		this.$(".mhap-tabs").on("click", ".mhap-tab", (e) => frappe.set_route("hr-academic-presence", $(e.currentTarget).data("tab")));
+		this.$(".mhap-head").replaceWith(MhPortal.head({
+			icon: "fa-chalkboard-user", eyebrow: __("HR Portal"), title: __("Academic Schedules & Presence"),
+			meta: [{ icon: "fa-circle-info", text: __("From the published class timetables, exam committees and recorded attendance") }],
+			actions: [
+				{ label: __("Refresh"), icon: "fa-rotate", id: "mhap-refresh", onClick: () => this.load() },
+				{ label: __("Export (Excel CSV)"), icon: "fa-download", id: "mhap-export", primary: true, onClick: () => this.export() },
+			],
+		}));
 	}
 
 	show(tab) {
 		this.tab = tab;
-		this.$(".ap-tab").removeClass("active").filter(`[data-tab="${tab}"]`).addClass("active");
-		this.$(".ap-hint").text(TABS[tab].hint);
+		MhPortal.setActive(this.page, `presence-${tab}`, TABS[tab].label);
+		this.$(".mhap-tab").removeClass("active").attr("aria-selected", "false").filter(`[data-tab="${tab}"]`).addClass("active").attr("aria-selected", "true");
+		this.$(".mhap-hint").text(TABS[tab].hint);
 		this.render_filters();
 		this.load();
 	}
 
 	render_filters() {
-		const $filters = this.$(".ap-filters").empty();
+		const $filters = this.$(".mhap-filters").empty();
 		const kind = TABS[this.tab].filters;
 		const today = frappe.datetime.get_today();
 		const make = (df) => {
@@ -134,7 +141,7 @@ class AcademicPresence {
 	load() {
 		const tab = TABS[this.tab];
 		const requested = this.tab;
-		this.$(".ap-table-wrap").html(`<div class="ap-empty">${__("Loading…")}</div>`);
+		this.$(".mhap-table-wrap").html(`<div class="mhap-empty">${__("Loading…")}</div>`);
 		frappe.call({ method: METHOD + tab.method, args: this.args(), callback: (r) => {
 			if (requested !== this.tab) return; // the user switched tabs meanwhile
 			this.data = r.message || {};
@@ -149,11 +156,13 @@ class AcademicPresence {
 
 	render() {
 		const tab = TABS[this.tab];
-		this.$(".ap-stats").html(tab.stats(this.data.summary || {}).map(([value, label]) =>
-			`<div class="ap-stat"><div class="value">${esc(value ?? 0)}</div><div class="label">${esc(label)}</div></div>`).join(""));
+		const chips = [["fa-calendar-days", ""], ["fa-users", "sky"], ["fa-clock", "amber"], ["fa-building", "violet"]];
+		this.$(".mhap-stats").html(tab.stats(this.data.summary || {}).map(([value, label], i) =>
+			`<div class="mhp-stat"><span class="mhp-chip ${chips[i % 4][1]}"><i class="fa-solid ${chips[i % 4][0]}" aria-hidden="true"></i></span>
+				<strong class="mhp-stat-value">${esc(value ?? 0)}</strong><span class="mhp-stat-label">${esc(label)}</span></div>`).join(""));
 		const rows = this.rows();
 		if (!rows.length) {
-			this.$(".ap-table-wrap").html(`<div class="ap-empty">${esc(tab.empty)}</div>`);
+			this.$(".mhap-table-wrap").html(`<div class="mhap-empty">${esc(tab.empty)}</div>`);
 		} else {
 			const max_present = Math.max(1, ...rows.map((row) => row.present || 0));
 			const cell = (key, row) => {
@@ -161,11 +170,11 @@ class AcademicPresence {
 				if (key === "date") value = frappe.datetime.str_to_user(value);
 				if (key === "attendance_rate") value = value === null || value === undefined ? "—" : `${value}%`;
 				if (key === "present" && this.tab === "students") {
-					return `<span class="ap-bar" style="width:${Math.round(80 * (row.present || 0) / max_present)}px"></span>${esc(value)}`;
+					return `<span class="mhap-bar" style="width:${Math.round(80 * (row.present || 0) / max_present)}px"></span>${esc(value)}`;
 				}
 				return esc(value);
 			};
-			this.$(".ap-table-wrap").html(`<table class="ap-table">
+			this.$(".mhap-table-wrap").html(`<table class="mhp-table mhap-table">
 				<thead><tr>${tab.columns.map(([, label]) => `<th>${esc(label)}</th>`).join("")}</tr></thead>
 				<tbody>${rows.map((row) => `<tr>${tab.columns.map(([key]) => `<td>${cell(key, row)}</td>`).join("")}</tr>`).join("")}</tbody>
 			</table>`);
@@ -188,7 +197,7 @@ class AcademicPresence {
 				notes.push(esc(__("No attendance-device logs in this period, so times come from the timetable and class attendance. Once devices are connected, actual check-out times are used automatically.")));
 			}
 		}
-		this.$(".ap-extra").html(notes.map((note) => `<div class="ap-note">${note}</div>`).join(""));
+		this.$(".mhap-extra").html(notes.map((note) => `<div class="mhap-note">${note}</div>`).join(""));
 	}
 
 	export() {
