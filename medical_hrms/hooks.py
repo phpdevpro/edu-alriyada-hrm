@@ -77,6 +77,10 @@ on_session_creation = [
 	"medical_hrms.login_redirect.redirect_hr_users_after_login"
 ]
 
+# Desk logins: picks the HR / Employee dashboard when the Education app's
+# landing-page resolution has none for the user (see login_redirect.py).
+boot_session = "medical_hrms.login_redirect.boot_session"
+
 # Generators
 # ----------
 
