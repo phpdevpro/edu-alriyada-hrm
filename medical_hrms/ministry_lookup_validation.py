@@ -27,6 +27,7 @@ def _validate_field(doc, fieldname: str, expected_category: str):
 
 
 def validate_employee_ministry_lookups(doc, method=None):
+	clear_values_that_do_not_apply(doc)
 	for field in MINISTRY_LOOKUP_FIELD_MAP["Employee"]:
 		_validate_field(doc, field["fieldname"], field["category"])
 
@@ -115,6 +116,18 @@ def identity_problems(nationality, identity_type, identity_number):
 	if nationality and type_code in NATIONAL_ID_TYPE_CODES and not is_saudi_nationality(nationality):
 		problems.append("A National ID is only issued to Saudi nationals; residents use an Iqama.")
 	return problems
+
+
+def clear_values_that_do_not_apply(doc):
+	"""The Employee form hides these fields when they do not apply, but the job
+	application form and imports can still fill them. Left in place, the
+	Ministry views would send a special-needs type for someone without special
+	needs, and every save of such a record would be "Not Saved" on opening."""
+	if not frappe.utils.cint(doc.get("custom_is_special_needs")) and doc.get("custom_ministry_special_needs_type"):
+		doc.custom_ministry_special_needs_type = None
+	nationality = doc.get("custom_jameah_nationality")
+	if doc.get("custom_original_home_id_number") and nationality and is_saudi_nationality(nationality):
+		doc.custom_original_home_id_number = None
 
 
 def _validate_identity_number_by_nationality(doc):

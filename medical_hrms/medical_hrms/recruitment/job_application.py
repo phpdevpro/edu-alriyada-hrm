@@ -317,21 +317,40 @@ def _assign_department_head(department, user_name):
 	return department
 
 
+def _college_email_domain():
+	"""The Education app's rule for Instructor e-mails (e.g. "@alriyada.edu.sa")."""
+	try:
+		from education.education.doctype.instructor.instructor import COLLEGE_EMAIL_DOMAIN
+	except ImportError:
+		return None
+	return COLLEGE_EMAIL_DOMAIN
+
+
+def _validate_academic_email(applicant, email):
+	"""Academic hires get an Instructor record, and the Education app only
+	accepts a new Instructor with an official college address. Check it
+	before anything is created, instead of creating the Employee and then
+	failing on the Instructor."""
+	domain = _college_email_domain()
+	if applicant.role in INSTRUCTOR_RECORD_ROLES and domain and not email.endswith(domain):
+		frappe.throw(
+			_("{0} hires get an Instructor record, which needs an official college e-mail ending in {1}. "
+				"Enter it as the Company Email (got: {2}).").format(_(applicant.role), domain, email or _("none")),
+			title=_("College E-mail Needed"),
+		)
+
+
 def _create_instructor_from_employee(applicant, employee, email=None, department=None):
 	"""Auto-create the matching Instructor record when an applicant who
 	applied under the "Instructor" Role is accepted and converted to an
 	Employee - so HR doesn't have to remember a separate manual step.
 
-	Instructor.email normally must be an official college address (see
-	Instructor.validate_college_email_domain in the education app) - a job
-	applicant's email_id is almost always their personal address instead.
-	Per instruction, the Instructor record should still be created either
-	way, so this sets the `ignore_college_email_domain_check` flag that
-	validate_college_email_domain() now respects, scoped to just this
-	auto-create path - manually creating/editing an Instructor from the UI
-	still enforces the real domain rule. HR can update the email to an
-	official one later once assigned; that edit will go through the normal
-	(enforced) validation.
+	Instructor.email must be an official college address (see
+	Instructor.validate_college_email_domain in the education app; its
+	master branch has no bypass), so create_employee_from_applicant checks
+	the address up front (_validate_academic_email). The
+	`ignore_college_email_domain_check` flag below is only honoured by
+	Education branches that support it.
 
 	The only thing still required is a non-blank email, since Instructor's
 	own after_insert() unconditionally creates a matching User account
@@ -656,6 +675,7 @@ def create_employee_from_applicant(job_applicant, department=None, company_email
 	# a concrete "which email represents this person" decision made once,
 	# here, rather than each downstream step guessing independently.
 	chosen_email = company_email or (applicant.email_id or "").strip().lower()
+	_validate_academic_email(applicant, chosen_email)
 
 	# A User account is needed for this person regardless of Role or
 	# Department (login access, Department Member rows, etc.), so it's
