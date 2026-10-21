@@ -82,11 +82,11 @@ frappe.ui.form.on("Employee", {
 	},
 
 	custom_is_special_needs(frm) {
-		toggle_special_needs_type(frm);
+		toggle_special_needs_type(frm, true);
 	},
 
 	custom_jameah_nationality(frm) {
-		toggle_identity_numbers(frm);
+		toggle_identity_numbers(frm, true);
 	},
 });
 
@@ -99,25 +99,32 @@ function ministry_code_query(category) {
 	};
 }
 
-function toggle_special_needs_type(frm) {
+// Values only change when the user changes the controlling field (clear = true);
+// opening a record must not mark it "Not Saved". The server clears values that
+// do not apply on save (ministry_lookup_validation.clear_values_that_do_not_apply).
+function toggle_special_needs_type(frm, clear) {
 	const has_special_needs = Boolean(frm.doc.custom_is_special_needs);
 
 	frm.set_df_property("custom_ministry_special_needs_type", "hidden", !has_special_needs);
 	frm.set_df_property("custom_ministry_special_needs_type", "reqd", has_special_needs);
 
-	if (!has_special_needs && frm.doc.custom_ministry_special_needs_type) {
+	if (clear && !has_special_needs && frm.doc.custom_ministry_special_needs_type) {
 		frm.set_value("custom_ministry_special_needs_type", "");
 	}
 }
 
-function toggle_identity_numbers(frm) {
-	const local_id_field = "custom_identity_number";
+// Ministry rule (see identity_problems): the Kingdom identity number - National ID
+// for Saudis, Iqama for residents - is mandatory for everyone; the home-country ID
+// is optional and only applies to non-Saudis.
+function toggle_identity_numbers(frm, clear) {
 	const home_country_id_field = "custom_original_home_id_number";
 	const nationality = frm.doc.custom_jameah_nationality;
 
+	frm.set_df_property("custom_identity_number", "hidden", false);
+	frm.set_df_property("custom_identity_number", "reqd", true);
+
 	if (!nationality) {
-		set_identity_number_state(frm, local_id_field, false, false);
-		set_identity_number_state(frm, home_country_id_field, false, false);
+		set_identity_number_state(frm, home_country_id_field, false, clear);
 		return;
 	}
 
@@ -128,17 +135,16 @@ function toggle_identity_numbers(frm) {
 		(message) => {
 			const is_saudi = message?.ministry_code === "101" || message?.name_english === "Saudi Arabia";
 
-			set_identity_number_state(frm, local_id_field, is_saudi, is_saudi);
-			set_identity_number_state(frm, home_country_id_field, !is_saudi, !is_saudi);
+			set_identity_number_state(frm, home_country_id_field, !is_saudi, clear);
 		}
 	);
 }
 
-function set_identity_number_state(frm, fieldname, show, required) {
+function set_identity_number_state(frm, fieldname, show, clear) {
 	frm.set_df_property(fieldname, "hidden", !show);
-	frm.set_df_property(fieldname, "reqd", required);
+	frm.set_df_property(fieldname, "reqd", false);
 
-	if (!show && frm.doc[fieldname]) {
+	if (clear && !show && frm.doc[fieldname]) {
 		frm.set_value(fieldname, "");
 	}
 }

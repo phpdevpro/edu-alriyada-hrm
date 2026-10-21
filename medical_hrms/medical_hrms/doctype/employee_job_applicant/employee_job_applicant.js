@@ -63,6 +63,9 @@ function show_create_employee_dialog(frm) {
 				fieldtype: "Data",
 				options: "Email",
 				label: __("Company Email"),
+				description: ["Instructor", "Academic Advisor"].includes(frm.doc.role)
+					? __("Academic staff need an official college address (…@alriyada.edu.sa) for their Instructor record.")
+					: "",
 				depends_on: 'eval:doc.email_choice=="Company Email"',
 				mandatory_depends_on: 'eval:doc.email_choice=="Company Email"',
 			},

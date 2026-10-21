@@ -78,8 +78,12 @@ on_session_creation = [
 ]
 
 # Desk logins: picks the HR / Employee dashboard when the Education app's
-# landing-page resolution has none for the user (see login_redirect.py).
-boot_session = "medical_hrms.login_redirect.boot_session"
+# landing-page resolution has none for the user (see login_redirect.py), and
+# keeps breadcrumbs off workspaces the user cannot open.
+boot_session = [
+	"medical_hrms.login_redirect.boot_session",
+	"medical_hrms.workspace_access.hide_inaccessible_workspace_breadcrumbs",
+]
 
 # Generators
 # ----------

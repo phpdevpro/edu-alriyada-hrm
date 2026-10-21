@@ -11,6 +11,12 @@
   the academic department the hire joins.
 - Role (select only): HR picks the hired Role on a Job Application Link.
   Which roles may be hired is enforced by validate_hireable_role.
+- Cost Center, Project (select only, as employees have): a new Expense
+  Claim fills in the default cost center, which showed HR a "No Read or
+  Select Permission for Cost Center" error.
+- Holiday List (HR User, read only): the Employee form links a holiday
+  list and HR Users check holidays when approving leave; ERPNext grants
+  only HR Manager, so HR Users got "Not permitted".
 
 Rows are only added when missing, so later changes in Role Permissions
 Manager are kept.
@@ -34,6 +40,17 @@ GRANTS = {
 	"Role": {
 		"HR User": ("select",),
 		"HR Manager": ("select",),
+	},
+	"Cost Center": {
+		"HR User": ("select",),
+		"HR Manager": ("select",),
+	},
+	"Project": {
+		"HR User": ("select",),
+		"HR Manager": ("select",),
+	},
+	"Holiday List": {
+		"HR User": ("read", "select", "report"),
 	},
 	"Travel Request": {
 		"HR User": ("read", "write", "create", "report", "print", "email"),
