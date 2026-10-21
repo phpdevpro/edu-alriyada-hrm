@@ -148,6 +148,12 @@ def employee_child(view_name, section, doctype, parentfield):
 # ---------------------------------------------------------------------------
 # Employees
 
+def only_if_special_needs(flag_expr, code_sql):
+	"""A special-needs type is only sent with the special-needs flag set, so a
+	type left behind on a record (job application, import) never contradicts it."""
+	return f"(CASE WHEN IFNULL({flag_expr}, 0) = 1 THEN {code_sql} END)"
+
+
 def employee_views():
 	views = []
 
@@ -162,7 +168,8 @@ def employee_views():
 	v.col("EnglishThirdName", text("e.custom_third_name_en"))
 	v.col("EnglishFourthName", f"COALESCE({text('e.custom_last_name_en')}, {text('e.last_name')})", note="English last name; falls back to the HR last name.")
 	v.col("IdentityTypeCode", v.ministry("it", "e.custom_identity_type", "Identity type"), "Lookup")
-	v.col("SpecialNeedsTypeCode", v.ministry("sn", "e.custom_ministry_special_needs_type", "Type of special needs"), "Lookup")
+	v.col("SpecialNeedsTypeCode", only_if_special_needs("e.custom_is_special_needs", v.ministry("sn", "e.custom_ministry_special_needs_type", "Type of special needs")), "Lookup",
+		"Only when IsSpecialNeeds = 1.")
 	v.col("IdentityNumber", digits("e.custom_identity_number"), "Integer")
 	v.col("BirthPlace", v.ministry("bp", "e.custom_ministry_place_of_birth", "Coding cities and governora"), "Lookup")
 	v.col("GregorianBirthDate", real_date("e.date_of_birth"), "Date")
@@ -181,7 +188,8 @@ def employee_views():
 	v.col("WorkTelephoneExtentionNumber", digits("e.custom_work_telephone_extention_number"), "Integer")
 	v.col("MobileNumber", digits("e.cell_number"), "Integer")
 	v.col("IsSpecialNeeds", "IFNULL(e.custom_is_special_needs, 0)", "Boolean")
-	v.col("SpecialNeedCode", v.ministry("sn2", "e.custom_ministry_special_needs_type", "Type of special needs"), "Lookup", "Same as SpecialNeedsTypeCode (the spec lists both).")
+	v.col("SpecialNeedCode", only_if_special_needs("e.custom_is_special_needs", v.ministry("sn2", "e.custom_ministry_special_needs_type", "Type of special needs")), "Lookup",
+		"Same as SpecialNeedsTypeCode (the spec lists both).")
 	v.col("LastUpdateDate", "e.modified", "Date")
 	views.append(v)
 
@@ -289,7 +297,8 @@ def student_views():
 	v.col("Email", text("s.email_id"))
 	v.col("MobileNumber", digits("s.mobile_number"), "Integer")
 	v.col("IdentityTypeCode", v.mapped("it", "Identity Type (Select)", "s.id_type", "Identity type"), "Lookup")
-	v.col("SpecialNeedsTypeCode", v.mapped("sn", "Special Need", "s.special_need_type", "Type of special needs"), "Lookup")
+	v.col("SpecialNeedsTypeCode", only_if_special_needs("s.special_need", v.mapped("sn", "Special Need", "s.special_need_type", "Type of special needs")), "Lookup",
+		"Only when SpecialNeedsId = 1.")
 	v.col("IdentityNumber", digits("s.civil_registry"), "Integer")
 	v.col("PassportNumber", text("sa.passport_number"))
 	v.col("BorderNumber", digits("sa.border_number"), "Integer")
@@ -303,7 +312,8 @@ def student_views():
 	v.col("OriginalLanguageId", NULL, "Lookup", "No Ministry code list exists for languages, so nothing is sent.")
 	v.col("ReligionId", v.mapped("rl", "Religion", "s.religion", "Religions"), "Lookup")
 	v.col("SpecialNeedsId", "IFNULL(s.special_need, 0)", "Boolean")
-	v.col("SpecialNeedId", v.mapped("sn2", "Special Need", "s.special_need_type", "Type of special needs"), "Lookup", "Same as SpecialNeedsTypeCode (the spec lists both).")
+	v.col("SpecialNeedId", only_if_special_needs("s.special_need", v.mapped("sn2", "Special Need", "s.special_need_type", "Type of special needs")), "Lookup",
+		"Same as SpecialNeedsTypeCode (the spec lists both).")
 	v.col("LastUpdateDate", "GREATEST(s.modified, COALESCE(d.modified, s.modified), COALESCE(sa.modified, s.modified))", "Date")
 	views.append(v)
 
@@ -422,12 +432,13 @@ def student_views():
 	v.col("UniversityMinorId", v.official("umn", "d.university_minor", "Specialization Coding Guide"), "Lookup")
 	v.col("StudyProgramPeriod", "NULLIF(CAST(cfg.program_period AS UNSIGNED), 0)", "Integer")
 	v.col("StudyProgramPeriodUnitId", v.setting("ppu", "program_period_unit", "Program duration coding"), "Lookup")
-	# Credit hours and GPA come from jameah_student_summary (see summary.py), refreshed hourly.
-	v.col("RequestedCreditHoursCount", "ROUND(NULLIF(sm.required, 0))", "Integer", "Credit hours on the student's plan (as the transcript shows them).")
-	v.col("RegisteredCreditHoursCount", "(CASE WHEN sm.has_plan = 1 THEN ROUND(sm.registered) END)", "Integer", "Plan courses registered and not yet graded.")
+	# Credit hours and GPA come from jameah_student_summary (see summary.py), refreshed hourly
+	# from Education's official calculations (utils/credit_hours.py, utils/gpa.py).
+	v.col("RequestedCreditHoursCount", "ROUND(NULLIF(sm.required, 0))", "Integer", "Credit hours of the current Study Plan (as the transcript shows them).")
+	v.col("RegisteredCreditHoursCount", "(CASE WHEN sm.has_plan = 1 THEN ROUND(sm.registered) END)", "Integer", "Credit hours registered in the current term.")
 	passed = "(IFNULL(sm.earned, 0) + IFNULL(sm.transferred, 0))"
 	v.col("PassedCreditHoursCount", f"(CASE WHEN sm.has_plan = 1 OR sm.transferred IS NOT NULL THEN ROUND({passed}) END)", "Integer",
-		"Earned hours plus transferred (bridging) hours.")
+		"Earned hours plus bridged (transferred) plan hours.")
 	v.col("RemainingCreditHoursCount",
 		f"(CASE WHEN s.original_status = 'Graduated' THEN 0 WHEN NULLIF(sm.required, 0) IS NULL THEN NULL ELSE ROUND(GREATEST(sm.required - {passed}, 0)) END)",
 		"Integer", "0 for graduates.")
@@ -463,7 +474,7 @@ def student_views():
 	v.col("AttendanceSemesterTypeId", v.official("atd", "d.attendance_semester_type", "Admission to study"), "Lookup")
 	v.col("CurrentSemesterTypeId", v.mapped("cst", "Academic Term.term_name", "lt.term_name", "Admission to study"), "Lookup", "Semester of the latest course registration.")
 	v.col("GPATypeId", v.setting("gpt", "gpa_type", "Cumulative GPA"), "Lookup")
-	v.col("GPA", "sm.gpa", "Number", "Cumulative GPA as on the transcript (exact, rounded half up); NULL when no graded credit hours.")
+	v.col("GPA", "sm.gpa", "Number", "The college's official cumulative GPA (Education's utils/gpa.py, as on the transcript); NULL when no graded credit hours.")
 	v.col("CurrentSemesterAssesmentId", v.official("csa", "d.current_semester_assessment", "Student Evaluation Coding"), "Lookup")
 	v.col("WarningCount", NULL, "Number", "Academic warnings are not tracked.")
 	v.col("AccumulatedAssesmentId", v.official("aca", "d.accumulated_assessment", "Student Evaluation Coding"), "Lookup")

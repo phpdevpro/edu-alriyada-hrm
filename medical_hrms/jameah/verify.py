@@ -19,6 +19,7 @@ from collections import Counter, defaultdict
 import frappe
 from frappe.utils import getdate
 
+from medical_hrms.jameah import summary
 from medical_hrms.jameah import views as V
 
 SPEC = os.path.join(os.path.dirname(__file__), "spec_columns.json")
@@ -140,7 +141,7 @@ def expected_employee_personal(c, emps):
 			"EnglishThirdName": text(e.custom_third_name_en),
 			"EnglishFourthName": coalesce(text(e.custom_last_name_en), text(e.last_name)),
 			"IdentityTypeCode": c.ministry(e.custom_identity_type, "Identity type"),
-			"SpecialNeedsTypeCode": c.ministry(e.custom_ministry_special_needs_type, "Type of special needs"),
+			"SpecialNeedsTypeCode": c.ministry(e.custom_ministry_special_needs_type, "Type of special needs") if e.custom_is_special_needs else None,
 			"IdentityNumber": digits(e.custom_identity_number),
 			"BirthPlace": c.ministry(e.custom_ministry_place_of_birth, "Coding cities and governora"),
 			"GregorianBirthDate": real_date(e.date_of_birth),
@@ -159,7 +160,7 @@ def expected_employee_personal(c, emps):
 			"WorkTelephoneExtentionNumber": digits(e.custom_work_telephone_extention_number),
 			"MobileNumber": digits(e.cell_number),
 			"IsSpecialNeeds": e.custom_is_special_needs or 0,
-			"SpecialNeedCode": c.ministry(e.custom_ministry_special_needs_type, "Type of special needs"),
+			"SpecialNeedCode": c.ministry(e.custom_ministry_special_needs_type, "Type of special needs") if e.custom_is_special_needs else None,
 			"LastUpdateDate": e.modified,
 		}
 	return out
@@ -271,7 +272,7 @@ def expected_student_personal(c, sd):
 			"StudentId": s.name, **names(s),
 			"Email": text(s.email_id), "MobileNumber": digits(s.mobile_number),
 			"IdentityTypeCode": c.mapped("Identity Type (Select)", s.id_type, "Identity type"),
-			"SpecialNeedsTypeCode": c.mapped("Special Need", s.special_need_type, "Type of special needs"),
+			"SpecialNeedsTypeCode": c.mapped("Special Need", s.special_need_type, "Type of special needs") if s.special_need else None,
 			"IdentityNumber": digits(s.civil_registry),
 			"PassportNumber": text(a.passport_number), "BorderNumber": digits(a.border_number),
 			"HomeIdentityNumber": text(a.id_number_in_the_country),
@@ -283,7 +284,7 @@ def expected_student_personal(c, sd):
 			"OriginalLanguageId": None,
 			"ReligionId": c.mapped("Religion", s.religion, "Religions"),
 			"SpecialNeedsId": s.special_need or 0,
-			"SpecialNeedId": c.mapped("Special Need", s.special_need_type, "Type of special needs"),
+			"SpecialNeedId": c.mapped("Special Need", s.special_need_type, "Type of special needs") if s.special_need else None,
 			"LastUpdateDate": max(x for x in (s.modified, d.get("modified"), a.get("modified")) if x),
 		}
 	return out
@@ -475,7 +476,8 @@ def exact_gpa():
 
 
 def education_gpa(student_ids):
-	"""The Education app's own transcript GPA (read only)."""
+	"""The Education app's old transcript GPA (read only), for Education versions
+	without utils/gpa.py."""
 	from education.education.page.course_registration_monitoring.course_registration_monitoring import _bulk_cumulative_gpa
 	return _bulk_cumulative_gpa(student_ids)
 
@@ -484,18 +486,30 @@ def expected_student_academic(c, sd):
 	enrollments = rows("Program Enrollment", ["*"], {"docstatus": 1})
 	programs = {p.name: p for p in rows("Program", ["name", "academic_degree", "academic_education_level", "academic_program_major"])}
 	years = {y.name: y for y in rows("Academic Year", ["name", "year_start_date"])}
-	credits, transferred = student_credits()
+	official_hours = summary.official_credit_hours(list(sd.students))
+	if official_hours is not None:
+		# The view must carry Education's official credit hours exactly (utils/credit_hours.py).
+		credits = {sid: h for sid, h in official_hours.items() if h}
+		transferred = {sid: h["transferred"] for sid, h in credits.items()}
+	else:
+		credits, transferred = student_credits()
 	terms = latest_terms()
 	all_terms = {t.name: t for t in rows("Academic Term", ["name", "term_name", "term_end_date"])}
 	graduation_term = {}
 	for gdoc in rows("Graduate Document", ["student", "academic_term", "creation"]):
 		if gdoc.academic_term and (gdoc.student not in graduation_term or gdoc.creation > graduation_term[gdoc.student][0]):
 			graduation_term[gdoc.student] = (gdoc.creation, all_terms.get(gdoc.academic_term))
-	gpa = exact_gpa()
-	transcript = education_gpa(list(sd.students))
 	GPA_DISAGREEMENTS.clear()
 	GPA_TIES.clear()
-	for sid, value in gpa.items():
+	official = summary.official_gpas(list(sd.students))
+	if official is not None:
+		# The view must carry the college's official GPA exactly (Education's utils/gpa.py).
+		gpa = {sid: decimal.Decimal(str(v)).quantize(decimal.Decimal("0.01")) for sid, v in official.items() if v is not None}
+		transcript = {}
+	else:
+		gpa = exact_gpa()
+		transcript = education_gpa(list(sd.students))
+	for sid, value in (gpa.items() if transcript else ()):
 		diff = abs(float(value) - float(transcript.get(sid) or 0))
 		if diff < 0.0001:
 			continue

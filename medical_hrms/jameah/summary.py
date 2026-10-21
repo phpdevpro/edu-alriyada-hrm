@@ -1,8 +1,9 @@
 """Per-student academic aggregates for jameahStudentAcademicDetails.
 
-Credit hours, GPA, latest enrollment and latest registered term come from
-Education tables with no index on the student (90,000+ grade rows), so
-computing them inside the view takes ~30 seconds. They are refreshed into
+Credit hours and GPA (Education's official calculations, see
+official_credit_hours and official_gpas), latest enrollment and latest
+registered term come from Education tables with no index on the student
+(90,000+ grade rows), so computing them inside the view takes too long. They are refreshed into
 jameah_student_summary instead (hourly, after migrate, or on demand) and the
 view joins that table. Values can therefore lag new grades by up to an hour.
 """
@@ -11,7 +12,8 @@ from frappe.utils import now_datetime
 
 TABLE = "jameah_student_summary"
 
-# Student credit hours, following the transcript (education.helper.get_transcript_summary):
+# Fallback credit hours for an Education version without utils/credit_hours.py,
+# following the old transcript (education.helper.get_transcript_summary):
 # a plan course counts as passed when its latest grade result is Pass (or, with no
 # result, when the plan row says Passed); bridging-equivalent courses are transferred hours.
 CREDITS = """(
@@ -30,8 +32,8 @@ CREDITS = """(
 ) cr ON cr.student = s.name
 LEFT JOIN (SELECT student, SUM(IFNULL(calc_hours, 0)) AS hours FROM `tabStudent Bridging Course` GROUP BY student) tr ON tr.student = s.name"""
 
-# Cumulative GPA as the transcript computes it (education's
-# course_registration_monitoring._bulk_cumulative_gpa): every grade result of a
+# Fallback cumulative GPA for an Education version without utils/gpa.py (the
+# old transcript rule, course_registration_monitoring._bulk_cumulative_gpa): every grade result of a
 # course on the student's latest study plan, weighted by the course's credit
 # hours, bridging-equivalent courses excluded. No graded credits -> NULL, not 0.
 # Exact decimal average rounded half up (4.325 -> 4.33); the transcript adds up
@@ -86,6 +88,44 @@ def ensure_table():
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
 
+def official_gpas(student_ids):
+	"""The college's official cumulative GPA, {student: gpa or None}, or None
+	when this Education version has no central GPA module.
+
+	Education's utils/gpa.py is "the one place a student's GPA is calculated"
+	(retakes, superseded fails, XF/W exclusions, legacy baselines...); the
+	Ministry must get the same number as the transcript, so it is not
+	re-implemented here. No counted credits -> None (not 0.00)."""
+	try:
+		from education.education.utils.gpa import get_gpa_breakdown
+	except ImportError:
+		return None
+	return {sid: (b["gpa"] if b["credits"] else None) for sid, b in get_gpa_breakdown(student_ids).items()}
+
+
+def official_credit_hours(student_ids):
+	"""Education's official credit-hour figures, {student: {...} or None (no
+	Student Plan)}, or None when this Education version has no central module.
+
+	utils/credit_hours.py is "the one place a student's credit-hour figures are
+	calculated" (the dashboard and My Transcript read it): required, earned and
+	bridged hours over the current Study Plan. registered = credit hours of the
+	student's live course registrations in the current term."""
+	try:
+		from education.education.utils.credit_hours import get_plan_hours, get_term_registered_hours
+	except ImportError:
+		return None
+	term = frappe.db.get_single_value("Education Settings", "current_academic_term")
+	out = {}
+	for sid in student_ids:
+		plan = get_plan_hours(sid)
+		out[sid] = plan and {
+			"required": plan["hours_required"], "earned": plan["hours_earned"], "transferred": plan["hours_bridged"],
+			"registered": get_term_registered_hours(sid, term)["hours"] if term else 0,
+		}
+	return out
+
+
 def refresh():
 	"""Rebuild the summary in one transaction, so readers never see a half-built table."""
 	ensure_table()
@@ -98,6 +138,20 @@ def refresh():
 		LEFT JOIN {CREDITS}
 		LEFT JOIN {GPA}
 		LEFT JOIN {LATEST}""", {"now": now})
+	students = frappe.get_all("Student", pluck="name")
+	hours = official_credit_hours(students)
+	for student, h in (hours or {}).items():
+		if h:
+			frappe.db.sql(f"""UPDATE `{TABLE}` SET has_plan = 1, required = %(required)s, earned = %(earned)s,
+				registered = %(registered)s, transferred = %(transferred)s WHERE student = %(student)s""", {**h, "student": student})
+		else:
+			frappe.db.sql(f"UPDATE `{TABLE}` SET has_plan = 0, required = NULL, earned = NULL, registered = NULL, transferred = NULL WHERE student = %s", student)
+	official = official_gpas(students)
+	if official is not None:
+		frappe.db.sql(f"UPDATE `{TABLE}` SET gpa = NULL")
+		for student, gpa in official.items():
+			if gpa is not None:
+				frappe.db.sql(f"UPDATE `{TABLE}` SET gpa = %s WHERE student = %s", (gpa, student))
 	frappe.db.set_single_value("Jameah Settings", "academic_summary_refreshed_on", now)
 	frappe.db.commit()
 	return frappe.db.sql(f"SELECT COUNT(*) FROM `{TABLE}`")[0][0]

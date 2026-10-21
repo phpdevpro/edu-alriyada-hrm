@@ -18,7 +18,7 @@ Spec section: **Employee Personal Information**. One row per: EmployeeId.
 | `EnglishThirdName` | String | `NULLIF(TRIM(e.custom_third_name_en), '')` |  |  |
 | `EnglishFourthName` | String | `COALESCE(NULLIF(TRIM(e.custom_last_name_en), ''), NULLIF(TRIM(e.last_name), ''))` |  | English last name; falls back to the HR last name. |
 | `IdentityTypeCode` | Lookup | `it.ministry_code` | Identity type |  |
-| `SpecialNeedsTypeCode` | Lookup | `sn.ministry_code` | Type of special needs |  |
+| `SpecialNeedsTypeCode` | Lookup | `(CASE WHEN IFNULL(e.custom_is_special_needs, 0) = 1 THEN sn.ministry_code END)` | Type of special needs | Only when IsSpecialNeeds = 1. |
 | `IdentityNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(e.custom_identity_number, ''), '[^0-9]', ''), '')` |  |  |
 | `BirthPlace` | Lookup | `bp.ministry_code` | Coding cities and governora |  |
 | `GregorianBirthDate` | Date | `(CASE WHEN e.date_of_birth >= '1920-01-01' THEN e.date_of_birth END)` |  |  |
@@ -37,7 +37,7 @@ Spec section: **Employee Personal Information**. One row per: EmployeeId.
 | `WorkTelephoneExtentionNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(e.custom_work_telephone_extention_number, ''), '[^0-9]', ''), '')` |  |  |
 | `MobileNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(e.cell_number, ''), '[^0-9]', ''), '')` |  |  |
 | `IsSpecialNeeds` | Boolean | `IFNULL(e.custom_is_special_needs, 0)` |  |  |
-| `SpecialNeedCode` | Lookup | `sn2.ministry_code` | Type of special needs | Same as SpecialNeedsTypeCode (the spec lists both). |
+| `SpecialNeedCode` | Lookup | `(CASE WHEN IFNULL(e.custom_is_special_needs, 0) = 1 THEN sn2.ministry_code END)` | Type of special needs | Same as SpecialNeedsTypeCode (the spec lists both). |
 | `LastUpdateDate` | Date | `e.modified` |  |  |
 
 ## `jameahEmployeeAcademicQualifications`
@@ -138,7 +138,7 @@ Spec section: **1. Personal Information**. One row per: StudentId.
 | `Email` | String | `NULLIF(TRIM(s.email_id), '')` |  |  |
 | `MobileNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(s.mobile_number, ''), '[^0-9]', ''), '')` |  |  |
 | `IdentityTypeCode` | Lookup | `it.ministry_code` | Identity type |  |
-| `SpecialNeedsTypeCode` | Lookup | `sn.ministry_code` | Type of special needs |  |
+| `SpecialNeedsTypeCode` | Lookup | `(CASE WHEN IFNULL(s.special_need, 0) = 1 THEN sn.ministry_code END)` | Type of special needs | Only when SpecialNeedsId = 1. |
 | `IdentityNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(s.civil_registry, ''), '[^0-9]', ''), '')` |  |  |
 | `PassportNumber` | String | `NULLIF(TRIM(sa.passport_number), '')` |  |  |
 | `BorderNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(sa.border_number, ''), '[^0-9]', ''), '')` |  |  |
@@ -151,7 +151,7 @@ Spec section: **1. Personal Information**. One row per: StudentId.
 | `OriginalLanguageId` | Lookup | `CAST(NULL AS CHAR)` |  | No Ministry code list exists for languages, so nothing is sent. |
 | `ReligionId` | Lookup | `rl.ministry_code` | Religions |  |
 | `SpecialNeedsId` | Boolean | `IFNULL(s.special_need, 0)` |  |  |
-| `SpecialNeedId` | Lookup | `sn2.ministry_code` | Type of special needs | Same as SpecialNeedsTypeCode (the spec lists both). |
+| `SpecialNeedId` | Lookup | `(CASE WHEN IFNULL(s.special_need, 0) = 1 THEN sn2.ministry_code END)` | Type of special needs | Same as SpecialNeedsTypeCode (the spec lists both). |
 | `LastUpdateDate` | Date | `GREATEST(s.modified, COALESCE(d.modified, s.modified), COALESCE(sa.modified, s.modified))` |  |  |
 
 ## `jameahStudentCompanion`
@@ -300,9 +300,9 @@ Spec section: **9. Academic Details**. One row per: StudentId, EnrollmentId.
 | `UniversityMinorId` | Lookup | `umn.ministry_code` | Specialization Coding Guide |  |
 | `StudyProgramPeriod` | Integer | `NULLIF(CAST(cfg.program_period AS UNSIGNED), 0)` |  |  |
 | `StudyProgramPeriodUnitId` | Lookup | `ppu.ministry_code` | Program duration coding |  |
-| `RequestedCreditHoursCount` | Integer | `ROUND(NULLIF(sm.required, 0))` |  | Credit hours on the student's plan (as the transcript shows them). |
-| `RegisteredCreditHoursCount` | Integer | `(CASE WHEN sm.has_plan = 1 THEN ROUND(sm.registered) END)` |  | Plan courses registered and not yet graded. |
-| `PassedCreditHoursCount` | Integer | `(CASE WHEN sm.has_plan = 1 OR sm.transferred IS NOT NULL THEN ROUND((IFNULL(sm.earned, 0) + IFNULL(sm.transferred, 0))) END)` |  | Earned hours plus transferred (bridging) hours. |
+| `RequestedCreditHoursCount` | Integer | `ROUND(NULLIF(sm.required, 0))` |  | Credit hours of the current Study Plan (as the transcript shows them). |
+| `RegisteredCreditHoursCount` | Integer | `(CASE WHEN sm.has_plan = 1 THEN ROUND(sm.registered) END)` |  | Credit hours registered in the current term. |
+| `PassedCreditHoursCount` | Integer | `(CASE WHEN sm.has_plan = 1 OR sm.transferred IS NOT NULL THEN ROUND((IFNULL(sm.earned, 0) + IFNULL(sm.transferred, 0))) END)` |  | Earned hours plus bridged (transferred) plan hours. |
 | `RemainingCreditHoursCount` | Integer | `(CASE WHEN s.original_status = 'Graduated' THEN 0 WHEN NULLIF(sm.required, 0) IS NULL THEN NULL ELSE ROUND(GREATEST(sm.required - (IFNULL(sm.earned, 0) + IFN...` |  | 0 for graduates. |
 | `AcademicStatusId` | Lookup | `COALESCE(asd.ministry_code, ast.ministry_code)` | General situation |  |
 | `StudyTypeId` | Lookup | `COALESCE(sty.ministry_code, CASE WHEN br.student IS NOT NULL THEN stb.ministry_code ELSE str.ministry_code END)` | Study type coding | Student Ministry Detail, else Jameah Settings (bridging or regular study type). |
@@ -322,7 +322,7 @@ Spec section: **9. Academic Details**. One row per: StudentId, EnrollmentId.
 | `AttendanceSemesterTypeId` | Lookup | `atd.ministry_code` | Admission to study |  |
 | `CurrentSemesterTypeId` | Lookup | `cst.ministry_code` | Admission to study | Semester of the latest course registration. |
 | `GPATypeId` | Lookup | `gpt.ministry_code` | Cumulative GPA |  |
-| `GPA` | Number | `sm.gpa` |  | Cumulative GPA as on the transcript (exact, rounded half up); NULL when no graded credit hours. |
+| `GPA` | Number | `sm.gpa` |  | The college's official cumulative GPA (Education's utils/gpa.py, as on the transcript); NULL when no graded credit hours. |
 | `CurrentSemesterAssesmentId` | Lookup | `csa.ministry_code` | Student Evaluation Coding |  |
 | `WarningCount` | Number | `CAST(NULL AS CHAR)` |  | Academic warnings are not tracked. |
 | `AccumulatedAssesmentId` | Lookup | `aca.ministry_code` | Student Evaluation Coding |  |

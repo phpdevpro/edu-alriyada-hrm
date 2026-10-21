@@ -37,9 +37,10 @@ Column-by-column sources: [VIEWS.md](VIEWS.md) (generated from `views.py`).
 - Integer columns (phones, IDs) are digits only; dates before 1920 (placeholders such as
   1900-01-01, zero dates) are sent as NULL.
 - **Academic figures** (credit hours, GPA, latest enrollment/term) come from
-  `jameah_student_summary`, rebuilt hourly (scheduler), after every migrate, and from the
-  Jameah Data Check page. They follow the transcript (`education.helper.get_transcript_summary`);
-  GPA is the exact average rounded half up.
+  `jameah_student_summary`, rebuilt hourly (long queue, ~7 minutes), after every migrate,
+  and from the Jameah Data Check page. GPA and credit hours are Education's official figures
+  (`education/utils/gpa.py`, `education/utils/credit_hours.py`, what the transcript shows);
+  older Education versions without those modules fall back to the SQL in `summary.py`.
 
 ## Checking the data
 
@@ -47,7 +48,7 @@ Column-by-column sources: [VIEWS.md](VIEWS.md) (generated from `views.py`).
   codes, mandatory gaps, values waiting for a code, empty settings, source problems.
 - **Employee form → View → Ministry (Jameah) Data**: what is sent for one employee.
 - Full value-by-value comparison of every view with the source records (Python rebuild,
-  independent of the SQL), plus GPA against the Education transcript:
+  independent of the SQL; GPA and credit hours against Education's official figures):
 
       bench --site <site> execute medical_hrms.jameah.verify.run
 

@@ -267,7 +267,7 @@ for request_doctype in EMPLOYEE_REQUEST_DOCTYPES:
 # ---------------
 
 scheduler_events = {
-	"hourly": ["medical_hrms.jameah.summary.refresh"],
+	"hourly_long": ["medical_hrms.jameah.summary.refresh"],
 }
 
 # scheduler_events = {
