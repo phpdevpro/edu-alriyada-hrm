@@ -62,6 +62,20 @@ def create_child_doctypes():
                 {"fieldname": "organization", "fieldtype": "Data", "label": "Organization", "in_list_view": 1},
                 {"fieldname": "date", "fieldtype": "Date", "label": "Date", "in_list_view": 1}
             ]
+        },
+        {
+            "name": "Jameah Previous Work Experience",
+            "fields": [
+                {"fieldname": "profession", "fieldtype": "Data", "label": "Job Title", "in_list_view": 1},
+                {"fieldname": "organization_name", "fieldtype": "Data", "label": "Name of educational institution/company", "in_list_view": 1},
+                {"fieldname": "city", "fieldtype": "Data", "label": "The city"},
+                {"fieldname": "country", "fieldtype": "Link", "options": "Jameah Ministry Code", "label": "Country"},
+                {"fieldname": "department", "fieldtype": "Data", "label": "College / Administration"},
+                {"fieldname": "section", "fieldtype": "Data", "label": "Section"},
+                {"fieldname": "start_work_date", "fieldtype": "Date", "label": "Start date", "in_list_view": 1},
+                {"fieldname": "end_work_date", "fieldtype": "Date", "label": "End of work date", "in_list_view": 1},
+                {"fieldname": "functional_tasks", "fieldtype": "Data", "label": "Job Duties"}
+            ]
         }
     ]
 
@@ -125,11 +139,18 @@ def link_tables_to_parents():
             "insert_after": "custom_jameah_qualifications"
         },
         {
+            "fieldname": "custom_jameah_previous_experience",
+            "label": "Employee Previous Experience",
+            "fieldtype": "Table",
+            "options": "Jameah Previous Work Experience",
+            "insert_after": "custom_jameah_experience"
+        },
+        {
             "fieldname": "custom_jameah_training",
             "label": "Training Courses",
             "fieldtype": "Table",
             "options": "Jameah Training Course",
-            "insert_after": "custom_jameah_experience"
+            "insert_after": "custom_jameah_previous_experience"
         },
         {
             "fieldname": "custom_jameah_publications",
@@ -147,13 +168,26 @@ def link_tables_to_parents():
         }
     ]
 
+    # "custom_job_duties" (the anchor for the first table, Qualifications)
+    # only exists on Employee - Instructor has no such field, which previously
+    # broke the whole insert_after chain's resolution on Instructor (Frappe
+    # falls back to an undefined order when an anchor fieldname doesn't
+    # exist). "custom_jameah_facility" is the last Institute Placement field
+    # and is confirmed present on both doctypes, so it's used as Instructor's
+    # anchor instead - this only affects where the whole block starts on
+    # Instructor's form, not the relative order of the six tables themselves.
+    instructor_fields = [dict(field) for field in table_fields]
+    instructor_fields[0]["insert_after"] = "custom_jameah_facility"
+
     custom_fields = {
         "Employee": table_fields,
         "Instructor": [
             dict(field, label="Academic Experience")
             if field["fieldname"] == "custom_jameah_experience"
+            else dict(field, label="Previous Work Experience")
+            if field["fieldname"] == "custom_jameah_previous_experience"
             else field
-            for field in table_fields
+            for field in instructor_fields
         ]
     }
 
