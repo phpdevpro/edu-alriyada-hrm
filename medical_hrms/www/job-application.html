@@ -2,20 +2,34 @@
 
 {% block page_content %}
 <style>
+	@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+	/* Same RCHS brand tokens as the Education app's applicant pages (student_applicant_theme.css) */
 	body.job-application-page {
-		background: var(--ja-page-bg, #f3f5f9);
-	}
-	.job-application-page :root,
-	.job-application-page {
-		--ja-accent: #2f6fed;
-		--ja-accent-dark: #1f52c9;
-		--ja-accent-soft: rgba(47, 111, 237, 0.1);
+		--ja-page-bg: #F3F8FC;
+		--ja-accent: #0769B2;
+		--ja-accent-dark: #054C82;
+		--ja-accent-soft: rgba(7, 105, 178, 0.1);
+		--ja-deepest: #062741;
+		--ja-teal: #13AFA3;
+		--ja-teal-soft: #DFF5F2;
 		--ja-danger: #d64545;
-		--ja-success: #1d8a4d;
-		--ja-ink: #1f2430;
-		--ja-muted: var(--text-muted, #6b7280);
-		--ja-border: var(--border-color, #e3e7ee);
-		--ja-card-bg: var(--card-bg, #fff);
+		--ja-success: #13AFA3;
+		--ja-ink: #0A2036;
+		--ja-muted: #5C7488;
+		--ja-border: #E1EAF2;
+		--ja-card-bg: #FFFFFF;
+		--ja-soft: #F3F8FC;
+		--ja-radius: 14px;
+		--ja-radius-sm: 10px;
+		--ja-ease: cubic-bezier(.4, 0, .2, 1);
+		background: var(--ja-page-bg);
+		color: var(--ja-ink);
+		font-family: 'Inter', sans-serif;
+		-webkit-font-smoothing: antialiased;
+	}
+	html[dir="rtl"] body.job-application-page,
+	html[lang^="ar"] body.job-application-page {
+		font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
 	}
 	.job-application-page .ja-wrap {
 		max-width: 920px;
@@ -27,12 +41,25 @@
 		display: flex;
 		align-items: center;
 		gap: 1.1rem;
-		background: linear-gradient(135deg, var(--ja-accent), #6f9bff);
+		background: linear-gradient(135deg, #062741 0%, var(--ja-accent) 60%, #13AFA3 100%);
 		color: #fff;
 		border-radius: 16px;
 		padding: 1.9rem 2rem;
-		margin-bottom: 1.75rem;
-		box-shadow: 0 16px 32px -18px rgba(47, 111, 237, 0.55);
+		margin-bottom: 1.5rem;
+		box-shadow: 0 16px 32px -18px rgba(7, 105, 178, 0.55);
+		position: relative;
+		overflow: hidden;
+	}
+	.job-application-page .ja-hero::after {
+		content: "";
+		position: absolute;
+		inset-inline-end: -60px;
+		top: -60px;
+		width: 220px;
+		height: 220px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.07);
+		pointer-events: none;
 	}
 	.job-application-page .ja-hero-icon {
 		flex: none;
@@ -65,19 +92,19 @@
 		padding: 1rem 1.25rem;
 		margin-bottom: 1.5rem;
 		border: 1px solid transparent;
-		border-left-width: 4px;
+		border-inline-start-width: 4px;
 		font-size: 0.92rem;
 	}
 	.job-application-page .ja-alert-danger {
 		background: #fdecea;
 		border-color: #f5c2c0;
-		border-left-color: var(--ja-danger);
+		border-inline-start-color: var(--ja-danger);
 		color: #7a1f1a;
 	}
 	.job-application-page .ja-alert-success {
 		background: #e8f6ee;
 		border-color: #b7e4c7;
-		border-left-color: var(--ja-success);
+		border-inline-start-color: var(--ja-success);
 		color: #145a32;
 	}
 	.job-application-page .ja-hint {
@@ -99,7 +126,7 @@
 		transition: box-shadow 0.15s ease;
 	}
 	.job-application-page .ja-section:focus-within {
-		box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 26px -16px rgba(47, 111, 237, 0.28);
+		box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 26px -16px rgba(7, 105, 178, 0.28);
 	}
 	.job-application-page .ja-section h2 {
 		display: flex;
@@ -113,7 +140,7 @@
 		border-bottom: 1px solid var(--ja-border);
 	}
 	.job-application-page .ja-section h2::before {
-		content: counter(ja-section);
+		content: attr(data-num);
 		flex: none;
 		display: inline-flex;
 		align-items: center;
@@ -146,7 +173,7 @@
 	}
 	.job-application-page label .ja-req {
 		color: var(--ja-danger);
-		margin-left: 0.1rem;
+		margin-inline-start: 0.1rem;
 	}
 	.job-application-page input,
 	.job-application-page select,
@@ -188,12 +215,12 @@
 		font-weight: 600;
 		font-size: 0.82rem;
 		padding: 0.45rem 0.8rem;
-		margin-right: 0.75rem;
+		margin-inline-end: 0.75rem;
 		cursor: pointer;
 		transition: background 0.15s ease;
 	}
 	.job-application-page input[type="file"]::file-selector-button:hover {
-		background: #dbe6fd;
+		background: #d6e8f5;
 	}
 	.job-application-page textarea {
 		resize: vertical;
@@ -221,7 +248,7 @@
 	.job-application-page .ja-repeat-row::before {
 		content: "";
 		position: absolute;
-		left: 0;
+		inset-inline-start: 0;
 		top: 0.6rem;
 		bottom: 0.6rem;
 		width: 3px;
@@ -258,7 +285,7 @@
 		transition: background 0.15s ease, transform 0.1s ease;
 	}
 	.job-application-page .ja-add-row:hover {
-		background: #dbe6fd;
+		background: #d6e8f5;
 	}
 	.job-application-page .ja-add-row:active {
 		transform: scale(0.98);
@@ -279,11 +306,11 @@
 		font-size: 0.95rem;
 		font-weight: 600;
 		cursor: pointer;
-		box-shadow: 0 10px 20px -10px rgba(47, 111, 237, 0.65);
+		box-shadow: 0 10px 20px -10px rgba(7, 105, 178, 0.65);
 		transition: transform 0.1s ease, box-shadow 0.15s ease;
 	}
 	.job-application-page .ja-submit-btn:hover:not(:disabled) {
-		box-shadow: 0 14px 24px -10px rgba(47, 111, 237, 0.75);
+		box-shadow: 0 14px 24px -10px rgba(7, 105, 178, 0.75);
 		transform: translateY(-1px);
 	}
 	.job-application-page .ja-submit-btn:disabled {
@@ -302,7 +329,480 @@
 	.job-application-page .ja-hidden {
 		display: none !important;
 	}
+	/* ---- Hero meta chips ---- */
+	.job-application-page .ja-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin-top: 0.85rem;
+	}
+	.job-application-page .ja-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		background: rgba(255, 255, 255, 0.16);
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		border-radius: 999px;
+		padding: 0.22rem 0.7rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: #fff;
+	}
+	.job-application-page .ja-hero-org {
+		font-size: 0.78rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.75);
+		margin: 0 0 0.25rem;
+	}
+
+	/* ---- Stepper ---- */
+	.job-application-page .ja-progress {
+		background: var(--ja-card-bg);
+		border: 1px solid var(--ja-border);
+		border-radius: 14px;
+		padding: 1rem 1.25rem 1.1rem;
+		margin-bottom: 1.25rem;
+		box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+	}
+	.job-application-page .ja-progress-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		margin-bottom: 0.65rem;
+		font-size: 0.85rem;
+	}
+	.job-application-page .ja-progress-step {
+		font-weight: 700;
+		color: var(--ja-ink);
+	}
+	.job-application-page .ja-progress-eta {
+		color: var(--ja-muted);
+	}
+	.job-application-page .ja-bar {
+		height: 6px;
+		border-radius: 999px;
+		background: var(--ja-accent-soft);
+		overflow: hidden;
+	}
+	.job-application-page .ja-bar-fill {
+		height: 100%;
+		width: 0;
+		border-radius: 999px;
+		background: linear-gradient(90deg, var(--ja-accent), #13AFA3);
+		transition: width 0.35s ease;
+	}
+	.job-application-page .ja-steps {
+		display: flex;
+		justify-content: space-between;
+		list-style: none;
+		margin: 0.9rem 0 0;
+		padding: 0;
+		gap: 0.25rem;
+	}
+	.job-application-page .ja-steps li {
+		flex: 1;
+		min-width: 0;
+		text-align: center;
+	}
+	.job-application-page .ja-step-btn {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.3rem;
+		width: 100%;
+		background: none;
+		border: none;
+		padding: 0;
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--ja-muted);
+		cursor: default;
+	}
+	.job-application-page .ja-step-dot {
+		width: 1.7rem;
+		height: 1.7rem;
+		border-radius: 50%;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.75rem;
+		font-weight: 700;
+		border: 2px solid var(--ja-border);
+		background: var(--ja-card-bg);
+		color: var(--ja-muted);
+		transition: all 0.2s ease;
+	}
+	.job-application-page .ja-step-label {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
+	}
+	.job-application-page .ja-steps li.is-current .ja-step-dot {
+		border-color: var(--ja-accent);
+		background: var(--ja-accent);
+		color: #fff;
+		box-shadow: 0 0 0 4px var(--ja-accent-soft);
+	}
+	.job-application-page .ja-steps li.is-current .ja-step-btn {
+		color: var(--ja-ink);
+	}
+	.job-application-page .ja-steps li.is-done .ja-step-dot {
+		border-color: var(--ja-accent);
+		background: var(--ja-accent-soft);
+		color: var(--ja-accent-dark);
+	}
+	.job-application-page .ja-steps li.is-done .ja-step-btn {
+		cursor: pointer;
+		color: var(--ja-accent-dark);
+	}
+	.job-application-page .ja-steps li.is-done .ja-step-btn:hover .ja-step-dot {
+		background: var(--ja-accent);
+		color: #fff;
+	}
+
+	/* ---- Steps ---- */
+	.job-application-page .ja-step {
+		animation: ja-step-in 0.28s ease backwards;
+	}
+	@keyframes ja-step-in {
+		from { opacity: 0; transform: translateY(8px); }
+		to { opacity: 1; transform: none; }
+	}
+	.job-application-page .ja-banner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+		background: var(--ja-accent-soft);
+		border: 1px solid rgba(7, 105, 178, 0.25);
+		color: var(--ja-accent-dark);
+		border-radius: 10px;
+		padding: 0.65rem 1rem;
+		margin-bottom: 1.1rem;
+		font-size: 0.86rem;
+	}
+	.job-application-page .ja-link-btn {
+		background: none;
+		border: none;
+		padding: 0;
+		color: var(--ja-accent-dark);
+		font-weight: 700;
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: inherit;
+	}
+	.job-application-page .ja-step-note {
+		display: flex;
+		gap: 0.6rem;
+		align-items: flex-start;
+		color: var(--ja-muted);
+		font-size: 0.84rem;
+		margin: -0.35rem 0 1.1rem;
+	}
+
+	/* ---- Validation ---- */
+	.job-application-page .ja-invalid {
+		border-color: var(--ja-danger) !important;
+		box-shadow: 0 0 0 3px rgba(214, 69, 69, 0.12) !important;
+	}
+	.job-application-page .ja-field-error {
+		display: block;
+	}
+	.job-application-page .ja-step-error {
+		margin-bottom: 1rem;
+	}
+
+	/* ---- Navigation bar ---- */
+	.job-application-page .ja-nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		position: sticky;
+		bottom: 0;
+		z-index: 5;
+		padding: 0.85rem 0;
+		margin-top: 0.5rem;
+		background: linear-gradient(to top, var(--ja-page-bg, #f3f5f9) 70%, rgba(243, 245, 249, 0));
+	}
+	.job-application-page .ja-nav-right {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+		margin-inline-start: auto;
+	}
+	.job-application-page .ja-btn-ghost {
+		background: var(--ja-card-bg);
+		color: var(--ja-ink);
+		border: 1px solid var(--ja-border);
+		border-radius: 8px;
+		padding: 0.72rem 1.4rem;
+		font-size: 0.93rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.15s ease, border-color 0.15s ease;
+	}
+	.job-application-page .ja-btn-ghost:hover {
+		background: #f3f6f9;
+		border-color: #c4ccd8;
+	}
+	.job-application-page .ja-draft-state {
+		font-size: 0.8rem;
+		color: var(--ja-muted);
+	}
+	.job-application-page .ja-draft-state.is-saved::before {
+		content: "\2713 ";
+		color: var(--ja-success);
+		font-weight: 700;
+	}
+
+	/* ---- Review ---- */
+	.job-application-page .ja-review-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: 1rem;
+	}
+	.job-application-page .ja-review-card {
+		border: 1px solid var(--ja-border);
+		border-radius: 12px;
+		padding: 1rem 1.1rem;
+		background: #fafbfd;
+	}
+	.job-application-page .ja-review-card h3 {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--ja-muted);
+		margin: 0 0 0.6rem;
+	}
+	.job-application-page .ja-review-card dl {
+		margin: 0;
+	}
+	.job-application-page .ja-review-card dt {
+		font-size: 0.75rem;
+		color: var(--ja-muted);
+		font-weight: 600;
+		margin-top: 0.5rem;
+	}
+	.job-application-page .ja-review-card dd {
+		margin: 0;
+		font-size: 0.92rem;
+		color: var(--ja-ink);
+		word-break: break-word;
+	}
+	.job-application-page .ja-review-card dd.is-empty {
+		color: var(--ja-muted);
+		font-style: italic;
+	}
+	.job-application-page .ja-strength {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin: 0 0 1.1rem;
+		padding: 1rem 1.1rem;
+		border: 1px solid var(--ja-border);
+		border-radius: 12px;
+		background: var(--ja-card-bg);
+	}
+	.job-application-page .ja-ring {
+		--p: 0;
+		flex: none;
+		width: 3.6rem;
+		height: 3.6rem;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		background: conic-gradient(var(--ja-accent) calc(var(--p) * 1%), var(--ja-accent-soft) 0);
+		position: relative;
+		font-weight: 700;
+		font-size: 0.85rem;
+		color: var(--ja-accent-dark);
+	}
+	.job-application-page .ja-ring::before {
+		content: "";
+		position: absolute;
+		inset: 6px;
+		border-radius: 50%;
+		background: var(--ja-card-bg);
+	}
+	.job-application-page .ja-ring span {
+		position: relative;
+	}
+	.job-application-page .ja-strength-title {
+		font-weight: 700;
+		color: var(--ja-ink);
+		font-size: 0.95rem;
+	}
+	.job-application-page .ja-strength-tip {
+		color: var(--ja-muted);
+		font-size: 0.84rem;
+		margin-top: 0.15rem;
+	}
+	.job-application-page .ja-consent {
+		display: flex;
+		gap: 0.65rem;
+		align-items: flex-start;
+		margin-top: 1.1rem;
+		font-size: 0.88rem;
+		color: var(--ja-ink);
+		font-weight: 500;
+		cursor: pointer;
+	}
+	.job-application-page .ja-consent input {
+		margin-top: 0.2rem;
+		width: 1.05rem;
+		height: 1.05rem;
+		flex: none;
+		accent-color: var(--ja-accent);
+	}
+	.job-application-page .ja-privacy {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		color: var(--ja-muted);
+		font-size: 0.8rem;
+		margin-top: 0.6rem;
+	}
+
+	/* ---- Success ---- */
+	.job-application-page .ja-done {
+		position: relative;
+		overflow: hidden;
+		text-align: center;
+		background: var(--ja-card-bg);
+		border: 1px solid var(--ja-border);
+		border-radius: 16px;
+		padding: 2.5rem 1.5rem 2rem;
+		box-shadow: 0 10px 26px -18px rgba(16, 24, 40, 0.2);
+	}
+	.job-application-page .ja-check {
+		width: 4.2rem;
+		height: 4.2rem;
+		margin: 0 auto 1rem;
+	}
+	.job-application-page .ja-check circle {
+		fill: var(--ja-accent-soft);
+		stroke: var(--ja-accent);
+		stroke-width: 3;
+		stroke-dasharray: 160;
+		stroke-dashoffset: 160;
+		animation: ja-draw 0.6s ease forwards;
+	}
+	.job-application-page .ja-check path {
+		fill: none;
+		stroke: var(--ja-accent-dark);
+		stroke-width: 4;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-dasharray: 40;
+		stroke-dashoffset: 40;
+		animation: ja-draw 0.4s ease 0.5s forwards;
+	}
+	@keyframes ja-draw {
+		to { stroke-dashoffset: 0; }
+	}
+	.job-application-page .ja-done h2 {
+		font-size: 1.45rem;
+		margin: 0 0 0.4rem;
+		color: var(--ja-ink);
+	}
+	.job-application-page .ja-done p {
+		color: var(--ja-muted);
+		margin: 0 auto;
+		max-width: 520px;
+	}
+	.job-application-page .ja-ref {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin: 1.2rem 0 1.4rem;
+		padding: 0.55rem 0.6rem 0.55rem 1.1rem;
+		border: 1px dashed var(--ja-accent);
+		border-radius: 10px;
+		background: var(--ja-accent-soft);
+	}
+	.job-application-page .ja-ref code {
+		font-size: 1.05rem;
+		font-weight: 700;
+		color: var(--ja-accent-dark);
+		background: none;
+		padding: 0;
+	}
+	.job-application-page .ja-timeline {
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: 0.9rem;
+		padding: 0;
+		margin: 1.4rem 0 1.4rem;
+		text-align: start;
+	}
+	.job-application-page .ja-timeline li {
+		border: 1px solid var(--ja-border);
+		border-radius: 12px;
+		padding: 0.85rem 1rem;
+		font-size: 0.85rem;
+		color: var(--ja-muted);
+	}
+	.job-application-page .ja-timeline li strong {
+		display: block;
+		color: var(--ja-ink);
+		font-size: 0.9rem;
+		margin-bottom: 0.15rem;
+	}
+	.job-application-page .ja-confetti {
+		position: absolute;
+		top: -12px;
+		width: 8px;
+		height: 14px;
+		border-radius: 2px;
+		opacity: 0;
+		animation: ja-fall 2.4s ease-out forwards;
+		pointer-events: none;
+	}
+	@keyframes ja-fall {
+		0% { opacity: 1; transform: translateY(0) rotate(0); }
+		100% { opacity: 0; transform: translateY(380px) rotate(540deg); }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.job-application-page .ja-step,
+		.job-application-page .ja-bar-fill,
+		.job-application-page .ja-check circle,
+		.job-application-page .ja-check path {
+			animation: none !important;
+			transition: none !important;
+			stroke-dashoffset: 0;
+		}
+		.job-application-page .ja-confetti { display: none; }
+	}
+	@media print {
+		.job-application-page .ja-hero,
+		.job-application-page .ja-no-print { display: none !important; }
+	}
+
 	@media (max-width: 600px) {
+		.job-application-page .ja-step-label { display: none; }
+		.job-application-page .ja-steps li.is-current .ja-step-label {
+			display: block;
+			position: absolute;
+			inset-inline: 0;
+			margin-top: 2rem;
+		}
+		.job-application-page .ja-steps { margin-bottom: 1.2rem; }
+		.job-application-page .ja-steps li { position: relative; }
+		.job-application-page .ja-progress { padding: 0.85rem 0.9rem 1rem; }
+		.job-application-page .ja-nav { padding: 0.7rem 0; }
+		.job-application-page .ja-btn-ghost,
+		.job-application-page .ja-submit-btn { padding: 0.75rem 1.2rem; }
+		.job-application-page .ja-draft-state { display: none; }
 		.job-application-page .ja-wrap {
 			padding: 1.25rem 0.75rem 3rem;
 		}
@@ -318,105 +818,1062 @@
 			border-radius: 12px;
 		}
 	}
+
+	/* =====================================================================
+	   RCHS look (matches the Education app's applicant pages): fixed brand
+	   panel + form panel, Space Grotesk / Inter, soft inputs, gradient CTAs.
+	   ===================================================================== */
+	body.job-application-page .navbar,
+	body.job-application-page .web-footer { display: none !important; }
+	body.job-application-page main.container {
+		max-width: none !important;
+		width: 100%;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+	/* web.html wraps content in .page_content; push it clear of the fixed panel */
+	body.job-application-page .page_content {
+		max-width: none !important;
+		margin-inline-start: 38% !important;
+		min-height: 100vh;
+		background: var(--ja-card-bg);
+		position: relative;
+	}
+	.job-application-page .ja-wrap {
+		max-width: 920px;
+		padding: 5rem 2.25rem 4rem 1.75rem;
+	}
+	html[dir="rtl"] .job-application-page .ja-wrap { padding: 5rem 1.75rem 4rem 2.25rem; }
+
+	/* Brand panel */
+	.job-application-page .ja-brand-panel {
+		position: fixed;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: 38%;
+		min-width: 340px;
+		background:
+			radial-gradient(120% 140% at 15% 0%, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, 0) 45%),
+			linear-gradient(160deg, #0769B2 0%, #054C82 58%, #062741 100%);
+		color: #fff;
+		padding: 52px 44px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		overflow: hidden;
+		z-index: 1;
+	}
+	.job-application-page .ja-brand-watermark {
+		position: absolute;
+		inset: 0;
+		opacity: .10;
+		pointer-events: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transform: scale(1.7) translateY(6%);
+	}
+	.job-application-page .ja-brand-top {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		position: relative;
+		z-index: 2;
+	}
+	.job-application-page .ja-brand-top img {
+		width: 48px;
+		height: 48px;
+		border-radius: 12px;
+		background: #fff;
+		padding: 6px;
+		object-fit: contain;
+		box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+	}
+	.job-application-page .ja-brand-wordmark { display: flex; flex-direction: column; line-height: 1.15; }
+	.job-application-page .ja-brand-wordmark .en {
+		font-family: 'Space Grotesk', sans-serif;
+		font-weight: 700;
+		font-size: 26px;
+		letter-spacing: .05em;
+	}
+	.job-application-page .ja-brand-wordmark .sub {
+		font-size: 14px;
+		font-weight: 600;
+		color: rgba(255, 255, 255, .72);
+		margin-top: 2px;
+	}
+	.job-application-page .ja-brand-mid {
+		position: relative;
+		z-index: 2;
+		max-width: 420px;
+		margin-block: auto;
+		padding: 40px 0;
+	}
+	.job-application-page .ja-brand-eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 13px;
+		letter-spacing: .14em;
+		text-transform: uppercase;
+		color: var(--ja-teal-soft);
+		margin-bottom: 20px;
+	}
+	.job-application-page .ja-brand-eyebrow .dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--ja-teal-soft);
+		box-shadow: 0 0 0 4px rgba(255, 255, 255, .15);
+	}
+	.job-application-page .ja-brand-mid h1 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-weight: 800;
+		font-size: clamp(28px, 2.6vw, 42px);
+		line-height: 1.22;
+		letter-spacing: -.01em;
+		color: #fff;
+		margin: 0;
+	}
+	.job-application-page .ja-brand-mid p {
+		margin: 16px 0 0;
+		font-size: 16px;
+		line-height: 1.65;
+		color: rgba(255, 255, 255, .78);
+		max-width: 400px;
+	}
+	.job-application-page .ja-brand-mid .ja-chips { margin-top: 20px; }
+	.job-application-page .ja-brand-checklist { margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+	.job-application-page .ja-brand-checklist .item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 14.5px;
+		color: rgba(255, 255, 255, .88);
+	}
+	.job-application-page .ja-brand-checklist .item svg {
+		flex-shrink: 0;
+		width: 18px;
+		height: 18px;
+		color: var(--ja-teal-soft);
+	}
+	.job-application-page .ja-brand-bottom {
+		position: relative;
+		z-index: 2;
+		font-size: 13.5px;
+		color: rgba(255, 255, 255, .62);
+		border-top: 1px solid rgba(255, 255, 255, .16);
+		padding-top: 18px;
+		line-height: 1.6;
+	}
+
+	/* Top bar: language pill */
+	.job-application-page .ja-topbar {
+		position: absolute;
+		top: 28px;
+		inset-inline-end: 32px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		z-index: 3;
+	}
+	.job-application-page .ja-lang-toggle {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+		background: var(--ja-soft);
+		border-radius: 999px;
+		padding: 4px;
+		border: 1px solid var(--ja-border);
+	}
+	.job-application-page .ja-lang-toggle button {
+		border: none;
+		background: transparent;
+		font-family: inherit;
+		font-size: 12.5px;
+		font-weight: 600;
+		padding: 6px 14px;
+		border-radius: 999px;
+		color: var(--ja-muted);
+		cursor: pointer;
+		transition: background .2s var(--ja-ease), color .2s var(--ja-ease);
+	}
+	.job-application-page .ja-lang-toggle button.active {
+		background: #fff;
+		color: var(--ja-accent);
+		box-shadow: 0 1px 3px rgba(10, 32, 54, .12);
+	}
+
+	/* Hero: shown on small screens only (the brand panel replaces it on desktop) */
+	.job-application-page .ja-hero {
+		display: none;
+		background:
+			radial-gradient(120% 140% at 15% 0%, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, 0) 45%),
+			linear-gradient(160deg, #0769B2 0%, #054C82 58%, #062741 100%);
+		box-shadow: 0 16px 32px -18px rgba(5, 76, 130, .55);
+	}
+	.job-application-page .ja-hero-logo {
+		flex: none;
+		width: 3.2rem;
+		height: 3.2rem;
+		border-radius: 12px;
+		background: #fff;
+		padding: 6px;
+		object-fit: contain;
+	}
+
+	/* Typography */
+	.job-application-page h1.ja-title,
+	.job-application-page .ja-section h2,
+	.job-application-page .ja-done h2,
+	.job-application-page .ja-strength-title { font-family: 'Space Grotesk', sans-serif; }
+	html[dir="rtl"] .job-application-page h1.ja-title,
+	html[dir="rtl"] .job-application-page .ja-section h2,
+	html[dir="rtl"] .job-application-page .ja-done h2,
+	html[dir="rtl"] .job-application-page .ja-strength-title { font-family: 'IBM Plex Sans Arabic', 'Space Grotesk', sans-serif; }
+	.job-application-page .ja-section h2 { color: var(--ja-accent-dark); font-weight: 600; }
+	.job-application-page label { font-size: 13.5px; }
+
+	/* Cards, inputs, buttons */
+	.job-application-page .ja-section,
+	.job-application-page .ja-progress,
+	.job-application-page .ja-done {
+		border-color: var(--ja-border);
+		border-radius: var(--ja-radius);
+		box-shadow: 0 20px 44px rgba(10, 32, 54, .06);
+	}
+	.job-application-page .ja-section:focus-within { box-shadow: 0 20px 44px rgba(7, 105, 178, .10); }
+	.job-application-page input:not([type="checkbox"]),
+	.job-application-page select,
+	.job-application-page textarea {
+		font-family: inherit;
+		background: var(--ja-soft);
+		border: 1.5px solid var(--ja-border);
+		border-radius: var(--ja-radius-sm);
+		color: var(--ja-ink);
+		transition: border-color .18s var(--ja-ease), background .18s var(--ja-ease), box-shadow .18s var(--ja-ease);
+	}
+	.job-application-page input::placeholder,
+	.job-application-page textarea::placeholder { color: #9AACBB; }
+	.job-application-page input:not([type="checkbox"]):focus,
+	.job-application-page select:focus,
+	.job-application-page textarea:focus {
+		background: #fff;
+		border-color: var(--ja-accent);
+		box-shadow: 0 0 0 4px rgba(7, 105, 178, .12);
+	}
+	.job-application-page input:disabled { background: #eaf0f6; }
+	.job-application-page .ja-submit-btn {
+		font-family: 'Space Grotesk', sans-serif;
+		letter-spacing: .01em;
+		border-radius: var(--ja-radius-sm);
+		background: linear-gradient(135deg, var(--ja-accent) 0%, var(--ja-accent-dark) 100%);
+		box-shadow: 0 8px 20px rgba(7, 105, 178, .24);
+		transition: transform .15s var(--ja-ease), box-shadow .15s var(--ja-ease), filter .15s var(--ja-ease);
+	}
+	.job-application-page .ja-submit-btn:hover:not(:disabled) {
+		filter: brightness(1.05);
+		box-shadow: 0 10px 24px rgba(7, 105, 178, .32);
+	}
+	.job-application-page .ja-btn-ghost {
+		font-weight: 600;
+		color: var(--ja-muted);
+		border: 1.5px solid var(--ja-border);
+		border-radius: var(--ja-radius-sm);
+	}
+	.job-application-page .ja-btn-ghost:hover { border-color: var(--ja-accent); color: var(--ja-accent); background: #fff; }
+	.job-application-page .ja-arrow { display: inline-block; }
+	html[dir="rtl"] .job-application-page .ja-arrow { transform: scaleX(-1); }
+	.job-application-page .ja-add-row,
+	.job-application-page .ja-repeat-row,
+	.job-application-page .ja-review-card { border-radius: var(--ja-radius-sm); }
+
+	/* Stepper: finished steps are teal, like the Education wizard */
+	.job-application-page .ja-steps li.is-done .ja-step-dot {
+		background: var(--ja-teal);
+		border-color: var(--ja-teal);
+		color: #fff;
+	}
+	.job-application-page .ja-steps li.is-done .ja-step-btn { color: var(--ja-accent-dark); }
+	.job-application-page .ja-steps li.is-done .ja-step-btn:hover .ja-step-dot { background: var(--ja-accent); border-color: var(--ja-accent); }
+	.job-application-page .ja-nav {
+		background: linear-gradient(to top, #fff 70%, rgba(255, 255, 255, 0));
+	}
+	.job-application-page .ja-bar-fill { background: linear-gradient(90deg, var(--ja-accent), var(--ja-teal)); }
+	.job-application-page .ja-done { box-shadow: 0 20px 44px rgba(10, 32, 54, .06); }
+	.job-application-page .ja-check circle { fill: var(--ja-teal-soft); stroke: var(--ja-teal); }
+	.job-application-page .ja-check path { stroke: var(--ja-teal); }
+
+	@media (max-width: 880px) {
+		.job-application-page .ja-brand-panel { display: none; }
+		body.job-application-page .page_content { margin-inline-start: 0 !important; }
+		.job-application-page .ja-hero { display: flex; }
+		.job-application-page .ja-wrap { padding: 4.5rem 0.9rem 3rem; }
+		html[dir="rtl"] .job-application-page .ja-wrap { padding: 4.5rem 0.9rem 3rem; }
+		.job-application-page .ja-topbar { position: fixed; top: 14px; inset-inline-end: 16px; z-index: 20; }
+		.job-application-page .ja-nav { background: linear-gradient(to top, #fff 70%, rgba(255, 255, 255, 0)); }
+	}
+
+	/* =====================================================================
+	   Form-panel polish: step headings, grouped sub-cards, field icons,
+	   valid ticks, and a floating action dock.
+	   ===================================================================== */
+	.job-application-page .ja-wrap { padding-bottom: 6rem; }
+	.job-application-page .ja-step-head {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin: 0 0 1.25rem;
+	}
+	.job-application-page .ja-step-head-icon {
+		flex: none;
+		width: 3.1rem;
+		height: 3.1rem;
+		border-radius: 14px;
+		display: grid;
+		place-items: center;
+		color: #fff;
+		background: linear-gradient(135deg, var(--ja-accent) 0%, var(--ja-accent-dark) 100%);
+		box-shadow: 0 8px 20px rgba(7, 105, 178, .24);
+	}
+	.job-application-page .ja-step-head-icon svg { width: 1.45rem; height: 1.45rem; }
+	.job-application-page .ja-step-head h2 {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.5rem;
+		font-weight: 700;
+		letter-spacing: -.01em;
+		color: var(--ja-ink);
+		margin: 0;
+		border: 0;
+		padding: 0;
+	}
+	html[dir="rtl"] .job-application-page .ja-step-head h2 { font-family: 'IBM Plex Sans Arabic', 'Space Grotesk', sans-serif; }
+	.job-application-page .ja-step-head p { margin: .2rem 0 0; color: var(--ja-muted); font-size: .93rem; }
+
+	/* section titles use an icon, not a number (the stepper already counts) */
+	.job-application-page .ja-section h2::before { display: none; }
+	.job-application-page .ja-section h2 .ja-sec-icon {
+		flex: none;
+		width: 1.9rem;
+		height: 1.9rem;
+		border-radius: 9px;
+		display: grid;
+		place-items: center;
+		background: var(--ja-accent-soft);
+		color: var(--ja-accent-dark);
+	}
+	.job-application-page .ja-section h2 .ja-sec-icon svg { width: 1rem; height: 1rem; }
+	.job-application-page .ja-section-solo { padding-top: 1.4rem; }
+	.job-application-page .ja-section-solo > h2 {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+	.job-application-page .ja-section { position: relative; }
+
+	.job-application-page .ja-gi,
+	.job-application-page .ja-ico svg,
+	.job-application-page .ja-step-head-icon svg,
+	.job-application-page .ja-sec-icon svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.job-application-page .ja-group {
+		background: #F8FBFE;
+		border: 1px solid var(--ja-border);
+		border-radius: var(--ja-radius-sm);
+		padding: 1rem 1.1rem 1.15rem;
+		margin-bottom: 1rem;
+	}
+	.job-application-page .ja-group:last-child { margin-bottom: 0; }
+	.job-application-page .ja-group-title {
+		display: flex;
+		align-items: center;
+		gap: .5rem;
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: .82rem;
+		font-weight: 700;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+		color: var(--ja-accent-dark);
+		margin-bottom: .85rem;
+	}
+	html[dir="rtl"] .job-application-page .ja-group-title { font-family: 'IBM Plex Sans Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: .9rem; }
+	.job-application-page .ja-gi { width: 1.05rem; height: 1.05rem; flex: none; }
+	.job-application-page .ja-tag {
+		font-size: .66rem;
+		letter-spacing: .08em;
+		padding: .1rem .45rem;
+		border-radius: 999px;
+		background: var(--ja-teal-soft);
+		color: #0b7a71;
+	}
+	.job-application-page .ja-grid-4 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+	.job-application-page input[lang="ar"] {
+		font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
+		font-size: 1rem;
+	}
+	.job-application-page .ja-group .ja-grid { gap: 1rem 1.1rem; }
+
+	/* icons + valid tick inside inputs */
+	.job-application-page .ja-control { position: relative; display: block; }
+	.job-application-page .ja-control input { width: 100%; }
+	.job-application-page .ja-control.has-ico input { padding-inline-start: 2.4rem; }
+	.job-application-page .ja-control.has-tick input { padding-inline-end: 2.2rem; }
+	.job-application-page .ja-ico {
+		position: absolute;
+		inset-inline-start: .8rem;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #8aa1b4;
+		display: flex;
+		pointer-events: none;
+		transition: color .18s var(--ja-ease);
+	}
+	.job-application-page .ja-ico svg { width: 1rem; height: 1rem; }
+	.job-application-page .ja-control:focus-within .ja-ico { color: var(--ja-accent); }
+	.job-application-page .ja-tick {
+		position: absolute;
+		inset-inline-end: .75rem;
+		top: 50%;
+		width: 1.15rem;
+		height: 1.15rem;
+		margin-top: -.575rem;
+		border-radius: 50%;
+		background: var(--ja-teal);
+		color: #fff;
+		font-size: .7rem;
+		font-weight: 700;
+		display: grid;
+		place-items: center;
+		opacity: 0;
+		transform: scale(.5);
+		transition: opacity .2s var(--ja-ease), transform .2s var(--ja-ease);
+		pointer-events: none;
+	}
+	.job-application-page .ja-field.is-valid .ja-tick { opacity: 1; transform: scale(1); }
+	.job-application-page .ja-field.is-valid .ja-control.has-tick input:not(.ja-invalid) { border-color: rgba(19, 175, 163, .65); }
+
+	/* floating action dock */
+	.job-application-page .ja-nav {
+		bottom: .9rem;
+		padding: .7rem .8rem;
+		margin-top: 1.25rem;
+		background: #fff;
+		border: 1px solid var(--ja-border);
+		border-radius: var(--ja-radius);
+		box-shadow: 0 16px 40px rgba(10, 32, 54, .14), 0 2px 6px rgba(10, 32, 54, .04);
+	}
+	.job-application-page .ja-draft-state { display: inline-flex; align-items: center; gap: .35rem; }
+	.job-application-page .ja-draft-state.is-saved::before { content: none; }
+	.job-application-page .ja-draft-state.is-saved::after {
+		content: "";
+		width: .5rem;
+		height: .5rem;
+		border-radius: 50%;
+		background: var(--ja-teal);
+		order: -1;
+	}
+	.job-application-page .ja-step { animation-duration: .35s; }
+	.job-application-page .ja-step .ja-group { animation: ja-step-in .35s ease backwards; }
+	.job-application-page .ja-step .ja-group:nth-child(2) { animation-delay: .05s; }
+	.job-application-page .ja-step .ja-group:nth-child(3) { animation-delay: .1s; }
+	.job-application-page .ja-step .ja-group:nth-child(4) { animation-delay: .15s; }
+	@media (prefers-reduced-motion: reduce) {
+		.job-application-page .ja-step .ja-group { animation: none; }
+	}
+	@media (max-width: 600px) {
+		.job-application-page .ja-group { padding: .85rem .8rem 1rem; }
+		.job-application-page .ja-step-head-icon { width: 2.6rem; height: 2.6rem; }
+		.job-application-page .ja-step-head h2 { font-size: 1.25rem; }
+		.job-application-page .ja-nav { bottom: .5rem; }
+	}
+
+	/* dock: left note + actions, never an empty slab */
+	.job-application-page .ja-nav { padding: .6rem .7rem .6rem 1rem; min-height: 3.6rem; }
+	html[dir="rtl"] .job-application-page .ja-nav { padding: .6rem 1rem .6rem .7rem; }
+	.job-application-page .ja-nav .ja-draft-state { flex: 1; min-width: 0; color: var(--ja-muted); font-size: .82rem; }
+	.job-application-page .ja-nav .ja-draft-state .ja-gi { width: .9rem; height: .9rem; color: #8aa1b4; flex: none; }
+	.job-application-page .ja-nav .ja-draft-state.is-saved .ja-gi { color: var(--ja-teal); }
+	.job-application-page .ja-nav .ja-draft-state.is-saved::after { content: none; }
+	.job-application-page .ja-nav-right { margin-inline-start: 0; }
+	.job-application-page .ja-nav .ja-submit-btn,
+	.job-application-page .ja-nav .ja-btn-ghost { padding: .62rem 1.4rem; white-space: nowrap; }
+	@media (max-width: 600px) {
+		.job-application-page .ja-nav .ja-draft-state { display: none; }
+		.job-application-page .ja-nav { padding: .5rem; gap: .6rem; }
+		.job-application-page .ja-nav-right { flex: 1; }
+		.job-application-page .ja-nav .ja-submit-btn { flex: 1; }
+		.job-application-page .ja-nav .ja-btn-ghost { flex: none; }
+	}
+
+	/* "You are applying for" card: the facts the applicant must read */
+	.job-application-page .ja-apply {
+		position: relative;
+		margin-top: 22px;
+		padding: 1.1rem 1.25rem 1.2rem;
+		border-radius: 16px;
+		background: linear-gradient(160deg, rgba(255, 255, 255, .20), rgba(255, 255, 255, .08));
+		border: 1px solid rgba(255, 255, 255, .34);
+		border-inline-start: 5px solid #5eead4;
+		box-shadow: 0 18px 40px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .25);
+		backdrop-filter: blur(6px);
+		animation: ja-apply-glow 2.4s ease-out 2;
+	}
+	@keyframes ja-apply-glow {
+		0% { box-shadow: 0 18px 40px rgba(0, 0, 0, .22), 0 0 0 0 rgba(94, 234, 212, .55); }
+		70% { box-shadow: 0 18px 40px rgba(0, 0, 0, .22), 0 0 0 14px rgba(94, 234, 212, 0); }
+		100% { box-shadow: 0 18px 40px rgba(0, 0, 0, .22), 0 0 0 0 rgba(94, 234, 212, 0); }
+	}
+	.job-application-page .ja-apply-label {
+		display: flex;
+		align-items: center;
+		gap: .45rem;
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: .74rem;
+		font-weight: 700;
+		letter-spacing: .14em;
+		text-transform: uppercase;
+		color: #a7f3e6;
+	}
+	html[dir="rtl"] .job-application-page .ja-apply-label { font-family: 'IBM Plex Sans Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: .85rem; }
+	.job-application-page .ja-apply-label .ja-gi { width: 1rem; height: 1rem; }
+	.job-application-page .ja-apply-role {
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: clamp(1.45rem, 2.1vw, 1.95rem);
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: -.01em;
+		color: #fff;
+		margin: .45rem 0 .6rem;
+	}
+	html[dir="rtl"] .job-application-page .ja-apply-role { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+	.job-application-page .ja-apply-cat {
+		display: inline-block;
+		padding: .22rem .8rem;
+		border-radius: 999px;
+		background: #fff;
+		color: var(--ja-accent-dark);
+		font-size: .78rem;
+		font-weight: 700;
+	}
+	.job-application-page .ja-apply-meta {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: .7rem;
+		margin-top: 1rem;
+	}
+	.job-application-page .ja-apply-stat {
+		display: flex;
+		gap: .6rem;
+		align-items: flex-start;
+		padding: .65rem .75rem;
+		border-radius: 12px;
+		background: rgba(6, 39, 65, .38);
+		border: 1px solid rgba(255, 255, 255, .14);
+	}
+	.job-application-page .ja-apply-stat .ja-gi { width: 1.1rem; height: 1.1rem; margin-top: .15rem; color: #a7f3e6; flex: none; }
+	.job-application-page .ja-apply-stat small {
+		display: block;
+		font-size: .68rem;
+		font-weight: 600;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, .65);
+	}
+	html[dir="rtl"] .job-application-page .ja-apply-stat small { letter-spacing: 0; text-transform: none; font-size: .75rem; }
+	.job-application-page .ja-apply-stat strong { display: block; font-size: .92rem; color: #fff; line-height: 1.3; }
+	.job-application-page .ja-apply-stat em { display: block; font-style: normal; font-size: .76rem; color: rgba(255, 255, 255, .72); margin-top: .1rem; }
+	.job-application-page .ja-apply-stat.is-urgent { background: rgba(245, 158, 11, .20); border-color: rgba(251, 191, 36, .6); }
+	.job-application-page .ja-apply-stat.is-urgent .ja-gi,
+	.job-application-page .ja-apply-stat.is-urgent em { color: #fcd34d; font-weight: 700; }
+	.job-application-page .ja-brand-checklist-title {
+		margin-top: 22px;
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: .74rem;
+		font-weight: 700;
+		letter-spacing: .14em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, .6);
+	}
+	html[dir="rtl"] .job-application-page .ja-brand-checklist-title { font-family: 'IBM Plex Sans Arabic', sans-serif; letter-spacing: 0; text-transform: none; font-size: .85rem; }
+	.job-application-page .ja-brand-checklist { margin-top: 10px; gap: 9px; }
+	.job-application-page .ja-brand-panel { overflow-y: auto; }
+
+	/* keep everything on screen on short laptop displays */
+	@media (min-width: 881px) and (max-height: 860px) {
+		.job-application-page .ja-brand-panel { padding: 34px 40px; }
+		.job-application-page .ja-brand-mid { padding: 18px 0; }
+		.job-application-page .ja-brand-mid p { display: none; }
+		.job-application-page .ja-brand-eyebrow { margin-bottom: 10px; }
+		.job-application-page .ja-brand-mid h1 { font-size: clamp(24px, 2.2vw, 34px); }
+		.job-application-page .ja-apply { margin-top: 16px; padding: .9rem 1.1rem 1rem; }
+	}
+	/* in the small-screen header the card sits on the blue hero */
+	.job-application-page .ja-hero .ja-apply { margin-top: 1rem; }
+	@media (prefers-reduced-motion: reduce) { .job-application-page .ja-apply { animation: none; } }
+	@media (max-width: 480px) { .job-application-page .ja-apply-meta { grid-template-columns: 1fr; } }
+
+	.job-application-page .ja-field-hint { color: #b45309; font-size: .8rem; font-weight: 600; }
+
+	/* phone: country picker + number */
+	.job-application-page .ja-phone { display: flex; align-items: stretch; position: relative; }
+	.job-application-page .ja-phone .ja-control { flex: 1; min-width: 0; }
+	.job-application-page .ja-phone .ja-control input {
+		border-start-start-radius: 0;
+		border-end-start-radius: 0;
+		height: 100%;
+	}
+	.job-application-page .ja-cc { position: relative; flex: none; }
+	.job-application-page .ja-cc-btn {
+		display: flex;
+		align-items: center;
+		gap: .4rem;
+		height: 100%;
+		min-height: 2.6rem;
+		padding: 0 .6rem;
+		font-family: inherit;
+		font-size: .9rem;
+		font-weight: 600;
+		color: var(--ja-ink);
+		background: #eaf2f9;
+		border: 1.5px solid var(--ja-border);
+		border-inline-end: 0;
+		border-start-start-radius: var(--ja-radius-sm);
+		border-end-start-radius: var(--ja-radius-sm);
+		cursor: pointer;
+		white-space: nowrap;
+		transition: background .18s var(--ja-ease), border-color .18s var(--ja-ease);
+	}
+	.job-application-page .ja-cc-btn:hover { background: #dfecf6; }
+	.job-application-page .ja-cc-btn:focus-visible,
+	.job-application-page .ja-cc-btn[aria-expanded="true"] {
+		outline: none;
+		border-color: var(--ja-accent);
+		box-shadow: 0 0 0 4px rgba(7, 105, 178, .12);
+		background: #fff;
+	}
+	.job-application-page .ja-cc-flag {
+		width: 1.35rem;
+		height: 1rem;
+		object-fit: cover;
+		border-radius: 2px;
+		box-shadow: 0 0 0 1px rgba(10, 32, 54, .15);
+		flex: none;
+	}
+	.job-application-page .ja-cc-chevron {
+		width: .45rem;
+		height: .45rem;
+		border-inline-end: 2px solid #6b8296;
+		border-bottom: 2px solid #6b8296;
+		transform: rotate(45deg) translateY(-2px);
+		flex: none;
+	}
+	.job-application-page .ja-cc-pop {
+		position: absolute;
+		top: calc(100% + 6px);
+		inset-inline-start: 0;
+		width: min(21rem, 88vw);
+		background: #fff;
+		border: 1px solid var(--ja-border);
+		border-radius: var(--ja-radius-sm);
+		box-shadow: 0 18px 44px rgba(10, 32, 54, .22);
+		z-index: 30;
+		padding: .5rem;
+	}
+	.job-application-page .ja-cc-search { width: 100%; margin-bottom: .4rem; }
+	.job-application-page .ja-cc-list { list-style: none; margin: 0; padding: 0; max-height: 15rem; overflow-y: auto; }
+	.job-application-page .ja-cc-list li {
+		display: flex;
+		align-items: center;
+		gap: .6rem;
+		padding: .5rem .55rem;
+		border-radius: 8px;
+		font-size: .88rem;
+		cursor: pointer;
+		color: var(--ja-ink);
+	}
+	.job-application-page .ja-cc-list li.is-active,
+	.job-application-page .ja-cc-list li:hover { background: var(--ja-accent-soft); }
+	.job-application-page .ja-cc-list li[aria-selected="true"] .ja-cc-name { font-weight: 700; color: var(--ja-accent-dark); }
+	.job-application-page .ja-cc-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.job-application-page .ja-cc-code { color: var(--ja-muted); font-variant-numeric: tabular-nums; direction: ltr; }
+	.job-application-page .ja-cc-list li.ja-cc-empty { color: var(--ja-muted); cursor: default; justify-content: center; }
+	.job-application-page .ja-cc-list li.ja-cc-empty:hover { background: none; }
+	.job-application-page .ja-phone .ja-cc-dial { direction: ltr; }
+	.job-application-page .ja-phone input[type="tel"] { direction: ltr; text-align: start; }
+	html[dir="rtl"] .job-application-page .ja-phone input[type="tel"] { text-align: right; }
+
+	/* an open country list must sit above the cards that follow it and above the action dock */
+	.job-application-page .ja-group { position: relative; }
+	.job-application-page .ja-group.ja-pop-open { z-index: 40; }
+
+	/* remove-record button and confirmation dialog */
+	.job-application-page .ja-remove-row {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: .4rem;
+		font-family: inherit;
+		font-size: .8rem;
+		font-weight: 600;
+		line-height: 1;
+		color: #b42323;
+		background: #fff5f5;
+		border: 1px solid #f3c6c6;
+		border-radius: var(--ja-radius-sm);
+		padding: .55rem .8rem;
+		white-space: nowrap;
+	}
+	.job-application-page .ja-remove-row:hover { background: #fde8e8; border-color: #e9a3a3; }
+	.job-application-page .ja-remove-row svg { width: .95rem; height: .95rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	body.ja-modal-open { overflow: hidden; }
+	.ja-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 2000;
+		display: grid;
+		place-items: center;
+		padding: 1rem;
+		background: rgba(6, 39, 65, .55);
+		backdrop-filter: blur(3px);
+		animation: ja-fade .18s ease both;
+		font-family: 'Inter', sans-serif;
+	}
+	html[dir="rtl"] .ja-modal { font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif; }
+	@keyframes ja-fade { from { opacity: 0; } to { opacity: 1; } }
+	.ja-modal-box {
+		width: min(26rem, 100%);
+		background: #fff;
+		border-radius: 16px;
+		padding: 1.6rem 1.5rem 1.3rem;
+		text-align: center;
+		box-shadow: 0 30px 70px rgba(6, 39, 65, .4);
+		animation: ja-pop .22s cubic-bezier(.4, 0, .2, 1) both;
+	}
+	@keyframes ja-pop { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+	.ja-modal-icon {
+		width: 3.2rem;
+		height: 3.2rem;
+		margin: 0 auto .9rem;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		background: #fde8e8;
+		color: #c62828;
+	}
+	.ja-modal-icon svg { width: 1.4rem; height: 1.4rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.ja-modal-box h3 { font-size: 1.15rem; font-weight: 700; color: #0A2036; margin: 0 0 .4rem; }
+	.ja-modal-box p { color: #5C7488; font-size: .92rem; line-height: 1.55; margin: 0 0 1.2rem; }
+	.ja-modal-actions { display: flex; gap: .7rem; justify-content: center; }
+	.ja-modal-actions button { flex: 1; padding: .7rem 1rem; font-size: .93rem; font-weight: 600; border-radius: 10px; cursor: pointer; font-family: inherit; }
+	.ja-modal-actions .ja-btn-ghost { background: #fff; color: #5C7488; border: 1.5px solid #E1EAF2; }
+	.ja-modal-actions .ja-btn-ghost:hover { border-color: #0769B2; color: #0769B2; }
+	.ja-modal-actions .ja-btn-danger { background: #d64545; color: #fff; border: 0; box-shadow: 0 8px 18px rgba(214, 69, 69, .3); }
+	.ja-modal-actions .ja-btn-danger:hover { background: #c23737; }
+	.ja-modal-actions button:focus-visible { outline: 3px solid rgba(7, 105, 178, .35); outline-offset: 2px; }
+	@media (prefers-reduced-motion: reduce) { .ja-modal, .ja-modal-box { animation: none; } }
+
+	/* Checkboxes: Frappe's global checkbox style relies on desk-only CSS variables that are not
+	   defined on this public page, so it drew a broken icon. Draw our own box and tick. */
+	.job-application-page input[type="checkbox"] {
+		-webkit-appearance: none;
+		appearance: none;
+		position: relative;
+		flex: none;
+		width: 1.2rem !important;
+		height: 1.2rem !important;
+		margin: 0 !important;
+		padding: 0;
+		border: 1.5px solid #9fb4c6;
+		border-radius: 6px;
+		background: #fff no-repeat center / 72%;
+		box-shadow: none;
+		cursor: pointer;
+		transition: background-color .15s var(--ja-ease), border-color .15s var(--ja-ease), box-shadow .15s var(--ja-ease);
+	}
+	.job-application-page input[type="checkbox"]:hover { border-color: var(--ja-accent); }
+	.job-application-page input[type="checkbox"]:checked {
+		background-color: var(--ja-accent);
+		border: 1.5px solid var(--ja-accent);
+		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 12 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 5.2 4.6 8.2 10.5 1.8' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+		background-size: 72%;
+		box-shadow: none;
+	}
+	.job-application-page input[type="checkbox"]:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 4px rgba(7, 105, 178, .22);
+	}
+	.job-application-page .ja-consent { gap: .75rem; }
+	.job-application-page .ja-consent input[type="checkbox"] { margin-top: .1rem !important; }
+	.job-application-page .ja-repeat-row .ja-field input[type="checkbox"] { align-self: flex-start; }
+
+	.job-application-page .ja-save-copy { display: inline-flex; align-items: center; gap: .55rem; margin-top: .2rem; cursor: pointer; }
+	.job-application-page .ja-save-copy .ja-gi { width: 1.05rem; height: 1.05rem; }
+
+	.job-application-page svg.ja-cc-flag { display: block; overflow: hidden; background: #e8eef4; }
 </style>
+
+<script>
+	// Frappe sets lang but not dir for Arabic web pages; set it before first paint so RTL layout applies.
+	if (/^ar/i.test(document.documentElement.lang || "")) document.documentElement.dir = "rtl";
+</script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+	<defs>
+		<symbol id="ja-i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+		<symbol id="ja-i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+		<symbol id="ja-i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+		<symbol id="ja-i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+		<symbol id="ja-i-id" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></symbol>
+		<symbol id="ja-i-dollar" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+		<symbol id="ja-i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+		<symbol id="ja-i-hash" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></symbol>
+		<symbol id="ja-i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></symbol>
+		<symbol id="ja-i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+		<symbol id="ja-i-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+		<symbol id="ja-i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+		<symbol id="ja-i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></symbol>
+		<symbol id="ja-i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+		<symbol id="ja-i-check" viewBox="0 0 24 24"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="m22 4-10 10-3-3"/></symbol>
+		<symbol id="ja-i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+		<symbol id="ja-i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+		<symbol id="ja-i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></symbol>
+		<symbol id="ja-i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+	</defs>
+</svg>
+{% macro ja_apply() %}
+{% if is_valid %}
+<div class="ja-apply" role="note">
+	<div class="ja-apply-label"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-briefcase"/></svg>{{ _("You are applying for") }}</div>
+	<div class="ja-apply-role">{{ _(role) if role else _("General application") }}</div>
+	{% if application_category %}<span class="ja-apply-cat">{{ _(application_category) }}</span>{% endif %}
+	<div class="ja-apply-meta">
+		{% if valid_until %}
+		<div class="ja-apply-stat{{ ' is-urgent' if days_left is not none and days_left <= 3 else '' }}">
+			<svg class="ja-gi" aria-hidden="true"><use href="#ja-i-calendar"/></svg>
+			<div>
+				<small>{{ _("Closes on") }}</small>
+				<strong>{{ valid_until }}</strong>
+				{% if days_left is not none %}<em>{% if days_left <= 0 %}{{ _("Last day to apply") }}{% elif days_left == 1 %}{{ _("1 day left") }}{% else %}{{ _("{0} days left").format(days_left) }}{% endif %}</em>{% endif %}
+			</div>
+		</div>
+		{% endif %}
+		<div class="ja-apply-stat">
+			<svg class="ja-gi" aria-hidden="true"><use href="#ja-i-clock"/></svg>
+			<div>
+				<small>{{ _("Time needed") }}</small>
+				<strong>{{ _("About 10 minutes") }}</strong>
+				<em>{{ _("Progress is saved") }}</em>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+{% endmacro %}
+
+<aside class="ja-brand-panel">
+	<div class="ja-brand-watermark" aria-hidden="true">
+		<svg width="480" height="480" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M100 260C100 176 168 108 252 108C300 108 342 130 368 166" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+			<path d="M420 260C420 344 352 412 268 412C220 412 178 390 152 354" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+			<circle cx="260" cy="260" r="150" stroke="#fff" stroke-width="1.5" stroke-dasharray="2 10" opacity=".6"/>
+		</svg>
+	</div>
+	<div class="ja-brand-top">
+		<img src="/assets/education/images/rchs-logo.png" alt="RCHS">
+		<div class="ja-brand-wordmark">
+			<span class="en">RCHS</span>
+			<span class="sub">{{ _("Al-Riyada College for Health Sciences") }}</span>
+		</div>
+	</div>
+	<div class="ja-brand-mid">
+		<div class="ja-brand-eyebrow"><span class="dot"></span><span>{{ _("Careers") }}</span></div>
+		<h1>{{ _("Join our team.") }}</h1>
+		<p>{{ _("Apply to work with us. It takes about 10 minutes and your progress is saved automatically.") }}</p>
+		{{ ja_apply() }}
+		<div class="ja-brand-checklist-title">{{ _("Please have these ready") }}</div>
+		<div class="ja-brand-checklist">
+			{% for item in [_("Identity or passport details"), _("Academic certificates and work history"), _("Your resume (PDF or Word)")] %}
+			<div class="item">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+				<span>{{ item }}</span>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="ja-brand-bottom">{{ _("Your details are kept secure and used for recruitment purposes only.") }}</div>
+</aside>
+
+<div class="ja-topbar">
+	<div class="ja-lang-toggle" id="ja-lang-toggle" role="group" aria-label="{{ _('Language') }}">
+		<button type="button" data-lang="en">EN</button>
+		<button type="button" data-lang="ar">عربي</button>
+	</div>
+</div>
 
 <div class="ja-wrap">
 	<div class="ja-hero">
-		<span class="ja-hero-icon">
-			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2ZM9 5h6v2H9Z"/><path d="M2 13h20"/></svg>
-		</span>
+		<img class="ja-hero-logo" src="/assets/education/images/rchs-logo.png" alt="RCHS">
 		<div>
+			<p class="ja-hero-org">RCHS &middot; {{ _("Al-Riyada College for Health Sciences") }}</p>
 			<h1 class="ja-title">{{ _("Employee Job Application") }}</h1>
-			<p class="ja-subtitle">{{ _("Please complete the form below to submit your application.") }}</p>
+			<p class="ja-subtitle">{{ _("Tell us about yourself. Your progress is saved automatically on this device.") }}</p>
+			{{ ja_apply() }}
 		</div>
 	</div>
 
 	{% if not is_valid %}
 	<div class="ja-alert ja-alert-danger">
-		{{ _(invalid_message) if invalid_message else _("This application link is not valid.") }}
+		<strong>{{ _(invalid_message) if invalid_message else _("This application link is not valid.") }}</strong><br>
+		{{ _("Please contact the HR department to request a new application link.") }}
 	</div>
 	{% else %}
 
-	<div id="ja-success" class="ja-alert ja-alert-success ja-hidden"></div>
-	<div id="ja-error" class="ja-alert ja-alert-danger ja-hidden"></div>
-	<p class="ja-hint">{{ _("Fields marked with") }} <span class="ja-req">*</span> {{ _("are required.") }}</p>
+	<div id="ja-success" class="ja-done ja-hidden" role="status" aria-live="polite">
+		<svg class="ja-check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 14-16"/></svg>
+		<h2>{{ _("Application submitted!") }}</h2>
+		<p>{{ _("Thank you for applying. Our HR team will review your application and contact you by email.") }}</p>
+		<div class="ja-ref">
+			<span>{{ _("Reference") }}</span> <code id="ja-ref-code"></code>
+			<button type="button" class="ja-btn-ghost ja-no-print" id="ja-copy-ref">{{ _("Copy") }}</button>
+		</div>
+		<ul class="ja-timeline">
+			<li><strong>1. {{ _("Application received") }}</strong>{{ _("Your application is in our system.") }}</li>
+			<li><strong>2. {{ _("HR review") }}</strong>{{ _("We check your details and qualifications.") }}</li>
+			<li><strong>3. {{ _("We contact you") }}</strong>{{ _("You will hear from us at the email you provided.") }}</li>
+		</ul>
+		<button type="button" class="ja-submit-btn ja-save-copy" id="ja-save-copy"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-download"/></svg><span>{{ _("Download PDF") }}</span></button>
+	</div>
 
-	<form id="ja-form">
+	<div id="ja-wizard-head" class="ja-progress" aria-label="{{ _('Application progress') }}">
+		<div class="ja-progress-top">
+			<span class="ja-progress-step" id="ja-progress-step"></span>
+			<span class="ja-progress-eta" id="ja-progress-eta"></span>
+		</div>
+		<div class="ja-bar"><div class="ja-bar-fill" id="ja-bar-fill"></div></div>
+		<ol class="ja-steps" id="ja-steps"></ol>
+	</div>
+
+	<div id="ja-error" class="ja-alert ja-alert-danger ja-hidden" role="alert"></div>
+
+	<form id="ja-form" novalidate>
 		<!-- Personal Information -->
 		<div class="ja-section">
 			<h2>{{ _("Personal Information") }}</h2>
-			<div class="ja-grid">
-				<div class="ja-field"><label>{{ _("First Name (English)") }} <span class="ja-req">*</span></label>
-					<input type="text" name="custom_first_name_en" required></div>
-				<div class="ja-field"><label>{{ _("Second Name (English)") }}</label>
-					<input type="text" name="custom_second_name_en"></div>
-				<div class="ja-field"><label>{{ _("Third Name (English)") }}</label>
-					<input type="text" name="custom_third_name_en"></div>
-				<div class="ja-field"><label>{{ _("Last Name (English)") }} <span class="ja-req">*</span></label>
-					<input type="text" name="custom_last_name_en" required></div>
-
-				<div class="ja-field"><label>{{ _("First Name (Arabic)") }}</label>
-					<input type="text" name="custom_first_name_ar"></div>
-				<div class="ja-field"><label>{{ _("Second Name (Arabic)") }}</label>
-					<input type="text" name="custom_second_name_ar"></div>
-				<div class="ja-field"><label>{{ _("Third Name (Arabic)") }}</label>
-					<input type="text" name="custom_third_name_ar"></div>
-				<div class="ja-field"><label>{{ _("Last Name (Arabic)") }}</label>
-					<input type="text" name="custom_last_name_ar"></div>
-
-				<div class="ja-field"><label>{{ _("Email") }} <span class="ja-req">*</span></label>
-					<input type="email" name="email" required></div>
-				<div class="ja-field"><label>{{ _("Phone") }} <span class="ja-req">*</span></label>
-					<input type="tel" name="phone" required></div>
-				<div class="ja-field"><label>{{ _("Date of Birth") }}</label>
-					<input type="date" name="date_of_birth"></div>
-				<div class="ja-field"><label>{{ _("Gender") }}</label>
-					<select name="gender" data-category="Gender"></select></div>
-
-				<div class="ja-field"><label>{{ _("National ID / Passport Number") }}</label>
-					<input type="text" name="nic_passport"></div>
-				<div class="ja-field ja-full"><label>{{ _("Address") }}</label>
-					<textarea name="address" rows="2"></textarea></div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-user"/></svg><span>{{ _("Name (English)") }}</span></div>
+				<div class="ja-grid ja-grid-4">
+					<div class="ja-field"><label>{{ _("First Name (English)") }} <span class="ja-req">*</span></label>
+						<input type="text" name="custom_first_name_en" required autocomplete="given-name"></div>
+					<div class="ja-field"><label>{{ _("Second Name (English)") }}</label>
+						<input type="text" name="custom_second_name_en"></div>
+					<div class="ja-field"><label>{{ _("Third Name (English)") }}</label>
+						<input type="text" name="custom_third_name_en"></div>
+					<div class="ja-field"><label>{{ _("Last Name (English)") }} <span class="ja-req">*</span></label>
+						<input type="text" name="custom_last_name_en" required autocomplete="family-name"></div>
+				</div>
+			</div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-globe"/></svg><span>{{ _("Name (Arabic)") }}</span><span class="ja-tag">AR</span></div>
+				<div class="ja-grid ja-grid-4">
+					<div class="ja-field"><label>{{ _("First Name (Arabic)") }}</label>
+						<input type="text" name="custom_first_name_ar" dir="rtl" lang="ar"></div>
+					<div class="ja-field"><label>{{ _("Second Name (Arabic)") }}</label>
+						<input type="text" name="custom_second_name_ar" dir="rtl" lang="ar"></div>
+					<div class="ja-field"><label>{{ _("Third Name (Arabic)") }}</label>
+						<input type="text" name="custom_third_name_ar" dir="rtl" lang="ar"></div>
+					<div class="ja-field"><label>{{ _("Last Name (Arabic)") }}</label>
+						<input type="text" name="custom_last_name_ar" dir="rtl" lang="ar"></div>
+				</div>
+			</div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-mail"/></svg><span>{{ _("Contact") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field"><label>{{ _("Email") }} <span class="ja-req">*</span></label>
+						<input type="email" name="email" required autocomplete="email"></div>
+					<div class="ja-field"><label>{{ _("Phone") }} <span class="ja-req">*</span></label>
+						<input type="tel" name="phone" required autocomplete="tel"></div>
+				</div>
+			</div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-user"/></svg><span>{{ _("About you") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field"><label>{{ _("Date of Birth") }}</label>
+						<input type="date" name="date_of_birth"></div>
+					<div class="ja-field"><label>{{ _("Gender") }}</label>
+						<select name="gender" data-category="Gender"></select></div>
+					<div class="ja-field"><label>{{ _("National ID / Passport Number") }}</label>
+						<input type="text" name="nic_passport"></div>
+					<div class="ja-field ja-full"><label>{{ _("Address") }}</label>
+						<textarea name="address" rows="2"></textarea></div>
+				</div>
 			</div>
 		</div>
 
 		<!-- Ministry Identity Details -->
 		<div class="ja-section">
 			<h2>{{ _("Identity Details") }}</h2>
-			<div class="ja-grid">
-				<div class="ja-field"><label>{{ _("Identity Type") }} <span class="ja-req">*</span></label>
-					<select name="custom_identity_type" data-category="Identity type" required></select></div>
-				<div class="ja-field"><label>{{ _("Identity Number") }} <span class="ja-req">*</span></label>
-					<input type="text" name="custom_identity_number" required></div>
-				<div class="ja-field"><label>{{ _("Identity Issue Date") }}</label>
-					<input type="date" name="custom_identity_issue_date"></div>
-				<div class="ja-field"><label>{{ _("Identity Issue Place") }}</label>
-					<select name="custom_identity_issue_place" data-category="Coding cities and governora"></select></div>
-				<div class="ja-field"><label>{{ _("ID Number in Country of Origin") }}</label>
-					<input type="text" name="custom_original_home_id_number"></div>
-				<div class="ja-field"><label>{{ _("Place of Birth") }}</label>
-					<select name="custom_ministry_place_of_birth" data-category="Coding cities and governora"></select></div>
-				<div class="ja-field"><label>{{ _("Nationality") }} <span class="ja-req">*</span></label>
-					<select name="custom_jameah_nationality" data-category="Nationality" required></select></div>
-				<div class="ja-field"><label>{{ _("Religion") }}</label>
-					<select name="custom_ministry_religion" data-category="Religions"></select></div>
-				<div class="ja-field"><label>{{ _("Has Special Needs") }}</label>
-					<select name="custom_is_special_needs">
-						<option value="0">{{ _("No") }}</option>
-						<option value="1">{{ _("Yes") }}</option>
-					</select></div>
-				<div class="ja-field"><label>{{ _("Type of Special Needs") }}</label>
-					<select name="custom_ministry_special_needs_type" data-category="Type of special needs"></select></div>
-				<div class="ja-field"><label>{{ _("Work Telephone Number") }}</label>
-					<input type="tel" name="custom_work_telephone_number"></div>
-				<div class="ja-field"><label>{{ _("Work Telephone Extension") }}</label>
-					<input type="tel" inputmode="numeric" name="custom_work_telephone_extention_number"></div>
-				<div class="ja-field"><label>{{ _("City (Place of Business)") }}</label>
-					<select name="custom_ministry_work_city" data-category="Coding cities and governora"></select></div>
-				<div class="ja-field"><label>{{ _("Job Rank") }}</label>
-					<select name="custom_ministry_job_rank" data-category="Job ranks"></select></div>
-				<div class="ja-field"><label>{{ _("Housing") }}</label>
-					<select name="custom_ministry_accommodation"></select></div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-id"/></svg><span>{{ _("Identity document") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field"><label>{{ _("Identity Type") }} <span class="ja-req">*</span></label>
+						<select name="custom_identity_type" data-category="Identity type" required></select></div>
+					<div class="ja-field"><label>{{ _("Identity Number") }} <span class="ja-req">*</span></label>
+						<input type="text" name="custom_identity_number" required></div>
+					<div class="ja-field"><label>{{ _("Identity Issue Date") }}</label>
+						<input type="date" name="custom_identity_issue_date"></div>
+					<div class="ja-field"><label>{{ _("Identity Issue Place") }}</label>
+						<select name="custom_identity_issue_place" data-category="Coding cities and governora"></select></div>
+					<div class="ja-field"><label>{{ _("ID Number in Country of Origin") }}</label>
+						<input type="text" name="custom_original_home_id_number"></div>
+				</div>
+			</div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-globe"/></svg><span>{{ _("Background") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field"><label>{{ _("Place of Birth") }}</label>
+						<select name="custom_ministry_place_of_birth" data-category="Coding cities and governora"></select></div>
+					<div class="ja-field"><label>{{ _("Nationality") }} <span class="ja-req">*</span></label>
+						<select name="custom_jameah_nationality" data-category="Nationality" required></select></div>
+					<div class="ja-field"><label>{{ _("Religion") }}</label>
+						<select name="custom_ministry_religion" data-category="Religions"></select></div>
+				</div>
+			</div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-heart"/></svg><span>{{ _("Accessibility") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field"><label>{{ _("Has Special Needs") }}</label>
+						<select name="custom_is_special_needs">
+							<option value="0">{{ _("No") }}</option>
+							<option value="1">{{ _("Yes") }}</option>
+						</select></div>
+					<div class="ja-field" id="ja-special-type"><label>{{ _("Type of Special Needs") }}</label>
+						<select name="custom_ministry_special_needs_type" data-category="Type of special needs"></select></div>
+				</div>
+			</div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-briefcase"/></svg><span>{{ _("Work details") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field"><label>{{ _("Work Telephone Number") }}</label>
+						<input type="tel" name="custom_work_telephone_number"></div>
+					<div class="ja-field"><label>{{ _("Work Telephone Extension") }}</label>
+						<input type="tel" inputmode="numeric" name="custom_work_telephone_extention_number"></div>
+					<div class="ja-field"><label>{{ _("City (Place of Business)") }}</label>
+						<select name="custom_ministry_work_city" data-category="Coding cities and governora"></select></div>
+					<div class="ja-field"><label>{{ _("Job Rank") }}</label>
+						<select name="custom_ministry_job_rank" data-category="Job ranks"></select></div>
+					<div class="ja-field"><label>{{ _("Housing") }}</label>
+						<select name="custom_ministry_accommodation" data-category="Residential status coding"></select></div>
+				</div>
 			</div>
 		</div>
 
@@ -436,27 +1893,33 @@
 		<!-- Position Information -->
 		<div class="ja-section">
 			<h2>{{ _("Position Information") }}</h2>
-			<div class="ja-grid">
-				<div class="ja-field">
-					<label>{{ _("Application Category") }}</label>
-					<select name="application_category" id="ja-application-category" {{ "disabled" if not is_admin_preview else "" }}>
-						<option value="Academic Staff" {{ "selected" if application_category == "Academic Staff" else "" }}>{{ _("Academic Staff") }}</option>
-						<option value="Non-Academic / Other Staff" {{ "selected" if application_category == "Non-Academic / Other Staff" else "" }}>{{ _("Non-Academic / Other Staff") }}</option>
-					</select>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-briefcase"/></svg><span>{{ _("The role") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field">
+						<label>{{ _("Application Category") }}</label>
+						<select name="application_category" id="ja-application-category" {{ "disabled" if not is_admin_preview else "" }}>
+							<option value="Academic Staff" {{ "selected" if application_category == "Academic Staff" else "" }}>{{ _("Academic Staff") }}</option>
+							<option value="Non-Academic / Other Staff" {{ "selected" if application_category == "Non-Academic / Other Staff" else "" }}>{{ _("Non-Academic / Other Staff") }}</option>
+						</select>
+					</div>
+					<div class="ja-field"><label>{{ _("Designation") }}</label>
+						<input type="text" value="{{ role or '' }}" disabled>
+					</div>
+					<div class="ja-field"><label>{{ _("Expected Salary") }}</label>
+						<input type="number" step="0.01" name="expected_salary"></div>
 				</div>
-				<div class="ja-field"><label>{{ _("Designation") }}</label>
-					<input type="text" value="{{ role or '' }}" disabled>
-				</div>
-				<div class="ja-field"><label>{{ _("Expected Salary") }}</label>
-					<input type="number" step="0.01" name="expected_salary"></div>
 			</div>
-			<div class="ja-grid" style="margin-top:1rem;">
-				<div class="ja-field ja-full"><label>{{ _("Cover Letter") }}</label>
-					<textarea name="cover_letter" rows="4"></textarea></div>
-				<div class="ja-field"><label>{{ _("Resume Link (optional)") }}</label>
-					<input type="url" name="resume_link"></div>
-				<div class="ja-field"><label>{{ _("Resume Attachment") }}</label>
-					<input type="file" id="ja-resume-file" name="resume" accept=".pdf,.doc,.docx"></div>
+			<div class="ja-group">
+				<div class="ja-group-title"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-file"/></svg><span>{{ _("Your application") }}</span></div>
+				<div class="ja-grid">
+					<div class="ja-field ja-full"><label>{{ _("Cover Letter") }}</label>
+						<textarea name="cover_letter" rows="4"></textarea></div>
+					<div class="ja-field"><label>{{ _("Resume Link (optional)") }}</label>
+						<input type="url" name="resume_link"></div>
+					<div class="ja-field"><label>{{ _("Resume Attachment") }}</label>
+						<input type="file" id="ja-resume-file" name="resume" accept=".pdf,.doc,.docx"></div>
+				</div>
 			</div>
 		</div>
 
@@ -470,6 +1933,10 @@
 		<!-- Academic Work Experience -->
 		<div class="ja-section" id="ja-section-academic-experience">
 			<h2>{{ _("Academic Work Experience") }}</h2>
+			<label class="ja-consent ja-skip ja-hidden" id="ja-skip-experience-label">
+				<input type="checkbox" name="ja_no_academic_experience" id="ja-no-experience">
+				<span>{{ _("I have no academic work experience yet") }}</span>
+			</label>
 			<div id="ja-rows-academic_work_experience"></div>
 			<button type="button" class="ja-add-row" data-table="academic_work_experience">+ {{ _("Add Experience") }}</button>
 		</div>
@@ -502,20 +1969,78 @@
 			<button type="button" class="ja-add-row" data-table="awards">+ {{ _("Add Award") }}</button>
 		</div>
 
-		<div class="ja-submit-bar">
-			<span id="ja-submitting-msg" class="ja-hidden">{{ _("Submitting...") }}</span>
-			<button type="submit" class="ja-submit-btn" id="ja-submit-btn">{{ _("Submit Application") }}</button>
+		<!-- Review (populated by script) -->
+		<div class="ja-step-review" id="ja-review" hidden>
+			<div class="ja-section">
+				<h2>{{ _("Review & Submit") }}</h2>
+				<div class="ja-strength">
+					<div class="ja-ring" id="ja-ring"><span id="ja-ring-text">0%</span></div>
+					<div>
+						<div class="ja-strength-title">{{ _("Profile completeness") }}</div>
+						<div class="ja-strength-tip" id="ja-strength-tip"></div>
+					</div>
+				</div>
+				<div class="ja-review-grid" id="ja-review-grid"></div>
+				<label class="ja-consent">
+					<input type="checkbox" id="ja-consent">
+					<span>{{ _("I confirm that the information I have provided is accurate and complete.") }} <span class="ja-req">*</span></span>
+				</label>
+				<div class="ja-field-error" id="ja-consent-error"></div>
+				<div class="ja-privacy">&#128274; {{ _("Your details are private and are only seen by the HR department.") }}</div>
+			</div>
+		</div>
+
+		<div class="ja-nav" id="ja-nav">
+			<button type="button" class="ja-btn-ghost" id="ja-back-btn"><span class="ja-arrow">&larr;</span> {{ _("Back") }}</button>
+			<span id="ja-draft-state" class="ja-draft-state" aria-live="polite"><svg class="ja-gi" aria-hidden="true"><use href="#ja-i-lock"/></svg><span id="ja-draft-text"></span></span>
+			<div class="ja-nav-right">
+				<span id="ja-submitting-msg" class="ja-hidden">{{ _("Submitting...") }}</span>
+				<button type="button" class="ja-submit-btn" id="ja-next-btn">{{ _("Next") }} <span class="ja-arrow">&rarr;</span></button>
+				<button type="submit" class="ja-submit-btn ja-hidden" id="ja-submit-btn">{{ _("Submit Application") }}</button>
+			</div>
 		</div>
 	</form>
 	{% endif %}
 </div>
 
+<script src="/assets/medical_hrms/js/phone_countries.js?v=1"></script>
 <script>
 (function () {
 	if (!document.getElementById("ja-form")) return;
 
 	var CONFIG = {{ job_application_config | tojson }};
 	var MINISTRY_CODES = CONFIG.ministry_codes || [];
+	var IS_AR = !!CONFIG.is_ar;
+	// Applicants see names, never ministry codes. In the imported data the English name is sometimes
+	// just the code (912 of 1,680 cities, all job ranks...) and the "Arabic" column holds an English
+	// translation, so: real Arabic (Arabic page only) > real English name > that translated column > code.
+	var NUMERIC_ONLY = /^[\d\s.\-]*$/;
+	function codeLabel(code) {
+		var en = (code.name_english || "").trim();
+		var ar = (code.name_arabic || "").trim();
+		// the source file's translation produced the literal word "undefined" for some "not specified" rows
+		if (/^(undefined|null)$/i.test(ar)) ar = {{ _("Not specified") | tojson }};
+		if (IS_AR && /[\u0600-\u06FF]/.test(ar)) return ar;
+		var id = (code.name.split("::")[1] || "").trim().toLowerCase();
+		var enIsCode = !en || NUMERIC_ONLY.test(en) || en.toLowerCase() === id;
+		var arIsCode = !ar || NUMERIC_ONLY.test(ar) || ar.toLowerCase() === id;
+		if (!enIsCode) return en;
+		if (!arIsCode) return ar;
+		return en || ar || code.name;
+	}
+
+	var jaUid = 0;
+	// Give every label a matching control id so labels are clickable and read by screen readers.
+	function linkLabels(root) {
+		root.querySelectorAll(".ja-field").forEach(function (field) {
+			var label = field.querySelector("label");
+			var control = field.querySelector("input:not([type=hidden]), select, textarea");
+			if (label && control && !control.id) {
+				control.id = "ja-f" + (++jaUid);
+				label.setAttribute("for", control.id);
+			}
+		});
+	}
 
 	var TABLE_FIELDS = {
 		academic_qualifications: [
@@ -588,18 +2113,48 @@
 		return MINISTRY_CODES.filter(function (c) { return c.code_category === category; });
 	}
 
+	// Options for one lookup category: [{ value, label }], easy to find by name.
+	var optionCache = {};
+	function optionsForCategory(category) {
+		if (optionCache[category]) return optionCache[category];
+		var list = codesForCategory(category).map(function (c) {
+			return { value: c.name, label: codeLabel(c), code: (c.name.split("::")[1] || "") };
+		}).filter(function (o) {
+			// the ministry file reserves some rows with a "-----" placeholder instead of a name: nothing to choose there
+			return /[A-Za-z\u0600-\u06FF\d]/.test(o.label);
+		});
+		if (category === "Coding cities and governora") {
+			// many centres share a name across governorates: add the governorate (code ...000 of the same 4-digit prefix)
+			var parent = {};
+			list.forEach(function (o) { if (/000$/.test(o.code)) parent[o.code.slice(0, 4)] = o.label; });
+			var count = {};
+			list.forEach(function (o) { count[o.label] = (count[o.label] || 0) + 1; });
+			list.forEach(function (o) {
+				var p = parent[o.code.slice(0, 4)];
+				if (count[o.label] > 1 && p && p !== o.label) o.label += " (" + p + ")";
+			});
+		}
+		var seen = {};
+		list.forEach(function (o) { seen[o.label] = (seen[o.label] || 0) + 1; });
+		list.forEach(function (o) { if (seen[o.label] > 1) o.label += " \u00b7 " + o.code; });
+		if (list.length > 15) {
+			list.sort(function (a, b) { return a.label.localeCompare(b.label, IS_AR ? "ar" : "en"); });
+		}
+		optionCache[category] = list;
+		return list;
+	}
+
 	function populateStaticSelects() {
 		document.querySelectorAll("select[data-category]").forEach(function (select) {
 			var category = select.getAttribute("data-category");
-			var codes = codesForCategory(category);
 			var frag = document.createDocumentFragment();
 			var blank = document.createElement("option");
 			blank.value = "";
 			frag.appendChild(blank);
-			codes.forEach(function (code) {
+			optionsForCategory(category).forEach(function (o) {
 				var opt = document.createElement("option");
-				opt.value = code.name;
-				opt.textContent = code.name_english || code.name;
+				opt.value = o.value;
+				opt.textContent = o.label;
 				frag.appendChild(opt);
 			});
 			select.appendChild(frag);
@@ -613,10 +2168,10 @@
 			var blank = document.createElement("option");
 			blank.value = "";
 			el.appendChild(blank);
-			codesForCategory(field.category).forEach(function (code) {
+			optionsForCategory(field.category).forEach(function (o) {
 				var opt = document.createElement("option");
-				opt.value = code.name;
-				opt.textContent = code.name_english || code.name;
+				opt.value = o.value;
+				opt.textContent = o.label;
 				el.appendChild(opt);
 			});
 		} else if (field.type === "date") {
@@ -635,6 +2190,7 @@
 			el.type = "text";
 		}
 		el.name = field.name;
+		if (field.required && field.type !== "checkbox") el.dataset.required = "1";
 		return el;
 	}
 
@@ -665,12 +2221,16 @@
 		removeBtn.type = "button";
 		removeBtn.className = "ja-remove-row";
 		removeBtn.title = "{{ _('Remove') }}";
-		removeBtn.innerHTML = "&times;";
+		removeBtn.appendChild(svgIcon("trash"));
+		var removeText = document.createElement("span");
+		removeText.textContent = "{{ _('Remove') }}";
+		removeBtn.appendChild(removeText);
 		removeBtn.addEventListener("click", function () {
-			row.remove();
+			requestRemove(row, tableName, removeBtn);
 		});
 		row.appendChild(removeBtn);
 
+		linkLabels(row);
 		container.appendChild(row);
 	}
 
@@ -685,8 +2245,9 @@
 				var input = rowEl.querySelector('[name="' + field.name + '"]');
 				var value;
 				if (field.type === "checkbox") {
+					// The "latest record" flag defaults to checked, so on its own it must
+					// not turn an untouched row into a submitted record.
 					value = input ? (input.checked ? 1 : 0) : 0;
-					if (value) hasValue = true;
 				} else {
 					value = input ? input.value : "";
 					if (value) hasValue = true;
@@ -719,26 +2280,1183 @@
 
 	var form = document.getElementById("ja-form");
 	var submitBtn = document.getElementById("ja-submit-btn");
+	var nextBtn = document.getElementById("ja-next-btn");
+	var backBtn = document.getElementById("ja-back-btn");
 	var submittingMsg = document.getElementById("ja-submitting-msg");
 	var successBox = document.getElementById("ja-success");
 	var errorBox = document.getElementById("ja-error");
+	var draftState = document.getElementById("ja-draft-state");
+	var draftText = document.getElementById("ja-draft-text");
+	var wizardHead = document.getElementById("ja-wizard-head");
+	var stepsEl = document.getElementById("ja-steps");
+	var barFill = document.getElementById("ja-bar-fill");
+	var stepLabel = document.getElementById("ja-progress-step");
+	var etaLabel = document.getElementById("ja-progress-eta");
+	var consentBox = document.getElementById("ja-consent");
+	var consentError = document.getElementById("ja-consent-error");
+	var ACADEMIC = "Academic Staff";
+
+	var T = {
+		stepOf: {{ _("Step {0} of {1}") | tojson }},
+		minLeft: {{ _("About {0} min left") | tojson }},
+		lastMin: {{ _("Almost done") | tojson }},
+		required: {{ _("This field is required.") | tojson }},
+		arabic: {{ _("Please use Arabic letters only.") | tojson }},
+		english: {{ _("Please use English letters only.") | tojson }},
+		phoneLocal: {{ _("Enter your number without the country code.") | tojson }},
+		searchCountry: {{ _("Search country or code") | tojson }},
+		noCountry: {{ _("No country found") | tojson }},
+		countryLabel: {{ _("Country code") | tojson }},
+		downloadPdf: {{ _("Download PDF") | tojson }},
+		preparing: {{ _("Preparing your PDF...") | tojson }},
+		downloaded: {{ _("Downloaded") | tojson }},
+		downloadFailed: {{ _("Could not download. Please try again.") | tojson }},
+		cancel: {{ _("Cancel") | tojson }},
+		remove: {{ _("Remove") | tojson }},
+		removeText: {{ _("All the details you entered here will be permanently removed.") | tojson }},
+		removeTitle: {
+			academic_qualifications: {{ _("Remove this qualification?") | tojson }},
+			academic_work_experience: {{ _("Remove this work experience?") | tojson }},
+			previous_work_experience: {{ _("Remove this previous experience?") | tojson }},
+			professional_certificates_training: {{ _("Remove this course?") | tojson }},
+			research_publications: {{ _("Remove this publication?") | tojson }},
+			awards: {{ _("Remove this award?") | tojson }}
+		},
+		email: {{ _("Enter a valid email address.") | tojson }},
+		phone: {{ _("Enter a valid phone number, e.g. +94 77 123 4567.") | tojson }},
+		url: {{ _("Enter a full link starting with http:// or https://.") | tojson }},
+		future: {{ _("This date cannot be in the future.") | tojson }},
+		dob: {{ _("Please check the date of birth.") | tojson }},
+		number: {{ _("Enter a positive number.") | tojson }},
+		dateOrder: {{ _("End date cannot be before the start date.") | tojson }},
+		fileType: {{ _("Please upload a PDF or Word document.") | tojson }},
+		fileSize: {{ _("The file is larger than 10 MB.") | tojson }},
+		needExperience: {{ _("Please add your academic work experience, or tick the box if you have none yet.") | tojson }},
+		needQualification: {{ _("Please add at least one academic qualification to continue.") | tojson }},
+		consent: {{ _("Please confirm the declaration to submit.") | tojson }},
+		fixErrors: {{ _("Please correct the highlighted fields to continue.") | tojson }},
+		saved: {{ _("Draft saved on this device") | tojson }},
+		autosave: {{ _("Your progress is saved automatically.") | tojson }},
+		restored: {{ _("We restored your saved draft from {0}.") | tojson }},
+		startOver: {{ _("Start over") | tojson }},
+		confirmReset: {{ _("Discard the saved draft and start again?") | tojson }},
+		requiredNote: {{ _("Fields marked with * are required.") | tojson }},
+		edit: {{ _("Edit") | tojson }},
+		none: {{ _("Not provided") | tojson }},
+		copied: {{ _("Copied") | tojson }},
+		copy: {{ _("Copy") | tojson }},
+		generic: {{ _("Something went wrong while submitting your application. Please try again.") | tojson }},
+		network: {{ _("Network error. Please try again.") | tojson }}
+	};
+
+	var STEPS = [
+		{ key: "personal", title: {{ _("Personal") | tojson }}, sections: [0], minutes: 2, icon: "user",
+			head: {{ _("Let's start with you") | tojson }}, sub: {{ _("Tell us who you are. Use your name exactly as it appears on your ID.") | tojson }} },
+		{ key: "identity", title: {{ _("Identity and Contact") | tojson }}, sections: [1, 2], minutes: 2, icon: "id",
+			head: {{ _("Your identity and how to reach you") | tojson }}, sub: {{ _("These details help HR verify your application.") | tojson }} },
+		{ key: "position", title: {{ _("Position") | tojson }}, sections: [3], minutes: 1, icon: "briefcase",
+			head: {{ _("The role you are applying for") | tojson }}, sub: {{ _("Confirm your expected salary and add your resume.") | tojson }} },
+		{ key: "education", title: {{ _("Education") | tojson }}, sections: [4], minutes: 2, icon: "book",
+			head: {{ _("Your education") | tojson }}, sub: {{ _("Add your degrees, starting with the most recent.") | tojson }} },
+		{ key: "experience", title: {{ _("Experience") | tojson }}, sections: [5, 6], minutes: 2, icon: "briefcase",
+			head: {{ _("Your work experience") | tojson }}, sub: {{ _("Tell us where you have worked before.") | tojson }} },
+		{ key: "extras", title: {{ _("Achievements") | tojson }}, sections: [7, 8, 9], minutes: 1, icon: "award",
+			head: {{ _("Courses, research and awards") | tojson }}, sub: {{ _("Everything here is optional, but it makes your application stronger.") | tojson }} },
+		{ key: "review", title: {{ _("Review") | tojson }}, review: true, minutes: 1, icon: "check",
+			head: {{ _("Review and submit") | tojson }}, sub: {{ _("Check your details one last time. You can edit any section.") | tojson }} }
+	];
+	var REVIEW = STEPS.length - 1;
+	var current = 0;
+
+	function fmt(text) {
+		var args = arguments;
+		return text.replace(/\{(\d+)\}/g, function (m, i) { return args[+i + 1]; });
+	}
+
+	function currentCategory() {
+		var sel = document.getElementById("ja-application-category");
+		return CONFIG.allow_category_override && sel ? sel.value : CONFIG.application_category;
+	}
+
+	/* ---------- Build steps from the existing sections ---------- */
+	var sections = Array.prototype.filter.call(form.querySelectorAll(".ja-section"), function (s) {
+		return !s.closest("#ja-review");
+	});
+	var SECTION_ICONS = ["user", "id", "heart", "briefcase", "book", "briefcase", "briefcase", "file", "book", "award"];
+	function svgIcon(name) {
+		var ns = "http://www.w3.org/2000/svg";
+		var svg = document.createElementNS(ns, "svg");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		svg.setAttribute("aria-hidden", "true");
+		var use = document.createElementNS(ns, "use");
+		use.setAttribute("href", "#ja-i-" + name);
+		svg.appendChild(use);
+		return svg;
+	}
+	function addSectionIcon(section, name) {
+		var h2 = section.querySelector("h2");
+		if (!h2) return;
+		var holder = document.createElement("span");
+		holder.className = "ja-sec-icon";
+		holder.appendChild(svgIcon(name));
+		h2.insertBefore(holder, h2.firstChild);
+	}
+	sections.forEach(function (section, i) { addSectionIcon(section, SECTION_ICONS[i] || "file"); });
+
+	STEPS.forEach(function (step, i) {
+		if (step.review) {
+			step.el = document.getElementById("ja-review");
+			step.el.hidden = false;
+			step.el.classList.add("ja-step", "ja-hidden");
+			return;
+		}
+		var wrap = document.createElement("div");
+		wrap.className = "ja-step ja-hidden";
+		wrap.setAttribute("data-step", i);
+		var first = sections[step.sections[0]];
+		first.parentNode.insertBefore(wrap, first);
+		step.sections.forEach(function (idx) { wrap.appendChild(sections[idx]); });
+		step.el = wrap;
+	});
+
+	var note = document.createElement("p");
+	note.className = "ja-hint";
+	note.textContent = T.requiredNote;
+	STEPS[0].el.insertBefore(note, STEPS[0].el.firstChild);
+
+	STEPS.forEach(function (step) {
+		var head = document.createElement("div");
+		head.className = "ja-step-head";
+		var icon = document.createElement("span");
+		icon.className = "ja-step-head-icon";
+		icon.appendChild(svgIcon(step.icon));
+		var text = document.createElement("div");
+		var h = document.createElement("h2");
+		h.textContent = step.head;
+		var p = document.createElement("p");
+		p.textContent = step.sub;
+		text.appendChild(h);
+		text.appendChild(p);
+		head.appendChild(icon);
+		head.appendChild(text);
+		step.el.insertBefore(head, step.el.firstChild);
+		// a step with a single card does not need that card's own title as well
+		var cards = step.el.querySelectorAll(":scope > .ja-section");
+		if (cards.length === 1) cards[0].classList.add("ja-section-solo");
+	});
+
+	linkLabels(form);
+
+	/* ---------- Field icons, valid ticks, conditional field ---------- */
+	var FIELD_ICONS = {
+		custom_first_name_en: "user", custom_second_name_en: "user", custom_third_name_en: "user", custom_last_name_en: "user",
+		email: "mail", phone: "phone", date_of_birth: "calendar", nic_passport: "id",
+		custom_identity_number: "id", custom_identity_issue_date: "calendar", custom_original_home_id_number: "id",
+		custom_work_telephone_number: "phone", custom_work_telephone_extention_number: "hash",
+		emergency_contact_name: "user", emergency_contact_phone: "phone", emergency_contact_relation: "user",
+		expected_salary: "dollar", resume_link: "link"
+	};
+	var TICK_TYPES = ["text", "email", "tel", "number", "url"];
+
+	function decorateControls(root) {
+		root.querySelectorAll(".ja-field").forEach(function (field) {
+			if (field.closest(".ja-repeat-row")) return;
+			var el = field.querySelector("input, select, textarea");
+			if (!el || !el.name || el.parentNode.classList.contains("ja-control")) return;
+			if (["text", "email", "tel", "number", "url", "date"].indexOf(el.type) === -1) return;
+			var icon = FIELD_ICONS[el.name];
+			var tick = TICK_TYPES.indexOf(el.type) !== -1 && !/_ar$/.test(el.name);
+			if (!icon && !tick) return;
+			var wrap = document.createElement("div");
+			wrap.className = "ja-control" + (icon ? " has-ico" : "") + (tick ? " has-tick" : "");
+			el.parentNode.insertBefore(wrap, el);
+			wrap.appendChild(el);
+			if (icon) {
+				var ico = document.createElement("span");
+				ico.className = "ja-ico";
+				ico.appendChild(svgIcon(icon));
+				wrap.appendChild(ico);
+			}
+			if (tick) {
+				var t = document.createElement("span");
+				t.className = "ja-tick";
+				t.textContent = "\u2713";
+				t.setAttribute("aria-hidden", "true");
+				wrap.appendChild(t);
+			}
+		});
+	}
+	// phone pickers first, so the generic icon/tick wrapper skips them
+	/* ---------- Phone fields: country picker + number ---------- */
+	var COUNTRIES = (window.JA_COUNTRIES || []).map(function (c) {
+		return { iso: c[0], dial: c[1], en: c[2], ar: c[3], sprite: c[4] || "c" };
+	});
+	var COUNTRY_BY_ISO = {};
+	COUNTRIES.forEach(function (c) { COUNTRY_BY_ISO[c.iso] = c; });
+	var DEFAULT_COUNTRY = COUNTRY_BY_ISO.SA ? "SA" : (COUNTRIES[0] && COUNTRIES[0].iso);
+	var PINNED = ["SA", "AE", "QA", "KW", "BH", "OM", "JO", "EG", "IQ", "YE"];
+	// when several countries share a dial code, a pasted +code picks this one
+	var DIAL_PREF = { "1": "US", "7": "RU", "44": "GB", "39": "IT", "47": "NO", "61": "AU", "212": "MA", "262": "RE", "290": "SH", "358": "FI", "590": "GP", "599": "CW" };
+	var PHONE_FIELDS = ["phone", "emergency_contact_phone", "custom_work_telephone_number"];
+	var phones = {};
+
+	function countryName(c) { return (IS_AR && c.ar) || c.en; }
+	// flags come from two SVG sprites (small ones up front, detailed coats of arms in a second file)
+	var FLAG_SPRITES = {
+		c: "/assets/medical_hrms/images/flags/flags-core.svg?v=1",
+		d: "/assets/medical_hrms/images/flags/flags-detail.svg?v=1"
+	};
+	function makeFlag() {
+		var ns = "http://www.w3.org/2000/svg";
+		var svg = document.createElementNS(ns, "svg");
+		svg.setAttribute("class", "ja-cc-flag");
+		svg.setAttribute("aria-hidden", "true");
+		var use = document.createElementNS(ns, "use");
+		use.setAttribute("width", "100%");
+		use.setAttribute("height", "100%");
+		svg.appendChild(use);
+		return svg;
+	}
+	function setFlag(svg, c) {
+		svg.firstChild.setAttribute("href", FLAG_SPRITES[c.sprite] + "#" + c.iso.toLowerCase());
+	}
+	function nationalDigits(value) { return (value || "").replace(/\D/g, "").replace(/^0+/, ""); }
+
+	function dialToCountry(digits) {
+		for (var len = Math.min(4, digits.length); len >= 1; len--) {
+			var code = digits.slice(0, len);
+			var pref = DIAL_PREF[code];
+			if (pref && COUNTRY_BY_ISO[pref]) return { country: COUNTRY_BY_ISO[pref], rest: digits.slice(len) };
+			for (var i = 0; i < COUNTRIES.length; i++) {
+				if (COUNTRIES[i].dial === code) return { country: COUNTRIES[i], rest: digits.slice(len) };
+			}
+		}
+		return null;
+	}
+
+	function phoneFull(name, spaced) {
+		var st = phones[name];
+		if (!st) return ((control(name) || {}).value || "").trim();
+		var n = nationalDigits(st.input.value);
+		return n ? "+" + COUNTRY_BY_ISO[st.iso].dial + (spaced ? " " : "") + n : "";
+	}
+
+	function sortedCountries() {
+		var pinned = PINNED.filter(function (iso) { return COUNTRY_BY_ISO[iso]; }).map(function (iso) { return COUNTRY_BY_ISO[iso]; });
+		var rest = COUNTRIES.filter(function (c) { return PINNED.indexOf(c.iso) === -1; });
+		rest.sort(function (a, b) { return countryName(a).localeCompare(countryName(b), IS_AR ? "ar" : "en"); });
+		return pinned.concat(rest);
+	}
+
+	function countryMatches(c, query) {
+		var q = query.trim().toLowerCase();
+		if (!q) return true;
+		var digits = q.replace(/^\+/, "");
+		if (/^\d+$/.test(digits)) return c.dial.indexOf(digits) === 0;
+		return c.en.toLowerCase().indexOf(q) !== -1 || (c.ar || "").indexOf(query.trim()) !== -1 || c.iso.toLowerCase() === q;
+	}
+
+	function buildPhone(name) {
+		var input = control(name);
+		if (!input) return;
+		var field = input.closest(".ja-field");
+		var st = { name: name, input: input, iso: DEFAULT_COUNTRY };
+		phones[name] = st;
+		var all = sortedCountries();
+
+		var root = document.createElement("div");
+		root.className = "ja-phone";
+		var cc = document.createElement("div");
+		cc.className = "ja-cc";
+
+		var btn = document.createElement("button");
+		btn.type = "button";
+		btn.className = "ja-cc-btn";
+		btn.setAttribute("aria-haspopup", "listbox");
+		btn.setAttribute("aria-expanded", "false");
+		var flag = makeFlag();
+		var dial = document.createElement("span");
+		dial.className = "ja-cc-dial";
+		var chevron = document.createElement("span");
+		chevron.className = "ja-cc-chevron";
+		chevron.setAttribute("aria-hidden", "true");
+		btn.appendChild(flag);
+		btn.appendChild(dial);
+		btn.appendChild(chevron);
+
+		var pop = document.createElement("div");
+		pop.className = "ja-cc-pop ja-hidden";
+		var search = document.createElement("input");
+		search.type = "search";
+		search.className = "ja-cc-search";
+		search.placeholder = T.searchCountry;
+		search.setAttribute("aria-label", T.searchCountry);
+		search.autocomplete = "off";
+		var list = document.createElement("ul");
+		list.className = "ja-cc-list";
+		list.setAttribute("role", "listbox");
+		list.id = "ja-cc-list-" + name;
+		search.setAttribute("aria-controls", list.id);
+		pop.appendChild(search);
+		pop.appendChild(list);
+		cc.appendChild(btn);
+		cc.appendChild(pop);
+
+		var hidden = document.createElement("input");
+		hidden.type = "hidden";
+		hidden.name = "ja_cc_" + name;
+		hidden.value = st.iso;
+		st.hidden = hidden;
+
+		var ctl = document.createElement("div");
+		ctl.className = "ja-control has-tick";
+		input.parentNode.insertBefore(root, input);
+		ctl.appendChild(input);
+		var tick = document.createElement("span");
+		tick.className = "ja-tick";
+		tick.textContent = "✓";
+		tick.setAttribute("aria-hidden", "true");
+		ctl.appendChild(tick);
+		root.appendChild(cc);
+		root.appendChild(ctl);
+		root.appendChild(hidden);
+		input.setAttribute("inputmode", "tel");
+		input.setAttribute("autocomplete", "tel-national");
+
+		var shown = [];
+		var active = -1;
+		var group = root.closest(".ja-group");
+
+		function setActive(i, scroll) {
+			var items = list.children;
+			if (active >= 0 && items[active]) items[active].classList.remove("is-active");
+			active = i;
+			if (active >= 0 && items[active]) {
+				items[active].classList.add("is-active");
+				search.setAttribute("aria-activedescendant", items[active].id);
+				if (scroll) items[active].scrollIntoView({ block: "nearest" });
+			}
+		}
+
+		function render(query) {
+			list.innerHTML = "";
+			shown = all.filter(function (c) { return countryMatches(c, query); });
+			if (query.trim() && !/^\+?\d/.test(query.trim())) {
+				var q = query.trim().toLowerCase();
+				shown.sort(function (a, b) {
+					var ap = countryName(a).toLowerCase().indexOf(q) === 0 ? 0 : 1;
+					var bp = countryName(b).toLowerCase().indexOf(q) === 0 ? 0 : 1;
+					return ap - bp;
+				});
+			}
+			var frag = document.createDocumentFragment();
+			shown.forEach(function (c, i) {
+				var li = document.createElement("li");
+				li.id = "ja-cc-" + name + "-" + c.iso;
+				li.setAttribute("role", "option");
+				li.setAttribute("aria-selected", c.iso === st.iso ? "true" : "false");
+				var img = makeFlag();
+				setFlag(img, c);
+				var label = document.createElement("span");
+				label.className = "ja-cc-name";
+				label.textContent = countryName(c);
+				var code = document.createElement("span");
+				code.className = "ja-cc-code";
+				code.textContent = "+" + c.dial;
+				li.appendChild(img);
+				li.appendChild(label);
+				li.appendChild(code);
+				li.addEventListener("mousedown", function (e) { e.preventDefault(); });
+				li.addEventListener("click", function () { choose(c.iso); });
+				frag.appendChild(li);
+			});
+			if (!shown.length) {
+				var none = document.createElement("li");
+				none.className = "ja-cc-empty";
+				none.textContent = T.noCountry;
+				frag.appendChild(none);
+			}
+			list.appendChild(frag);
+			var selected = shown.findIndex(function (c) { return c.iso === st.iso; });
+			setActive(query.trim() ? (shown.length ? 0 : -1) : selected, true);
+		}
+
+		function open() {
+			if (!pop.classList.contains("ja-hidden")) return;
+			pop.classList.remove("ja-hidden");
+			if (group) group.classList.add("ja-pop-open");
+			btn.setAttribute("aria-expanded", "true");
+			search.value = "";
+			render("");
+			search.focus({ preventScroll: true });
+			pop.scrollIntoView({ block: "nearest" });
+		}
+
+		function close(refocus) {
+			if (pop.classList.contains("ja-hidden")) return;
+			pop.classList.add("ja-hidden");
+			if (group) group.classList.remove("ja-pop-open");
+			btn.setAttribute("aria-expanded", "false");
+			if (refocus) btn.focus({ preventScroll: true });
+		}
+
+		function setCountry(iso, silent) {
+			var c = COUNTRY_BY_ISO[iso] || COUNTRY_BY_ISO[DEFAULT_COUNTRY];
+			if (!c) return;
+			st.iso = c.iso;
+			hidden.value = c.iso;
+			setFlag(flag, c);
+			dial.textContent = "+" + c.dial;
+			root.setAttribute("data-dial", c.dial);
+			btn.setAttribute("aria-label", T.countryLabel + ": " + countryName(c) + " +" + c.dial);
+			if (!silent) {
+				scheduleSave();
+				if (input.value.trim()) validateEl(input);
+			}
+		}
+		st.setCountry = setCountry;
+
+		function choose(iso) {
+			setCountry(iso);
+			close(false);
+			input.focus({ preventScroll: true });
+		}
+
+		btn.addEventListener("click", function () {
+			if (pop.classList.contains("ja-hidden")) open(); else close(true);
+		});
+		btn.addEventListener("keydown", function (e) {
+			if (e.key === "ArrowDown") { e.preventDefault(); open(); }
+		});
+		search.addEventListener("input", function (e) { e.stopPropagation(); render(search.value); });
+		search.addEventListener("keydown", function (e) {
+			// keep these keys away from the form-level Enter-to-next handler
+			if (e.key === "ArrowDown") { e.preventDefault(); setActive(Math.min(shown.length - 1, active + 1), true); }
+			else if (e.key === "ArrowUp") { e.preventDefault(); setActive(Math.max(0, active - 1), true); }
+			else if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); if (shown[active]) choose(shown[active].iso); }
+			else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(true); }
+			else if (e.key === "Tab") { close(false); }
+			else return;
+			e.stopPropagation();
+		});
+		document.addEventListener("mousedown", function (e) {
+			if (!cc.contains(e.target)) close(false);
+		});
+
+		// digits only; Arabic-Indic digits are converted so Arabic keyboards work
+		input.addEventListener("input", function () {
+			var before = input.value;
+			var caret = typeof input.selectionStart === "number" ? input.selectionStart : before.length;
+			var clean = function (text) {
+				return text
+					.replace(/[٠-٩]/g, function (d) { return String(d.charCodeAt(0) - 1632); })
+					.replace(/[۰-۹]/g, function (d) { return String(d.charCodeAt(0) - 1776); })
+					.replace(/[^\d\s()-]/g, "");
+			};
+			var after = clean(before);
+			if (after === before) return;
+			input.value = after;
+			var pos = clean(before.slice(0, caret)).length;
+			try { input.setSelectionRange(pos, pos); } catch (err) { /* ignore */ }
+		});
+		// a pasted international number (+94 77 123 4567 or 0094...) picks the country for the user
+		input.addEventListener("paste", function (e) {
+			var text = ((e.clipboardData || window.clipboardData).getData("text") || "").trim();
+			if (!/^(\+|00)\s*\d/.test(text)) return;
+			var found = dialToCountry(text.replace(/\D/g, "").replace(/^00/, ""));
+			if (!found) return;
+			e.preventDefault();
+			setCountry(found.country.iso);
+			input.value = found.rest;
+			input.dispatchEvent(new Event("input", { bubbles: true }));
+		});
+
+		setCountry(st.iso, true);
+	}
+
+	function buildPhoneFields() {
+		if (!COUNTRIES.length) return; // country list failed to load: plain phone inputs still work
+		PHONE_FIELDS.forEach(buildPhone);
+	}
+	buildPhoneFields();
+
+	decorateControls(form);
+
+	function updateValid(el) {
+		var field = el.closest && el.closest(".ja-field");
+		if (!field || el.type === "checkbox" || el.type === "file" || el.type === "hidden" || el.closest(".ja-cc")) return;
+		field.classList.toggle("is-valid", !!(el.value || "").trim() && !fieldMessage(el));
+	}
+
+	// "Type of special needs" only matters when the applicant answered Yes.
+	function syncSpecialNeeds() {
+		var flag = control("custom_is_special_needs");
+		var wrap = document.getElementById("ja-special-type");
+		if (!flag || !wrap) return;
+		var show = flag.value === "1";
+		wrap.classList.toggle("ja-hidden", !show);
+		if (!show) {
+			var type = control("custom_ministry_special_needs_type");
+			if (type) type.value = "";
+		}
+	}
+
+	/* ---------- Stepper ---------- */
+	STEPS.forEach(function (step, i) {
+		var li = document.createElement("li");
+		var btn = document.createElement("button");
+		btn.type = "button";
+		btn.className = "ja-step-btn";
+		var dot = document.createElement("span");
+		dot.className = "ja-step-dot";
+		dot.textContent = i + 1;
+		var label = document.createElement("span");
+		label.className = "ja-step-label";
+		label.textContent = step.title;
+		btn.appendChild(dot);
+		btn.appendChild(label);
+		step.dot = dot;
+		btn.addEventListener("click", function () {
+			if (i < current) goTo(i);
+		});
+		li.appendChild(btn);
+		stepsEl.appendChild(li);
+		step.li = li;
+		step.btn = btn;
+	});
+	stepLabel.setAttribute("aria-live", "polite");
+
+	function goTo(index, opts) {
+		opts = opts || {};
+		current = Math.max(0, Math.min(REVIEW, index));
+		STEPS.forEach(function (step, i) {
+			step.el.classList.toggle("ja-hidden", i !== current);
+			step.li.classList.toggle("is-current", i === current);
+			step.li.classList.toggle("is-done", i < current);
+			step.dot.textContent = i < current ? "\u2713" : i + 1;
+			if (i === current) step.btn.setAttribute("aria-current", "step");
+			else step.btn.removeAttribute("aria-current");
+			step.btn.disabled = i >= current;
+		});
+		barFill.style.width = ((current + 1) / STEPS.length * 100) + "%";
+		stepLabel.textContent = fmt(T.stepOf, current + 1, STEPS.length) + " · " + STEPS[current].title;
+		var minutes = 0;
+		for (var i = current; i < STEPS.length; i++) minutes += STEPS[i].minutes;
+		etaLabel.textContent = current === REVIEW ? T.lastMin : fmt(T.minLeft, minutes);
+		backBtn.classList.toggle("ja-hidden", current === 0);
+		nextBtn.classList.toggle("ja-hidden", current === REVIEW);
+		submitBtn.classList.toggle("ja-hidden", current !== REVIEW);
+		errorBox.classList.add("ja-hidden");
+		if (current === REVIEW) renderReview();
+		if (!opts.silent) {
+			wizardHead.scrollIntoView({ behavior: "smooth", block: "start" });
+			scheduleSave();
+		}
+	}
+
+	/* ---------- Validation ---------- */
+	var ARABIC_RE = /^[؀-ۿݐ-ݿࢠ-ࣿ\s'’-]+$/;
+	var ARABIC_DIGITS_RE = /[\u0660-\u0669\u06F0-\u06F9]/;
+	var ENGLISH_RE = /^[A-Za-z\s'\u2019.-]+$/;
+	// characters dropped while typing or pasting into the bilingual name fields
+	var EN_STRIP = /[^A-Za-z\s'\u2019.-]/g;
+	var AR_STRIP = /[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s'\u2019-]|[\u0660-\u0669\u06F0-\u06F9]/g;
+	var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+	function pad(n) { return (n < 10 ? "0" : "") + n; }
+	function todayISO() {
+		var d = new Date();
+		return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+	}
+
+	// A record row (qualification, experience...) only has to be complete once the applicant has started filling it.
+	function rowStarted(el) {
+		var row = el.closest(".ja-repeat-row");
+		if (!row) return false;
+		return Array.prototype.some.call(row.querySelectorAll("input, select, textarea"), function (x) {
+			return x.type !== "checkbox" && (x.value || "").trim() !== "";
+		});
+	}
+
+	// Academic Staff must give academic work experience unless they say they have none yet.
+	function skipExperience() {
+		var box = document.getElementById("ja-no-experience");
+		return !!(box && box.checked && currentCategory() === ACADEMIC);
+	}
+
+	function syncExperienceSkip() {
+		var label = document.getElementById("ja-skip-experience-label");
+		var rows = document.getElementById("ja-rows-academic_work_experience");
+		if (!label || !rows) return;
+		var academic = currentCategory() === ACADEMIC;
+		label.classList.toggle("ja-hidden", !academic);
+		var skipped = skipExperience();
+		rows.classList.toggle("ja-hidden", skipped);
+		var addBtn = rows.parentNode.querySelector(".ja-add-row");
+		if (addBtn) addBtn.classList.toggle("ja-hidden", skipped);
+	}
+
+	function fieldMessage(el) {
+		if (skipExperience() && el.closest && el.closest("#ja-rows-academic_work_experience")) return "";
+		var name = el.name || "";
+		if (el.type === "file") {
+			var file = el.files && el.files[0];
+			if (!file) return "";
+			if (!/\.(pdf|docx?)$/i.test(file.name)) return T.fileType;
+			if (file.size > 10 * 1024 * 1024) return T.fileSize;
+			return "";
+		}
+		var v = (el.value || "").trim();
+		if ((el.required || (el.dataset.required === "1" && rowStarted(el))) && !v) return T.required;
+		if (!v) return "";
+		if (nameKind(el) === "ar" && (!ARABIC_RE.test(v) || ARABIC_DIGITS_RE.test(v))) return T.arabic;
+		if (nameKind(el) === "en" && !ENGLISH_RE.test(v)) return T.english;
+		if (el.type === "email" && !EMAIL_RE.test(v)) return T.email;
+		var phoneBox = el.closest && el.closest(".ja-phone");
+		if (phoneBox) {
+			var national = nationalDigits(v);
+			var room = 15 - (phoneBox.getAttribute("data-dial") || "").length;
+			if (!/^[\d\s()-]+$/.test(v) || national.length < 6 || national.length > room) return T.phoneLocal;
+			return "";
+		}
+		if (el.type === "tel") {
+			var digits = v.replace(/\D/g, "");
+			if (!/^[+\d\s()\-.]+$/.test(v) || digits.length < 7 || digits.length > 15) return T.phone;
+		}
+		if (el.type === "url") {
+			try {
+				var u = new URL(v);
+				if (!/^https?:$/.test(u.protocol)) return T.url;
+			} catch (err) { return T.url; }
+		}
+		if (el.type === "date") {
+			if (name === "date_of_birth") {
+				if (v > todayISO()) return T.future;
+				if (v < "1900-01-01") return T.dob;
+			}
+			if (name === "custom_identity_issue_date" && v > todayISO()) return T.future;
+			var startName = name === "end_date" ? "start_date" : (name === "end_work_date" ? "start_work_date" : "");
+			if (startName) {
+				var row = el.closest(".ja-repeat-row");
+				var start = row && row.querySelector('[name="' + startName + '"]');
+				if (start && start.value && v < start.value) return T.dateOrder;
+			}
+		}
+		if (el.type === "number" && parseFloat(v) < 0) return T.number;
+		return "";
+	}
+
+	function showFieldError(el, message) {
+		var field = el.closest(".ja-field");
+		if (!field) return;
+		var old = field.querySelector(".ja-field-error");
+		if (old) old.remove();
+		el.classList.toggle("ja-invalid", !!message);
+		if (message) {
+			el.setAttribute("aria-invalid", "true");
+			var err = document.createElement("div");
+			err.className = "ja-field-error";
+			err.setAttribute("role", "alert");
+			err.textContent = message;
+			field.appendChild(err);
+		} else {
+			el.removeAttribute("aria-invalid");
+		}
+	}
+
+	function validateEl(el) {
+		var message = fieldMessage(el);
+		showFieldError(el, message);
+		updateValid(el);
+		return !message;
+	}
+
+	function stepControls(step) {
+		return Array.prototype.filter.call(
+			step.el.querySelectorAll("input[name], select[name], textarea[name]"),
+			function (el) { return !el.disabled && el.type !== "checkbox" && el.type !== "hidden"; }
+		);
+	}
+
+	function stepError(step, message) {
+		var box = step.el.querySelector(".ja-step-error");
+		if (!message) {
+			if (box) box.remove();
+			return;
+		}
+		if (!box) {
+			box = document.createElement("div");
+			box.className = "ja-alert ja-alert-danger ja-step-error";
+			box.setAttribute("role", "alert");
+			step.el.insertBefore(box, step.el.firstChild);
+		}
+		box.textContent = message;
+	}
+
+	function validateStep(index) {
+		var step = STEPS[index];
+		if (step.review) return validateConsent();
+		stepError(step, "");
+		var firstBad = null;
+		stepControls(step).forEach(function (el) {
+			if (!validateEl(el) && !firstBad) firstBad = el;
+		});
+		if (firstBad) {
+			stepError(step, T.fixErrors);
+			firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+			firstBad.focus({ preventScroll: true });
+			return false;
+		}
+		if (step.key === "education" && currentCategory() === ACADEMIC && !collectRows("academic_qualifications").length) {
+			stepError(step, T.needQualification);
+			step.el.scrollIntoView({ behavior: "smooth", block: "start" });
+			return false;
+		}
+		if (step.key === "experience" && currentCategory() === ACADEMIC && !skipExperience() && !collectRows("academic_work_experience").length) {
+			stepError(step, T.needExperience);
+			step.el.scrollIntoView({ behavior: "smooth", block: "start" });
+			return false;
+		}
+		return true;
+	}
+
+	function validateConsent() {
+		var ok = consentBox.checked;
+		consentError.textContent = ok ? "" : T.consent;
+		return ok;
+	}
+
+	form.addEventListener("focusout", function (e) {
+		var el = e.target;
+		if (el.matches && el.matches("input[name], select[name], textarea[name]") && el.type !== "checkbox") validateEl(el);
+	});
+	function nameKind(el) {
+		var n = el.name || "";
+		if (/^custom_.*_name_en$/.test(n)) return "en";
+		if (/^custom_.*_name_ar$/.test(n)) return "ar";
+		return "";
+	}
+
+	// a short amber note (not an error state) shown when a character is refused
+	function flashHint(el, message) {
+		var field = el.closest(".ja-field");
+		if (!field) return;
+		var old = field.querySelector(".ja-field-hint");
+		if (old) old.remove();
+		var hint = document.createElement("div");
+		hint.className = "ja-field-hint";
+		hint.setAttribute("role", "status");
+		hint.textContent = message;
+		field.appendChild(hint);
+		clearTimeout(el._jaHintTimer);
+		el._jaHintTimer = setTimeout(function () { hint.remove(); }, 2500);
+	}
+
+	// Name fields take one script only: English letters or Arabic letters.
+	form.addEventListener("input", function (e) {
+		var el = e.target;
+		var kind = nameKind(el);
+		if (!kind || e.isComposing) return;
+		var strip = kind === "en" ? EN_STRIP : AR_STRIP;
+		var before = el.value;
+		if (before.search(strip) === -1) return;
+		var caret = typeof el.selectionStart === "number" ? el.selectionStart : before.length;
+		el.value = before.replace(strip, "");
+		var pos = before.slice(0, caret).replace(strip, "").length;
+		try { el.setSelectionRange(pos, pos); } catch (err) { /* not supported for this input type */ }
+		flashHint(el, kind === "en" ? T.english : T.arabic);
+	});
+
+	form.addEventListener("input", function (e) {
+		var el = e.target;
+		if (el.classList && el.classList.contains("ja-invalid")) validateEl(el);
+		else updateValid(el);
+	});
+	form.addEventListener("change", function (e) {
+		var el = e.target;
+		if (el.name === "custom_is_special_needs") syncSpecialNeeds();
+		if (el.id === "ja-no-experience" || el.id === "ja-application-category") syncExperienceSkip();
+		if (el.type !== "file") updateValid(el);
+		if (el.type === "file") validateEl(el);
+		// Start-date edits can fix or break an already-entered end date.
+		if (el.name === "start_date" || el.name === "start_work_date") {
+			var row = el.closest(".ja-repeat-row");
+			var end = row && row.querySelector('[name="' + (el.name === "start_date" ? "end_date" : "end_work_date") + '"]');
+			if (end && end.value) validateEl(end);
+		}
+	});
+	consentBox.addEventListener("change", validateConsent);
+
+	/* ---------- Navigation ---------- */
+	nextBtn.addEventListener("click", function () {
+		if (validateStep(current)) goTo(current + 1);
+	});
+	backBtn.addEventListener("click", function () { goTo(current - 1); });
+	form.addEventListener("keydown", function (e) {
+		if (e.key !== "Enter") return;
+		var tag = e.target.tagName;
+		if (tag === "TEXTAREA" || tag === "BUTTON") return;
+		e.preventDefault();
+		if (current === REVIEW) return;
+		nextBtn.click();
+	});
+
+	/* ---------- Autosave draft ---------- */
+	var DRAFT_KEY = "ja-draft:" + (CONFIG.token || "public");
+	var DRAFT_TTL = 7 * 24 * 60 * 60 * 1000;
+	var saveTimer = null;
+	var storageOk = true;
+
+	function topControls() {
+		return Array.prototype.filter.call(form.querySelectorAll("input[name], select[name], textarea[name]"), function (el) {
+			return !el.closest(".ja-repeat-row") && el.type !== "file" && !el.disabled;
+		});
+	}
+
+	function rawRows(tableName) {
+		var rows = [];
+		document.getElementById("ja-rows-" + tableName).querySelectorAll(".ja-repeat-row").forEach(function (rowEl) {
+			var row = {};
+			TABLE_FIELDS[tableName].forEach(function (field) {
+				var input = rowEl.querySelector('[name="' + field.name + '"]');
+				row[field.name] = input ? (field.type === "checkbox" ? input.checked : input.value) : "";
+			});
+			rows.push(row);
+		});
+		return rows;
+	}
+
+	function saveDraft() {
+		if (!storageOk) return;
+		try {
+			var fields = {};
+			topControls().forEach(function (el) { fields[el.name] = el.type === "checkbox" ? (el.checked ? "1" : "") : el.value; });
+			var tables = {};
+			Object.keys(TABLE_FIELDS).forEach(function (t) { tables[t] = rawRows(t); });
+			localStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 1, ts: Date.now(), step: current, fields: fields, tables: tables }));
+			draftText.textContent = T.saved;
+			draftState.classList.add("is-saved");
+		} catch (err) {
+			storageOk = false;
+			draftState.classList.add("ja-hidden");
+		}
+	}
+
+	function scheduleSave() {
+		if (!storageOk) return;
+		draftState.classList.remove("is-saved");
+		clearTimeout(saveTimer);
+		saveTimer = setTimeout(saveDraft, 500);
+	}
+
+	function clearDraft() {
+		clearTimeout(saveTimer);
+		storageOk = false;
+		try { localStorage.removeItem(DRAFT_KEY); } catch (err) { /* storage unavailable */ }
+	}
+
+	function restoreDraft() {
+		var draft;
+		try {
+			var raw = localStorage.getItem(DRAFT_KEY);
+			if (!raw) return null;
+			draft = JSON.parse(raw);
+		} catch (err) {
+			return null;
+		}
+		if (!draft || draft.v !== 1 || !draft.fields || Date.now() - draft.ts > DRAFT_TTL) {
+			try { localStorage.removeItem(DRAFT_KEY); } catch (err) { /* ignore */ }
+			return null;
+		}
+		var hasContent = false;
+		topControls().forEach(function (el) {
+			if (!(el.name in draft.fields)) return;
+			var value = draft.fields[el.name];
+			if (el.type === "checkbox") el.checked = value === "1";
+			else el.value = value;
+			if (value && value !== "0") hasContent = true;
+		});
+		Object.keys(TABLE_FIELDS).forEach(function (t) {
+			var saved = draft.tables && draft.tables[t];
+			if (!Array.isArray(saved)) return;
+			document.getElementById("ja-rows-" + t).innerHTML = "";
+			saved.forEach(function (rowData) {
+				addRow(t);
+				var rows = document.getElementById("ja-rows-" + t).querySelectorAll(".ja-repeat-row");
+				var rowEl = rows[rows.length - 1];
+				TABLE_FIELDS[t].forEach(function (field) {
+					var input = rowEl.querySelector('[name="' + field.name + '"]');
+					if (!input || !(field.name in rowData)) return;
+					if (field.type === "checkbox") input.checked = !!rowData[field.name];
+					else {
+						input.value = rowData[field.name];
+						if (rowData[field.name]) hasContent = true;
+					}
+				});
+			});
+		});
+		return hasContent ? draft : null;
+	}
+
+	var restoredObserver = new MutationObserver(scheduleSave);
+	Object.keys(TABLE_FIELDS).forEach(function (t) {
+		var box = document.getElementById("ja-rows-" + t);
+		if (box) restoredObserver.observe(box, { childList: true });
+	});
+	form.addEventListener("input", scheduleSave);
+	form.addEventListener("change", scheduleSave);
+
+	/* ---------- Review ---------- */
+	function control(name) {
+		var list = form.querySelectorAll('[name="' + name + '"]');
+		for (var i = 0; i < list.length; i++) {
+			if (!list[i].closest(".ja-repeat-row")) return list[i];
+		}
+		return null;
+	}
+
+	function valueOf(name) {
+		if (phones[name]) return phoneFull(name, true);
+		var el = control(name);
+		if (!el) return "";
+		if (el.tagName === "SELECT") return el.value ? el.options[el.selectedIndex].text : "";
+		return (el.value || "").trim();
+	}
+
+	function joinValues(names) {
+		return names.map(valueOf).filter(Boolean).join(" ");
+	}
+
+	function activeRows(tableName) {
+		return collectRows(tableName).length;
+	}
+
+	function reviewCard(title, stepIndex, items) {
+		var card = document.createElement("div");
+		card.className = "ja-review-card";
+		var h3 = document.createElement("h3");
+		var span = document.createElement("span");
+		span.textContent = title;
+		var edit = document.createElement("button");
+		edit.type = "button";
+		edit.className = "ja-link-btn";
+		edit.textContent = T.edit;
+		edit.addEventListener("click", function () { goTo(stepIndex); });
+		h3.appendChild(span);
+		h3.appendChild(edit);
+		card.appendChild(h3);
+		var dl = document.createElement("dl");
+		items.forEach(function (item) {
+			var dt = document.createElement("dt");
+			dt.textContent = item[0];
+			var dd = document.createElement("dd");
+			dd.textContent = item[1] || T.none;
+			if (!item[1]) dd.className = "is-empty";
+			dl.appendChild(dt);
+			dl.appendChild(dd);
+		});
+		card.appendChild(dl);
+		return card;
+	}
+
+	function resumeSummary() {
+		var file = document.getElementById("ja-resume-file");
+		if (file && file.files && file.files[0]) return file.files[0].name;
+		return valueOf("resume_link");
+	}
+
+	function strength() {
+		var academic = currentCategory() === ACADEMIC;
+		var checks = [
+			[valueOf("custom_first_name_en") && valueOf("custom_last_name_en"), {{ _("your full name") | tojson }}],
+			[valueOf("custom_first_name_ar"), {{ _("your name in Arabic") | tojson }}],
+			[valueOf("email") && valueOf("phone"), {{ _("your contact details") | tojson }}],
+			[valueOf("date_of_birth"), {{ _("your date of birth") | tojson }}],
+			[valueOf("gender"), {{ _("your gender") | tojson }}],
+			[valueOf("address"), {{ _("your address") | tojson }}],
+			[valueOf("custom_identity_number") || valueOf("nic_passport"), {{ _("your identity number") | tojson }}],
+			[valueOf("custom_jameah_nationality"), {{ _("your nationality") | tojson }}],
+			[valueOf("emergency_contact_name") && valueOf("emergency_contact_phone"), {{ _("an emergency contact") | tojson }}],
+			[valueOf("expected_salary"), {{ _("your expected salary") | tojson }}],
+			[valueOf("cover_letter"), {{ _("a short cover letter") | tojson }}],
+			[resumeSummary(), {{ _("your resume") | tojson }}],
+			[activeRows("academic_qualifications"), {{ _("your academic qualifications") | tojson }}],
+			[activeRows("academic_work_experience") || activeRows("previous_work_experience"), {{ _("your work experience") | tojson }}],
+			[activeRows("professional_certificates_training"), {{ _("training courses or certificates") | tojson }}]
+		];
+		if (academic) checks.push([activeRows("research_publications"), {{ _("your research publications") | tojson }}]);
+		checks.push([activeRows("awards"), {{ _("any awards") | tojson }}]);
+		var done = checks.filter(function (c) { return c[0]; }).length;
+		var missing = checks.filter(function (c) { return !c[0]; }).map(function (c) { return c[1]; });
+		return { percent: Math.round(done / checks.length * 100), missing: missing };
+	}
+
+	function renderReview() {
+		var grid = document.getElementById("ja-review-grid");
+		grid.innerHTML = "";
+		var rowsLabel = function (n, one, many) { return n ? n + " " + (n === 1 ? one : many) : ""; };
+		grid.appendChild(reviewCard({{ _("Personal") | tojson }}, 0, [
+			[{{ _("Name (English)") | tojson }}, joinValues(["custom_first_name_en", "custom_second_name_en", "custom_third_name_en", "custom_last_name_en"])],
+			[{{ _("Name (Arabic)") | tojson }}, joinValues(["custom_first_name_ar", "custom_second_name_ar", "custom_third_name_ar", "custom_last_name_ar"])],
+			[{{ _("Email") | tojson }}, valueOf("email")],
+			[{{ _("Phone") | tojson }}, valueOf("phone")],
+			[{{ _("Date of Birth") | tojson }}, valueOf("date_of_birth")]
+		]));
+		grid.appendChild(reviewCard({{ _("Identity and Contact") | tojson }}, 1, [
+			[{{ _("Nationality") | tojson }}, valueOf("custom_jameah_nationality")],
+			[{{ _("Identity Type") | tojson }}, valueOf("custom_identity_type")],
+			[{{ _("Identity Number") | tojson }}, valueOf("custom_identity_number")],
+			[{{ _("Emergency Contact") | tojson }}, [valueOf("emergency_contact_name"), valueOf("emergency_contact_phone")].filter(Boolean).join(" · ")]
+		]));
+		var salary = valueOf("expected_salary");
+		grid.appendChild(reviewCard({{ _("Position") | tojson }}, 2, [
+			[{{ _("Role") | tojson }}, CONFIG.role || ""],
+			[{{ _("Application Category") | tojson }}, currentCategory() || ""],
+			[{{ _("Expected Salary") | tojson }}, salary],
+			[{{ _("Resume") | tojson }}, resumeSummary()]
+		]));
+		grid.appendChild(reviewCard({{ _("Education") | tojson }}, 3, [
+			[{{ _("Academic Qualifications") | tojson }}, rowsLabel(activeRows("academic_qualifications"), {{ _("record") | tojson }}, {{ _("records") | tojson }})]
+		]));
+		grid.appendChild(reviewCard({{ _("Experience") | tojson }}, 4, [
+			[{{ _("Academic Work Experience") | tojson }}, rowsLabel(activeRows("academic_work_experience"), {{ _("record") | tojson }}, {{ _("records") | tojson }})],
+			[{{ _("Previous Work Experience") | tojson }}, rowsLabel(activeRows("previous_work_experience"), {{ _("record") | tojson }}, {{ _("records") | tojson }})]
+		]));
+		grid.appendChild(reviewCard({{ _("Achievements") | tojson }}, 5, [
+			[{{ _("Training Courses") | tojson }}, rowsLabel(activeRows("professional_certificates_training"), {{ _("record") | tojson }}, {{ _("records") | tojson }})],
+			[{{ _("Research Publications") | tojson }}, rowsLabel(activeRows("research_publications"), {{ _("record") | tojson }}, {{ _("records") | tojson }})],
+			[{{ _("Awards") | tojson }}, rowsLabel(activeRows("awards"), {{ _("record") | tojson }}, {{ _("records") | tojson }})]
+		]));
+
+		var s = strength();
+		document.getElementById("ja-ring").style.setProperty("--p", s.percent);
+		document.getElementById("ja-ring-text").textContent = s.percent + "%";
+		document.getElementById("ja-strength-tip").textContent = s.missing.length
+			? {{ _("Adding {0} would make your application stronger. All of these are optional.") | tojson }}.replace("{0}", s.missing[0])
+			: {{ _("Your profile is complete. Great work!") | tojson }};
+	}
+
+	/* ---------- Submit ---------- */
+	function showError(message) {
+		errorBox.textContent = message;
+		errorBox.classList.remove("ja-hidden");
+		errorBox.scrollIntoView({ behavior: "smooth", block: "center" });
+	}
+
+	function plainText(html) {
+		return new DOMParser().parseFromString(String(html), "text/html").body.textContent || "";
+	}
+
+	function celebrate() {
+		var colors = ["#0769B2", "#13AFA3", "#f59e0b", "#6366f1", "#ec4899", "#22c55e"];
+		for (var i = 0; i < 40; i++) {
+			var piece = document.createElement("span");
+			piece.className = "ja-confetti";
+			piece.style.left = Math.round(Math.random() * 100) + "%";
+			piece.style.background = colors[i % colors.length];
+			piece.style.animationDelay = (Math.random() * 0.6).toFixed(2) + "s";
+			successBox.appendChild(piece);
+		}
+		setTimeout(function () {
+			successBox.querySelectorAll(".ja-confetti").forEach(function (p) { p.remove(); });
+		}, 3500);
+	}
+
+	/* ---------- Download the receipt as a PDF (rendered by the server from the saved record) ---------- */
+	var receiptInfo = null;
+	var saveBtn = document.getElementById("ja-save-copy");
+	var saveLabel = saveBtn.querySelector("span");
+	saveBtn.addEventListener("click", function () {
+		if (!receiptInfo || saveBtn.disabled) return;
+		saveBtn.disabled = true;
+		saveLabel.textContent = T.preparing;
+		var url = "/api/method/medical_hrms.medical_hrms.recruitment.receipt.download_receipt?name=" +
+			encodeURIComponent(receiptInfo.ref) + "&key=" + encodeURIComponent(receiptInfo.key) +
+			"&lang=" + (IS_AR ? "ar" : "en");
+		fetch(url, { credentials: "same-origin" })
+			.then(function (res) {
+				if (!res.ok) throw new Error("bad status");
+				return res.blob();
+			})
+			.then(function (blob) {
+				var href = URL.createObjectURL(blob);
+				var link = document.createElement("a");
+				link.href = href;
+				link.download = "Application-" + receiptInfo.ref + ".pdf";
+				document.body.appendChild(link);
+				link.click();
+				link.remove();
+				setTimeout(function () { URL.revokeObjectURL(href); }, 2000);
+				saveLabel.textContent = T.downloaded;
+			})
+			.catch(function () {
+				saveLabel.textContent = T.downloadFailed;
+			})
+			.then(function () {
+				setTimeout(function () {
+					saveBtn.disabled = false;
+					saveLabel.textContent = T.downloadPdf;
+				}, 2500);
+			});
+	});
+
+	function showSuccess(reference, receiptKey) {
+		receiptInfo = { ref: reference, key: receiptKey };
+		clearDraft();
+		form.classList.add("ja-hidden");
+		wizardHead.classList.add("ja-hidden");
+		errorBox.classList.add("ja-hidden");
+		document.querySelectorAll(".ja-banner").forEach(function (b) { b.remove(); });
+		document.getElementById("ja-ref-code").textContent = reference;
+		successBox.classList.remove("ja-hidden");
+		successBox.scrollIntoView({ behavior: "smooth", block: "start" });
+		celebrate();
+	}
+
+	document.getElementById("ja-copy-ref").addEventListener("click", function () {
+		var btn = this;
+		var text = document.getElementById("ja-ref-code").textContent;
+		var done = function () {
+			btn.textContent = T.copied;
+			setTimeout(function () { btn.textContent = T.copy; }, 1800);
+		};
+		if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () {});
+		else done();
+	});
 
 	form.addEventListener("submit", function (e) {
 		e.preventDefault();
+		if (current !== REVIEW) {
+			nextBtn.click();
+			return;
+		}
 		errorBox.classList.add("ja-hidden");
-		successBox.classList.add("ja-hidden");
+
+		// Re-check every step so nothing skipped by editing is submitted invalid.
+		for (var i = 0; i < REVIEW; i++) {
+			if (!validateStep(i)) {
+				goTo(i, { silent: true });
+				validateStep(i);
+				return;
+			}
+		}
+		if (!validateConsent()) return;
 
 		var payload = {};
 		form.querySelectorAll("input[name], select[name], textarea[name]").forEach(function (input) {
 			if (input.closest(".ja-repeat-row")) return; // collected separately below
 			if (input.name === "resume") return;
 			if (input.type === "file") return;
+			if (input.name.indexOf("ja_") === 0) return; // form-only controls (country pickers, "no experience" tick)
 			payload[input.name] = input.value;
 		});
+		// phone numbers go out with their country code: +<code><number>
+		Object.keys(phones).forEach(function (n) { payload[n] = phoneFull(n); });
 
 		Object.keys(TABLE_FIELDS).forEach(function (tableName) {
 			payload[tableName] = collectRows(tableName);
 		});
+		if (skipExperience()) payload.academic_work_experience = [];
 
 		if (!CONFIG.allow_category_override) {
 			payload.application_category = CONFIG.application_category;
@@ -753,7 +3471,14 @@
 		}
 
 		submitBtn.disabled = true;
+		backBtn.disabled = true;
 		submittingMsg.classList.remove("ja-hidden");
+
+		var finish = function () {
+			submitBtn.disabled = false;
+			backBtn.disabled = false;
+			submittingMsg.classList.add("ja-hidden");
+		};
 
 		fetch("/api/method/medical_hrms.medical_hrms.recruitment.job_application.submit_application", {
 			method: "POST",
@@ -766,29 +3491,163 @@
 				});
 			})
 			.then(function (result) {
-				submitBtn.disabled = false;
-				submittingMsg.classList.add("ja-hidden");
+				finish();
 				if (result.ok && result.body && result.body.message) {
-					form.classList.add("ja-hidden");
-					successBox.textContent = "{{ _('Thank you! Your application has been submitted. Reference: ') }}" + result.body.message.name;
-					successBox.classList.remove("ja-hidden");
-				} else {
-					var msg = (result.body && (result.body.exc_type ? result.body._server_messages : result.body.exception)) ||
-						"{{ _('Something went wrong while submitting your application. Please try again.') }}";
-					try {
-						var serverMessages = JSON.parse(result.body._server_messages || "[]");
-						if (serverMessages.length) msg = JSON.parse(serverMessages[0]).message;
-					} catch (err) { /* ignore parse issues, fall back to generic message */ }
-					errorBox.textContent = msg;
-					errorBox.classList.remove("ja-hidden");
+					showSuccess(result.body.message.name, result.body.message.receipt_key);
+					return;
 				}
+				var msg = T.generic;
+				try {
+					var serverMessages = JSON.parse((result.body && result.body._server_messages) || "[]");
+					if (serverMessages.length) msg = plainText(JSON.parse(serverMessages[0]).message) || msg;
+				} catch (err) { /* ignore parse issues, fall back to generic message */ }
+				showError(msg);
 			})
 			.catch(function () {
-				submitBtn.disabled = false;
-				submittingMsg.classList.add("ja-hidden");
-				errorBox.textContent = "{{ _('Network error. Please try again.') }}";
-				errorBox.classList.remove("ja-hidden");
+				finish();
+				showError(T.network);
 			});
+	});
+
+	/* ---------- Confirm before removing a filled record ---------- */
+	function rowHasData(row) {
+		var filled = false;
+		row.querySelectorAll("input, select, textarea").forEach(function (el) {
+			if (el.type === "checkbox") return;
+			if ((el.value || "").trim()) filled = true;
+		});
+		return filled;
+	}
+
+	function confirmDialog(title, message, confirmLabel, cancelLabel) {
+		return new Promise(function (resolve) {
+			var previous = document.activeElement;
+			var overlay = document.createElement("div");
+			overlay.className = "ja-modal";
+			var box = document.createElement("div");
+			box.className = "ja-modal-box";
+			box.setAttribute("role", "alertdialog");
+			box.setAttribute("aria-modal", "true");
+			box.setAttribute("aria-labelledby", "ja-modal-title");
+			box.setAttribute("aria-describedby", "ja-modal-text");
+			var icon = document.createElement("div");
+			icon.className = "ja-modal-icon";
+			icon.appendChild(svgIcon("trash"));
+			var h = document.createElement("h3");
+			h.id = "ja-modal-title";
+			h.textContent = title;
+			var p = document.createElement("p");
+			p.id = "ja-modal-text";
+			p.textContent = message;
+			var actions = document.createElement("div");
+			actions.className = "ja-modal-actions";
+			var cancel = document.createElement("button");
+			cancel.type = "button";
+			cancel.className = "ja-btn-ghost";
+			cancel.textContent = cancelLabel;
+			var ok = document.createElement("button");
+			ok.type = "button";
+			ok.className = "ja-btn-danger";
+			ok.textContent = confirmLabel;
+			actions.appendChild(cancel);
+			actions.appendChild(ok);
+			box.appendChild(icon);
+			box.appendChild(h);
+			box.appendChild(p);
+			box.appendChild(actions);
+			overlay.appendChild(box);
+			document.body.appendChild(overlay);
+			document.body.classList.add("ja-modal-open");
+			cancel.focus();
+
+			function done(result) {
+				document.removeEventListener("keydown", onKey, true);
+				overlay.remove();
+				document.body.classList.remove("ja-modal-open");
+				if (previous && previous.focus && document.contains(previous)) previous.focus({ preventScroll: true });
+				resolve(result);
+			}
+			function onKey(e) {
+				if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); done(false); }
+				else if (e.key === "Tab") {
+					// keep focus inside the dialog
+					e.preventDefault();
+					(document.activeElement === cancel ? ok : cancel).focus();
+				}
+			}
+			document.addEventListener("keydown", onKey, true);
+			cancel.addEventListener("click", function () { done(false); });
+			ok.addEventListener("click", function () { done(true); });
+			overlay.addEventListener("mousedown", function (e) { if (e.target === overlay) done(false); });
+		});
+	}
+
+	function requestRemove(row, tableName, trigger) {
+		var drop = function () {
+			var addBtn = row.closest(".ja-section") && row.closest(".ja-section").querySelector(".ja-add-row");
+			row.remove();
+			if (addBtn) addBtn.focus({ preventScroll: true });
+		};
+		if (!rowHasData(row)) { drop(); return; } // nothing typed yet: no need to ask
+		confirmDialog(T.removeTitle[tableName] || T.remove, T.removeText, T.remove, T.cancel).then(function (yes) {
+			if (yes) drop();
+		});
+	}
+
+	/* ---------- Start ---------- */
+	var restored = restoreDraft();
+	linkLabels(form);
+	if (restored) {
+		var banner = document.createElement("div");
+		banner.className = "ja-banner";
+		var text = document.createElement("span");
+		text.textContent = fmt(T.restored, new Date(restored.ts).toLocaleString());
+		var reset = document.createElement("button");
+		reset.type = "button";
+		reset.className = "ja-link-btn";
+		reset.textContent = T.startOver;
+		reset.addEventListener("click", function () {
+			if (!window.confirm(T.confirmReset)) return;
+			clearDraft();
+			window.location.reload();
+		});
+		banner.appendChild(text);
+		banner.appendChild(reset);
+		wizardHead.parentNode.insertBefore(banner, wizardHead.nextSibling);
+	}
+	Object.keys(phones).forEach(function (n) { phones[n].setCountry(phones[n].hidden.value, true); });
+	draftText.textContent = T.autosave;
+	syncSpecialNeeds();
+	syncExperienceSkip();
+	topControls().forEach(updateValid);
+	goTo(restored ? Math.min(restored.step || 0, REVIEW) : 0, { silent: true });
+})();
+</script>
+<script>
+(function () {
+	var toggle = document.getElementById("ja-lang-toggle");
+	if (!toggle) return;
+	var isAr = document.documentElement.dir === "rtl" || /^ar/i.test(document.documentElement.lang || "");
+	// Same mechanism as the Education applicant pages: a cookie for guests, the user's own
+	// language setting for signed-in users, then a reload so the server renders the page translated.
+	function switchLanguage(target) {
+		document.cookie = "preferred_language=" + target + "; path=/; max-age=31536000; SameSite=Lax";
+		var signedIn = window.frappe && frappe.call && frappe.session && frappe.session.user && frappe.session.user !== "Guest";
+		if (signedIn) {
+			frappe.call({ method: "education.education.api.set_user_language", args: { language: target } })
+				.always(function () { window.location.reload(); });
+			setTimeout(function () { window.location.reload(); }, 3000);
+		} else {
+			window.location.reload();
+		}
+	}
+	toggle.querySelectorAll("button").forEach(function (btn) {
+		var active = (btn.getAttribute("data-lang") === "ar") === isAr;
+		btn.classList.toggle("active", active);
+		btn.addEventListener("click", function () {
+			var target = btn.getAttribute("data-lang");
+			if ((target === "ar") !== isAr) switchLanguage(target);
+		});
 	});
 })();
 </script>

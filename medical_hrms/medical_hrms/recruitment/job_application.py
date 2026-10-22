@@ -634,7 +634,9 @@ def submit_application(data, token=None):
 		)
 		doc.db_set("resume_attachment", file_doc.file_url)
 
-	return {"name": doc.name, "status": doc.status}
+	from medical_hrms.medical_hrms.recruitment.receipt import receipt_key
+
+	return {"name": doc.name, "status": doc.status, "receipt_key": receipt_key(doc.name)}
 
 
 @frappe.whitelist()
@@ -818,6 +820,10 @@ def validate_payload(payload, application_category):
 	if payload.get("email"):
 		validate_email_address(payload.get("email"), throw=True)
 
+	phone_digits = re.sub(r"\D", "", payload.get("phone") or "")
+	if not 7 <= len(phone_digits) <= 15:
+		frappe.throw(_("Enter a valid phone number including the country code."))
+
 	# Same Ministry identity rules the Employee will be held to, so an
 	# application can't be accepted only to fail at Create Employee.
 	from medical_hrms.ministry_lookup_validation import identity_problems
@@ -838,8 +844,19 @@ def validate_payload(payload, application_category):
 		"custom_last_name_ar",
 	):
 		value = payload.get(fieldname)
-		if value and not arabic_pattern.fullmatch(value):
+		if value and (not arabic_pattern.fullmatch(value) or re.search("[\u0660-\u0669\u06f0-\u06f9]", value)):
 			frappe.throw(_("{0} must contain Arabic letters only.").format(fieldname))
+
+	english_pattern = re.compile("^[A-Za-z\\s'\u2019.-]+$")
+	for fieldname in (
+		"custom_first_name_en",
+		"custom_second_name_en",
+		"custom_third_name_en",
+		"custom_last_name_en",
+	):
+		value = payload.get(fieldname)
+		if value and not english_pattern.fullmatch(value):
+			frappe.throw(_("{0} must contain English letters only.").format(fieldname))
 
 	if application_category == ACADEMIC_CATEGORY:
 		rows = payload.get("academic_qualifications") or []
