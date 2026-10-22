@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"intro_h\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h3\\\"><b>Medical HRMS - Administration Panel</b></span>\", \"col\": 12}}, {\"id\": \"intro_p\", \"type\": \"paragraph\", \"data\": {\"text\": \"Centralized HR hub for employee services, approvals, compliance, and HR-finance handoffs.\", \"col\": 12}}, {\"id\": \"card_hr\", \"type\": \"card\", \"data\": {\"card_name\": \"HR Dashboard\", \"col\": 4}}, {\"id\": \"card_es\", \"type\": \"card\", \"data\": {\"card_name\": \"Employee Services\", \"col\": 4}}, {\"id\": \"card_ta\", \"type\": \"card\", \"data\": {\"card_name\": \"Time & Attendance\", \"col\": 4}}, {\"id\": \"card_fa\", \"type\": \"card\", \"data\": {\"card_name\": \"Financial & Admin\", \"col\": 4}}, {\"id\": \"card_cc\", \"type\": \"card\", \"data\": {\"card_name\": \"Career & Compliance\", \"col\": 4}}]",
+ "content": "[{\"id\": \"intro_h\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h3\\\"><b>Medical HRMS - Administration Panel</b></span>\", \"col\": 12}}, {\"id\": \"intro_p\", \"type\": \"paragraph\", \"data\": {\"text\": \"Centralized HR hub for employee services, approvals, compliance, and HR-finance handoffs.\", \"col\": 12}}, {\"id\": \"card_hr\", \"type\": \"card\", \"data\": {\"card_name\": \"HR Dashboard\", \"col\": 4}}, {\"id\": \"card_rec\", \"type\": \"card\", \"data\": {\"card_name\": \"Recruitment\", \"col\": 4}}, {\"id\": \"card_es\", \"type\": \"card\", \"data\": {\"card_name\": \"Employee Services\", \"col\": 4}}, {\"id\": \"card_ta\", \"type\": \"card\", \"data\": {\"card_name\": \"Time & Attendance\", \"col\": 4}}, {\"id\": \"card_fa\", \"type\": \"card\", \"data\": {\"card_name\": \"Financial & Admin\", \"col\": 4}}, {\"id\": \"card_cc\", \"type\": \"card\", \"data\": {\"card_name\": \"Career & Compliance\", \"col\": 4}}]",
  "creation": "2026-04-28 14:47:11.427416",
  "custom_blocks": [],
  "docstatus": 0,
@@ -29,6 +29,35 @@
    "link_count": 0,
    "link_to": "hr-dashboard",
    "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Recruitment",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Job Application Link",
+   "link_count": 0,
+   "link_to": "Job Application Link",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Job Applicant",
+   "link_count": 0,
+   "link_to": "Employee Job Applicant",
+   "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   },
@@ -259,7 +288,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-05-15 13:34:37.614743",
+ "modified": "2026-10-22 01:46:50.449377",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
  "name": "Medical HRMS",
