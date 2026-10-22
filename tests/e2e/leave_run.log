@@ -1,0 +1,39 @@
+PASS ESS-01 [Employee self-service] Employee logs in and lands on the Employee Dashboard
+PASS ESS-02 [Employee self-service] Header shows own name, Employee ID and 11 service cards
+PASS ESS-03 [Employee self-service] Leave balance shows the Annual Leave allocation (21 days)
+PASS ESS-04 [Employee self-service] Permission Request with hour/minute/AM-PM pickers -> Pending
+PASS ESS-05 [Employee self-service] Incomplete time (hour without minute) is rejected in the dialog
+PASS ESS-06 [Employee self-service] Remote Work Request: fill dialog and Send -> Pending
+PASS ESS-07 [Employee self-service] Salary Certificate Request: fill dialog and Send -> Pending
+PASS ESS-08 [Employee self-service] Pre Approved Overtime Request: fill dialog and Send -> Pending
+PASS ESS-09 [Employee self-service] Employee Training Request: fill dialog and Send -> Pending
+PASS ESS-10 [Employee self-service] Company Car Request: fill dialog and Send -> Pending
+PASS ESS-11 [Employee self-service] Employee Data Update Request: fill dialog and Send -> Pending
+PASS ESS-12 [Employee self-service] Children Medical Allowance: upload a private invoice in the dialog and Send
+PASS ESS-13 [Employee self-service] Save Draft keeps the request in Draft
+PASS ESS-14 [Leave] Request Leave: Annual Leave 2 days -> Open, approver set by HR
+PASS ESS-15 [Employee self-service] Counters and Recent Requests refresh after sending
+PASS ESS-16 [Employee self-service] 'N request(s)' opens My Requests; View shows the details
+PASS ESS-17 [Employee self-service] My Profile quick link shows own record summary
+PASS HRD-01 [HR Dashboard] HR Manager logs in and lands on the HR Dashboard
+PASS HRD-02 [HR Dashboard] Stat cards load
+PASS HRD-03 [HR Dashboard] Every link on the HR Dashboard opens without an error
+PASS HRD-04 [HR Dashboard] Medical HRMS workspace renders
+PASS APR-01 [HR approval] HR approves the Permission Request in the form
+PASS APR-02 [HR approval] HR rejects the Training Request
+PASS APR-03 [HR approval] Salary Certificate moves Pending -> Issued
+PASS APR-04 [Leave] Leave approver approves and submits the Leave Application
+PASS APR-05 [Leave] Employee dashboard shows the approval and the balance 21 -> 19
+PASS APR-06 [Employee self-service] Return from Leave: employee picks their approved leave and sends
+FAIL APR-07 [HR approval] HR User sees every request list, including Leave Return Request -- AssertionError: {'Permission Request': 1, 'Remote Work Request': 1, 'Salary Certificate Request': 2, 'Pre Approved Overtime Request': 1, 'Employee Training Request': 1, 'Children Medical Allowance Request': 1, 'Company Car Request': 1, 'Employee Data Update Request': 1, 'Leave Return Request': 1, 'Leave Application': 1}
+PASS APR-08 [Security] HR can open the private invoice; another employee cannot
+PASS LV-01 [Leave flow] Leave Application lists only the leave the employee holds, with the days left
+PASS LV-02 [Leave flow] Employee sends a Leave Plan -> Pending Manager; leave days counted
+PASS LV-03 [Leave flow] HR approves the plan; the employee clicks Apply now; the application is linked to the plan
+PASS LV-04 [Leave flow] After a leave ends the dashboard asks for the return; the form is pre-filled, no certificate for annual leave
+PASS LV-05 [Leave flow] HR completes the return; occupational health is refused for annual leave
+PASS LV-06 [Leave flow] HR Portal: leave setup check covers every company with active staff
+PASS LV-07 [Leave flow] Sick leave stages are named in pay order
+
+==== 35/36 passed in 341s; 1 browser events captured
+  ISSUE 2026-10-22 11:54:45 hr.manager leave-page-prompt /app/leave-control-panel unsaved form left by a full page load
