@@ -5,3 +5,9 @@
 tags
 node_modules
 __pycache__
+# browser test run output (tests/e2e)
+tests/e2e/e2e_full_results.json
+tests/e2e/e2e_shots/
+tests/e2e/qa_fixture_state.json
+tests/e2e/*.log
+project_tracking/source/__pycache__/

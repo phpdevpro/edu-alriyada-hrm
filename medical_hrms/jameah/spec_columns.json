@@ -1384,5 +1384,669 @@
    "type": "Lookup",
    "english": "Country"
   }
+ ],
+ "Faculty Personal Information": [
+  {
+   "column": "ArabicFirstName",
+   "mandatory": true,
+   "type": "String",
+   "english": "First Name (Arabic)"
+  },
+  {
+   "column": "ArabicSecondName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Second Name (Arabic)"
+  },
+  {
+   "column": "ArabicThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (Arabic)"
+  },
+  {
+   "column": "ArabicFourthName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Fourth Name (Arabic)"
+  },
+  {
+   "column": "EnglishFirstName",
+   "mandatory": true,
+   "type": "String",
+   "english": "First Name (English)"
+  },
+  {
+   "column": "EnglishSecondName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Second Name (English)"
+  },
+  {
+   "column": "EnglishThirdName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Third Name (English)"
+  },
+  {
+   "column": "EnglishFourhtName",
+   "mandatory": true,
+   "type": "String",
+   "english": "Fourth Name (English)"
+  },
+  {
+   "column": "IdentityTypeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Identity type"
+  },
+  {
+   "column": "SpecialNeedsTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of special needs"
+  },
+  {
+   "column": "IdentityNumber",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Identity (Civil Registry) in the Kingdom"
+  },
+  {
+   "column": "BirthPlaceCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Place of birth"
+  },
+  {
+   "column": "BirthDate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Date of birth"
+  },
+  {
+   "column": "PassportNumber",
+   "mandatory": false,
+   "type": "String",
+   "english": "Passport number"
+  },
+  {
+   "column": "HomeCountryIdentityNumber",
+   "mandatory": false,
+   "type": "String",
+   "english": "ID number in the country of origin for non-Saudis"
+  },
+  {
+   "column": "IsMaleGender",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Sex"
+  },
+  {
+   "column": "NationalityCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Nationality"
+  },
+  {
+   "column": "MaritalStatusCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Marital status"
+  },
+  {
+   "column": "ReligionCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Religion"
+  },
+  {
+   "column": "PostalAddress",
+   "mandatory": false,
+   "type": "String",
+   "english": "Postal address"
+  },
+  {
+   "column": "CityCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "City (geographical place of business)"
+  },
+  {
+   "column": "ZipCode",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Zip code"
+  },
+  {
+   "column": "Email",
+   "mandatory": true,
+   "type": "String",
+   "english": "E-mail"
+  },
+  {
+   "column": "HomeTelephoneNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Home phone number"
+  },
+  {
+   "column": "WorkTelephoneNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Business (office) phone number"
+  },
+  {
+   "column": "WorkTelephoneExtentionNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Extension number"
+  },
+  {
+   "column": "MobileNumber",
+   "mandatory": true,
+   "type": "Integer",
+   "english": "Mobile number"
+  },
+  {
+   "column": "IsSpecialNeeds",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Special needs"
+  },
+  {
+   "column": "SpecialNeedCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of special needs"
+  },
+  {
+   "column": "LastUpdateDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Last update date"
+  }
+ ],
+ "Faculty Research and Published Scientific Papers": [
+  {
+   "column": "RType",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of scientific production"
+  },
+  {
+   "column": "RStatus",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Scientific production status"
+  },
+  {
+   "column": "RStatus2Code",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "State of scientific production"
+  },
+  {
+   "column": "RNatureCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Nature of scientific production"
+  },
+  {
+   "column": "RDomainCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Scientific production field"
+  },
+  {
+   "column": "RCategoryCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Scientific production classification"
+  },
+  {
+   "column": "RTitle",
+   "mandatory": false,
+   "type": "String",
+   "english": "Scientific production title"
+  },
+  {
+   "column": "RPublishDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Publication date"
+  },
+  {
+   "column": "Publisher",
+   "mandatory": false,
+   "type": "String",
+   "english": "Publisher"
+  },
+  {
+   "column": "ISBN",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "International Standard Book Number"
+  },
+  {
+   "column": "RMagazine",
+   "mandatory": false,
+   "type": "String",
+   "english": "The Magazine"
+  },
+  {
+   "column": "Edition",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Magazine Issue"
+  },
+  {
+   "column": "PageNumber",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Number of pages"
+  },
+  {
+   "column": "PublishingLocation",
+   "mandatory": false,
+   "type": "String",
+   "english": "Place of publication (country)"
+  },
+  {
+   "column": "Summury",
+   "mandatory": false,
+   "type": "String",
+   "english": "Research Summary"
+  },
+  {
+   "column": "Language",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Search language"
+  },
+  {
+   "column": "PublishingURL",
+   "mandatory": false,
+   "type": "String",
+   "english": "Publish Link"
+  },
+  {
+   "column": "KeyWords",
+   "mandatory": false,
+   "type": "String",
+   "english": "Keywords"
+  }
+ ],
+ "Faculty Academic Qualification": [
+  {
+   "column": "ScientificDegreeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic qualification"
+  },
+  {
+   "column": "MajorCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "General Specialization (Main)"
+  },
+  {
+   "column": "MinorCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Subspecialty"
+  },
+  {
+   "column": "RatingCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Appreciation"
+  },
+  {
+   "column": "GPA",
+   "mandatory": false,
+   "type": "Number",
+   "english": "Graduation rate (GPA)"
+  },
+  {
+   "column": "GPATypeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Rate type"
+  },
+  {
+   "column": "StudyTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Study system"
+  },
+  {
+   "column": "GraduateFrom",
+   "mandatory": false,
+   "type": "String",
+   "english": "Graduation Place"
+  },
+  {
+   "column": "Faculty",
+   "mandatory": false,
+   "type": "String",
+   "english": "College"
+  },
+  {
+   "column": "DateOfScientificDegree",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Date of obtaining the qualification"
+  },
+  {
+   "column": "GraduationYear",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Graduation year (AD)"
+  },
+  {
+   "column": "CityCode",
+   "mandatory": false,
+   "type": "String",
+   "english": "City"
+  },
+  {
+   "column": "CountryCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Country (Graduation Country)"
+  },
+  {
+   "column": "ResearchTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of PhD or Master's research"
+  },
+  {
+   "column": "IsLastQualificationAuthenticated",
+   "mandatory": false,
+   "type": "Boolean",
+   "english": "Latest qualification certified by Cultural Attaché (non-Saudi graduates)"
+  },
+  {
+   "column": "IsLastAcademicDataRecord",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Latest academic data record"
+  },
+  {
+   "column": "EducationalSubLevelCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Sub-level education"
+  },
+  {
+   "column": "IncludedSpecializationCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Included specialization"
+  },
+  {
+   "column": "LastAcademicStatusUpdatedate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Date of last update of academic status"
+  }
+ ],
+ "Faculty Academic Experience": [
+  {
+   "column": "HasPosition",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Does a faculty member have a position?"
+  },
+  {
+   "column": "IsLatestWorkExperienceRecord",
+   "mandatory": true,
+   "type": "Boolean",
+   "english": "Latest work experience record?"
+  },
+  {
+   "column": "Profession",
+   "mandatory": true,
+   "type": "String",
+   "english": "Job Title"
+  },
+  {
+   "column": "InstituteCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Educational entity"
+  },
+  {
+   "column": "LocationCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Geographical work location"
+  },
+  {
+   "column": "CollegeCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "College"
+  },
+  {
+   "column": "SectionCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic Department"
+  },
+  {
+   "column": "MajorCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "General Specialization (Main)"
+  },
+  {
+   "column": "MinorCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Subspecialty"
+  },
+  {
+   "column": "TeachingStaffNumber",
+   "mandatory": true,
+   "type": "String",
+   "english": "Job Number"
+  },
+  {
+   "column": "AcademicRankCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Academic rank"
+  },
+  {
+   "column": "HiringDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Date of appointment to the rank"
+  },
+  {
+   "column": "AppointmentTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type of appointment (type of contract)"
+  },
+  {
+   "column": "StartWorkingDate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "Start date"
+  },
+  {
+   "column": "EndWorkingDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "End of work date"
+  },
+  {
+   "column": "EmploymentStatusCode",
+   "mandatory": true,
+   "type": "Lookup",
+   "english": "Job status"
+  },
+  {
+   "column": "FunctionalTasks",
+   "mandatory": false,
+   "type": "String",
+   "english": "Job Duties"
+  },
+  {
+   "column": "JobType",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Job Type"
+  },
+  {
+   "column": "CurrentAcademicYeardate",
+   "mandatory": true,
+   "type": "Date",
+   "english": "School year history"
+  }
+ ],
+ "Faculty Previous Experience": [
+  {
+   "column": "Profession",
+   "mandatory": false,
+   "type": "String",
+   "english": "Job Title"
+  },
+  {
+   "column": "OrganizationName",
+   "mandatory": false,
+   "type": "String",
+   "english": "Name of educational institution/company"
+  },
+  {
+   "column": "CityName",
+   "mandatory": false,
+   "type": "String",
+   "english": "The city"
+  },
+  {
+   "column": "CountryCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country"
+  },
+  {
+   "column": "Department",
+   "mandatory": false,
+   "type": "String",
+   "english": "College / Administration"
+  },
+  {
+   "column": "Section",
+   "mandatory": false,
+   "type": "String",
+   "english": "Section"
+  },
+  {
+   "column": "StartWorkingDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "Start date"
+  },
+  {
+   "column": "EndWorkingDate",
+   "mandatory": false,
+   "type": "Date",
+   "english": "End of work date"
+  },
+  {
+   "column": "FunctionalTasks",
+   "mandatory": false,
+   "type": "String",
+   "english": "Job Duties"
+  }
+ ],
+ "Faculty Professional Certificates & Training Courses": [
+  {
+   "column": "CourseName",
+   "mandatory": false,
+   "type": "String",
+   "english": "the name"
+  },
+  {
+   "column": "CourseTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Type"
+  },
+  {
+   "column": "Issuer",
+   "mandatory": false,
+   "type": "String",
+   "english": "Issuing Authority"
+  },
+  {
+   "column": "CertificateAwardingGYear",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Year of obtaining the certificate AD"
+  },
+  {
+   "column": "CoursePeriod",
+   "mandatory": false,
+   "type": "String",
+   "english": "Duration"
+  },
+  {
+   "column": "CourseCity",
+   "mandatory": false,
+   "type": "String",
+   "english": "The city"
+  },
+  {
+   "column": "CountryCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Country"
+  }
+ ],
+ "Faculty Awards and Achievements": [
+  {
+   "column": "AchievementYear",
+   "mandatory": false,
+   "type": "Integer",
+   "english": "Year of acquisition"
+  },
+  {
+   "column": "AchievementTitle",
+   "mandatory": false,
+   "type": "String",
+   "english": "Award Name/Scientific Achievement"
+  },
+  {
+   "column": "AchievementDonor",
+   "mandatory": false,
+   "type": "String",
+   "english": "Donor"
+  }
+ ],
+ "Faculty Attachments": [
+  {
+   "column": "AttachmentTypeCode",
+   "mandatory": false,
+   "type": "Lookup",
+   "english": "Attachment type"
+  },
+  {
+   "column": "AttachmentURL",
+   "mandatory": false,
+   "type": "String",
+   "english": "Attached file link"
+  },
+  {
+   "column": "AttachmentTitle",
+   "mandatory": false,
+   "type": "String",
+   "english": "Attachment name"
+  }
  ]
 }

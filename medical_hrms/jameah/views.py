@@ -1,4 +1,4 @@
-"""Ministry (Jameah) database views for Students and Employees.
+"""Ministry (Jameah) database views for Students, Employees and Faculty.
 
 One view per section of MINISTRY_FIELD_MAPPING.html, with the spec's column
 names, so the Jameah agent can read them directly. Each column is declared
@@ -249,6 +249,220 @@ def employee_views():
 	v.col("CoursePeriod", text("r.duration"), note="Duration in days.")
 	v.col("CourseCity", text("r.city"))
 	v.col("CourseCountry", v.ministry("cn", "r.country", "Nationality"), "Lookup")
+	views.append(v)
+	return views
+
+
+# ---------------------------------------------------------------------------
+# Faculty
+
+# Current teaching staff: active Instructors (Left ones are former faculty). Their personal data is
+# on the Instructor's Jameah fields, or else on the Employee record of the same person - the linked
+# one, or the one with the Instructor's e-mail; those Employees are left out of the Employee views
+# (EMPLOYEE_POPULATION), so each person is sent once.
+FACULTY = """(
+	SELECT i0.*, (SELECT e2.name FROM `tabEmployee` e2
+		WHERE e2.name = i0.employee OR (IFNULL(i0.email, '') != '' AND (e2.user_id = i0.email OR e2.company_email = i0.email))
+		ORDER BY e2.name = IFNULL(i0.employee, '') DESC, e2.creation LIMIT 1) AS faculty_employee
+	FROM `tabInstructor` i0 WHERE i0.status = 'Active'
+)"""
+FACULTY_PERSON = f"{FACULTY} i LEFT JOIN `tabEmployee` e ON e.name = i.faculty_employee"
+# Only the current position (latest record) takes values from the Instructor master.
+LATEST = "IFNULL(r.is_latest_work_experience_record, 0) = 1"
+
+
+def faculty_union(doctype, parentfield, fields):
+	"""A faculty member's rows of one Jameah table: the Instructor's own rows, or - when it has none -
+	the same table on their Employee record (a hire's rows come from the job application)."""
+	cols = ", ".join(f"r.`{f}`" for f in ("name", "modified", *fields))
+	return f"""SELECT {cols}, i.name AS faculty_id FROM `tab{doctype}` r JOIN {FACULTY} i
+			ON r.parenttype = 'Instructor' AND r.parent = i.name AND r.parentfield = {q(parentfield)}
+		UNION ALL
+		SELECT {cols}, i.name FROM `tab{doctype}` r JOIN {FACULTY} i
+			ON r.parenttype = 'Employee' AND r.parent = i.faculty_employee AND r.parentfield = {q(parentfield)}
+		WHERE NOT EXISTS (SELECT 1 FROM `tab{doctype}` x WHERE x.parenttype = 'Instructor' AND x.parent = i.name AND x.parentfield = {q(parentfield)})"""
+
+
+def faculty_rows(doctype, parentfield, fields):
+	return f"({faculty_union(doctype, parentfield, fields)}) r JOIN `tabInstructor` i ON i.name = r.faculty_id"
+
+
+def faculty_child(view_name, section, doctype, parentfield, fields):
+	v = View(view_name, section, faculty_rows(doctype, parentfield, fields), key=("FacultyId", "RecordId"))
+	v.col("FacultyId", "r.faculty_id", "Key", "Instructor ID (record key).")
+	v.col("RecordId", "r.name", "Key", "Row ID (record key).")
+	return v
+
+
+EXPERIENCE_FIELDS = ("is_latest_work_experience_record", "current_academic_year_date", "employment_status_code", "designation",
+	"institute_code", "location_code", "section_code", "employee_number", "profession_rank_code", "hiring_date", "start_date",
+	"end_date", "job_duties")
+
+
+def faculty_experience_rows():
+	"""Jameah Work Experience rows, plus one current-position row (RecordId = Instructor ID, synthetic = 1)
+	for a faculty member who has none, so the rank, status and contract on the Instructor record still
+	reach the Ministry."""
+	empty = ", ".join("1" if f == "is_latest_work_experience_record" else "NULL" for f in EXPERIENCE_FIELDS)
+	return f"""(
+		SELECT x0.*, 0 AS synthetic FROM ({faculty_union("Jameah Work Experience", "custom_jameah_experience", EXPERIENCE_FIELDS)}) x0
+		UNION ALL
+		SELECT i.name, i.modified, {empty}, i.name, 1 FROM {FACULTY} i
+		WHERE NOT EXISTS (SELECT 1 FROM `tabJameah Work Experience` x WHERE x.parentfield = 'custom_jameah_experience'
+			AND ((x.parenttype = 'Instructor' AND x.parent = i.name) OR (x.parenttype = 'Employee' AND x.parent = i.faculty_employee)))
+	) r JOIN `tabInstructor` i ON i.name = r.faculty_id"""
+
+
+def faculty_views():
+	views = []
+
+	v = View("jameahFacultyPersonalInfo", "Faculty Personal Information", FACULTY_PERSON, key=("FacultyId",))
+	v.col("FacultyId", "i.name", "Key", "Instructor ID (record key).")
+	either = lambda field, emp_field=None: f"COALESCE({text('i.' + field)}, {text('e.' + (emp_field or field))})"
+	v.col("ArabicFirstName", either("custom_first_name_ar"), note="Instructor, else the Employee record.")
+	v.col("ArabicSecondName", either("custom_second_name_ar"))
+	v.col("ArabicThirdName", either("custom_third_name_ar"))
+	v.col("ArabicFourthName", either("custom_last_name_ar"), note="Arabic last name.")
+	v.col("EnglishFirstName", f"COALESCE({text('i.custom_first_name_en')}, {text('e.custom_first_name_en')}, {text('e.first_name')})")
+	v.col("EnglishSecondName", f"COALESCE({text('i.custom_second_name_en')}, {text('e.custom_second_name_en')}, {text('e.middle_name')})")
+	v.col("EnglishThirdName", either("custom_third_name_en"))
+	v.col("EnglishFourhtName", f"COALESCE({text('i.custom_last_name_en')}, {text('e.custom_last_name_en')}, {text('e.last_name')})", note="Spelled as in the Ministry document.")
+	v.col("IdentityTypeCode", v.ministry("it", "COALESCE(NULLIF(i.custom_identity_type, ''), e.custom_identity_type)", "Identity type"), "Lookup")
+	v.col("SpecialNeedsTypeCode", only_if_special_needs("e.custom_is_special_needs", v.ministry("sn", "e.custom_ministry_special_needs_type", "Type of special needs")), "Lookup",
+		"Employee record; only when IsSpecialNeeds = 1.")
+	v.col("IdentityNumber", f"COALESCE({digits('i.custom_identity_number')}, {digits('e.custom_identity_number')})", "Integer")
+	v.col("BirthPlaceCode", v.ministry("bp", "e.custom_ministry_place_of_birth", "Coding cities and governora"), "Lookup", "Employee record.")
+	v.col("BirthDate", real_date("e.date_of_birth"), "Date", "Employee record.")
+	v.col("PassportNumber", text("e.passport_number"))
+	v.col("HomeCountryIdentityNumber", text("e.custom_original_home_id_number"))
+	v.col("IsMaleGender", f"(CASE COALESCE({v.mapped('gi', 'Gender Edu', 'i.gender', 'Gender')}, {v.ministry('ge', 'e.gender', 'Gender')}) WHEN '1' THEN 1 WHEN '2' THEN 0 END)",
+		"Boolean", "1 = male, 0 = female (Instructor gender, else the Employee record).")
+	v.col("NationalityCode", v.ministry("nt", "COALESCE(NULLIF(i.custom_jameah_nationality, ''), e.custom_jameah_nationality)", "Nationality"), "Lookup")
+	v.col("MaritalStatusCode", v.mapped("ms", "Employee.marital_status", "e.marital_status", "Social status"), "Lookup")
+	v.col("ReligionCode", f"COALESCE({v.mapped('rli', 'Religion', 'i.instructor_religion', 'Religions')}, {v.ministry('rle', 'e.custom_ministry_religion', 'Religions')})", "Lookup")
+	v.col("PostalAddress", text("e.current_address"))
+	v.col("CityCode", v.ministry("wc", "e.custom_ministry_work_city", "Coding cities and governora"), "Lookup", "City of the place of work (Employee record).")
+	v.col("ZipCode", digits("e.custom_zip_code"), "Integer")
+	v.col("Email", f"COALESCE({text('i.email')}, {text('e.prefered_email')}, {text('e.company_email')}, {text('e.personal_email')})", note="College e-mail, else the Employee's e-mails.")
+	v.col("HomeTelephoneNumber", digits("e.custom_home_telephone_number"), "Integer")
+	v.col("WorkTelephoneNumber", digits("e.custom_work_telephone_number"), "Integer")
+	v.col("WorkTelephoneExtentionNumber", digits("e.custom_work_telephone_extention_number"), "Integer")
+	v.col("MobileNumber", f"COALESCE({digits('i.mobile_no')}, {digits('e.cell_number')})", "Integer")
+	v.col("IsSpecialNeeds", "IFNULL(e.custom_is_special_needs, 0)", "Boolean")
+	v.col("SpecialNeedCode", only_if_special_needs("e.custom_is_special_needs", v.ministry("sn2", "e.custom_ministry_special_needs_type", "Type of special needs")), "Lookup",
+		"Same as SpecialNeedsTypeCode (the spec lists both).")
+	v.col("LastUpdateDate", "GREATEST(i.modified, IFNULL(e.modified, i.modified))", "Date")
+	views.append(v)
+
+	v = faculty_child("jameahFacultyResearch", "Faculty Research and Published Scientific Papers", "Jameah Research Publication", "custom_jameah_publications",
+		("title", "journal", "publication_date", "link"))
+	no_source = "The college system does not record this yet."
+	for column in ("RType", "RStatus", "RStatus2Code", "RNatureCode", "RDomainCode", "RCategoryCode"):
+		v.col(column, NULL, "Lookup", no_source)
+	v.col("RTitle", text("r.title"))
+	v.col("RPublishDate", real_date("r.publication_date"), "Date")
+	v.col("Publisher", NULL, "String", no_source)
+	v.col("ISBN", NULL, "Integer", no_source)
+	v.col("RMagazine", text("r.journal"), note="Journal.")
+	v.col("Edition", NULL, "Integer", no_source)
+	v.col("PageNumber", NULL, "Integer", no_source)
+	v.col("PublishingLocation", NULL, "String", no_source)
+	v.col("Summury", NULL, "String", no_source + " Spelled as in the Ministry document.")
+	v.col("Language", NULL, "Lookup", no_source)
+	v.col("PublishingURL", text("r.link"))
+	v.col("KeyWords", NULL, "String", no_source)
+	views.append(v)
+
+	v = faculty_child("jameahFacultyAcademicQualification", "Faculty Academic Qualification", "Jameah Academic Qualification", "custom_jameah_qualifications",
+		("is_last_academic_data_record", "degree", "specialization", "minor", "assessment_type", "gpa", "gpa_type", "study_type", "institute",
+			"faculty", "qualification_date", "graduation_year", "city", "country"))
+	v.col("ScientificDegreeCode", v.ministry("dg", "r.degree", "Coding of academic degrees"), "Lookup")
+	v.col("MajorCode", v.ministry("mj", "r.specialization", "Specialization Coding Guide"), "Lookup")
+	v.col("MinorCode", v.ministry("mn", "r.minor", "Specialization Coding Guide"), "Lookup")
+	v.col("RatingCode", v.ministry("at", "r.assessment_type", "Student Evaluation Coding"), "Lookup",
+		"The Ministry 'appreciation' list (excellent, very good...), as for Employees.")
+	v.col("GPA", "r.gpa", "Number")
+	v.col("GPATypeCode", v.ministry("gt", "r.gpa_type", "Cumulative GPA"), "Lookup")
+	v.col("StudyTypeCode", v.ministry("st", "r.study_type", "Study type coding"), "Lookup")
+	v.col("GraduateFrom", text("r.institute"))
+	v.col("Faculty", text("r.faculty"))
+	v.col("DateOfScientificDegree", real_date("r.qualification_date"), "Date")
+	v.col("GraduationYear", "NULLIF(r.graduation_year, 0)", "Integer")
+	v.col("CityCode", text("r.city"), note="City name as entered.")
+	v.col("CountryCode", v.ministry("cn", "r.country", "Nationality"), "Lookup")
+	v.col("ResearchTypeCode", NULL, "Lookup", no_source)
+	v.col("IsLastQualificationAuthenticated", "CAST(NULL AS UNSIGNED)", "Boolean", no_source)
+	v.col("IsLastAcademicDataRecord", "IFNULL(r.is_last_academic_data_record, 0)", "Boolean")
+	v.col("EducationalSubLevelCode", NULL, "Lookup", no_source)
+	v.col("IncludedSpecializationCode", NULL, "Lookup", no_source)
+	v.col("LastAcademicStatusUpdatedate", "DATE(r.modified)", "Date", "When the qualification row was last changed.")
+	views.append(v)
+
+	v = View("jameahFacultyAcademicExperience", "Faculty Academic Experience", faculty_experience_rows(), key=("FacultyId", "RecordId"))
+	v.col("FacultyId", "r.faculty_id", "Key", "Instructor ID (record key).")
+	v.col("RecordId", "r.name", "Key", "Row ID; the Instructor ID for the current position built from the Instructor record.")
+	v.col("HasPosition", "1", "Boolean")
+	v.col("IsLatestWorkExperienceRecord", "IFNULL(r.is_latest_work_experience_record, 0)", "Boolean")
+	v.col("Profession", f"COALESCE({text('r.designation')}, CASE WHEN r.synthetic = 1 THEN {text('i.instructor_faculty_ranking')} END)", note="Job title; the faculty rank for a position built from the Instructor record.")
+	v.col("InstituteCode", f"COALESCE({v.ministry('ic', 'r.institute_code', 'Coding of educational insti')}, CASE WHEN r.synthetic = 1 THEN {v.setting('ici', 'institute', 'Coding of educational insti')} END)", "Lookup")
+	v.col("LocationCode", f"COALESCE({v.ministry('lc', 'r.location_code', 'Coding cities and governora')}, CASE WHEN r.synthetic = 1 THEN {v.setting('lci', 'study_location_city', 'Coding cities and governora')} END)", "Lookup")
+	v.col("CollegeCode", f"(CASE WHEN {LATEST} THEN {v.setting('cc', 'college', 'College Coding Guide')} END)", "Lookup", "Jameah Settings college, for the current position.")
+	v.col("SectionCode", v.ministry("sc", "r.section_code", "Coding academic departments"), "Lookup")
+	v.col("MajorCode", NULL, "Lookup", no_source)
+	v.col("MinorCode", NULL, "Lookup", no_source)
+	v.col("TeachingStaffNumber", f"COALESCE({text('r.employee_number')}, CASE WHEN {LATEST} THEN {text('i.employee_no')} END)", note="Instructor employee number for the current position.")
+	v.col("AcademicRankCode", f"COALESCE({v.ministry('ar', 'r.profession_rank_code', 'Academic ranks')}, CASE WHEN {LATEST} THEN {v.mapped('ari', 'Faculty Ranking', 'i.instructor_faculty_ranking', 'Academic ranks')} END)",
+		"Lookup", "Row rank, else the Instructor's faculty ranking (Code Map) for the current position.")
+	v.col("HiringDate", real_date(f"COALESCE(r.hiring_date, CASE WHEN {LATEST} THEN i.instructor_appoinment_date END)"), "Date")
+	v.col("AppointmentTypeCode", f"(CASE WHEN {LATEST} THEN {v.mapped('apt', 'Faculty Contract Type', 'i.instructor_faculty_contract_type', 'Type of appointment')} END)", "Lookup",
+		"Instructor contract type (Code Map), for the current position.")
+	v.col("StartWorkingDate", real_date(f"COALESCE(r.start_date, CASE WHEN {LATEST} THEN i.instructor_start_date END)"), "Date")
+	v.col("EndWorkingDate", real_date("r.end_date"), "Date")
+	v.col("EmploymentStatusCode", f"COALESCE({v.ministry('es', 'r.employment_status_code', 'Job status')}, CASE WHEN {LATEST} THEN {v.mapped('esi', 'Faculty Status', 'i.instructor_faculty_status', 'Job status')} END)",
+		"Lookup", "Row status, else the Instructor's faculty status (Code Map) for the current position.")
+	v.col("FunctionalTasks", text("r.job_duties"))
+	v.col("JobType", NULL, "Lookup", no_source)
+	v.col("CurrentAcademicYeardate", real_date("r.current_academic_year_date"), "Date")
+	views.append(v)
+
+	v = faculty_child("jameahFacultyPreviousExperience", "Faculty Previous Experience", "Jameah Previous Work Experience", "custom_jameah_previous_experience",
+		("profession", "organization_name", "city", "country", "department", "section", "start_work_date", "end_work_date", "functional_tasks"))
+	v.col("Profession", text("r.profession"))
+	v.col("OrganizationName", text("r.organization_name"))
+	v.col("CityName", text("r.city"))
+	v.col("CountryCode", v.ministry("cn", "r.country", "Nationality"), "Lookup")
+	v.col("Department", text("r.department"))
+	v.col("Section", text("r.section"))
+	v.col("StartWorkingDate", real_date("r.start_work_date"), "Date")
+	v.col("EndWorkingDate", real_date("r.end_work_date"), "Date")
+	v.col("FunctionalTasks", text("r.functional_tasks"))
+	views.append(v)
+
+	v = faculty_child("jameahFacultyProfessionalCertificates", "Faculty Professional Certificates & Training Courses", "Jameah Training Course", "custom_jameah_training",
+		("course_name", "course_type", "provider", "duration", "date", "city", "country"))
+	v.col("CourseName", text("r.course_name"))
+	v.col("CourseTypeCode", NULL, "Lookup", "Course type is free text; the Ministry list of course types is not in the system.")
+	v.col("Issuer", text("r.provider"))
+	v.col("CertificateAwardingGYear", f"YEAR({real_date('r.date')})", "Integer")
+	v.col("CoursePeriod", text("r.duration"), note="Duration in days.")
+	v.col("CourseCity", text("r.city"))
+	v.col("CountryCode", v.ministry("cn", "r.country", "Nationality"), "Lookup")
+	views.append(v)
+
+	v = faculty_child("jameahFacultyAwards", "Faculty Awards and Achievements", "Jameah Award", "custom_jameah_awards", ("award_name", "organization", "date"))
+	v.col("AchievementYear", f"YEAR({real_date('r.date')})", "Integer")
+	v.col("AchievementTitle", text("r.award_name"))
+	v.col("AchievementDonor", text("r.organization"))
+	views.append(v)
+
+	v = View("jameahFacultyAttachments", "Faculty Attachments", f"{FACULTY} i CROSS JOIN jameah_cfg cfg", key=("FacultyId", "AttachmentTitle"))
+	v.columns = [
+		("FacultyId", "i.name", "Key", "Instructor ID (record key)."),
+		("AttachmentTypeCode", NULL, "Lookup", "The Ministry has not published an attachment type list."),
+		("AttachmentURL", "CONCAT(IFNULL(cfg.file_base_url, ''), i.instructor_image)", "String", "File Base URL from Jameah Settings + file path."),
+		("AttachmentTitle", q("Personal Photo"), "String", "The Instructor photo; no other faculty documents are recorded."),
+	]
+	v.source = f"{FACULTY} i CROSS JOIN jameah_cfg cfg WHERE IFNULL(i.instructor_image, '') != ''"
 	views.append(v)
 	return views
 
@@ -531,8 +745,9 @@ STUDENT_DOCUMENT_FIELDS = [
 
 
 def all_views():
-	# Student views read the Education app's tables.
-	return employee_views() + (student_views() if frappe.db.table_exists("Student") else [])
+	# Student and Faculty views read the Education app's tables (read only).
+	return (employee_views() + (faculty_views() if frappe.db.table_exists("Instructor") else [])
+		+ (student_views() if frappe.db.table_exists("Student") else []))
 
 
 def grant_statements(user="jameah_reader", host="%"):

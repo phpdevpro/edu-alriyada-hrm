@@ -115,6 +115,10 @@ SOURCES = [
 	("Identity Type (Select)", "Identity type", _options("Student", "id_type", [("Student", "id_type"), ("Student Guardian", "id_type_civil_registration_type")])),
 	("Address Edu.housing_status", "Residential status coding", _options("Address Edu", "housing_status", [("Address Edu", "housing_status")])),
 	("Employee.marital_status", "Social status", _options("Employee", "marital_status", [("Employee", "marital_status")])),
+	# Faculty masters (Faculty views). Their own codes are not Ministry codes (1 / 0 / FCT-FULL), so only the name can match.
+	("Faculty Ranking", "Academic ranks", _master("Faculty Ranking", None, ["faculty_ranking_name"], [("Instructor", "instructor_faculty_ranking")])),
+	("Faculty Status", "Job status", _master("Faculty Status", None, ["faculty_status_name"], [("Instructor", "instructor_faculty_status")])),
+	("Faculty Contract Type", "Type of appointment", _master("Faculty Contract Type", None, ["faculty_contract_type_name"], [("Instructor", "instructor_faculty_contract_type")])),
 ]
 
 # Checked by hand against the Ministry list when the views were built

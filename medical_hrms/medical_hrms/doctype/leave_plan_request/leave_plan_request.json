@@ -8,9 +8,20 @@
  "engine": "InnoDB",
  "field_order": [
   "employee",
+  "employee_name",
+  "department",
+  "column_break_plan",
   "for_year",
+  "section_break_dates",
+  "leave_type",
+  "from_date",
+  "to_date",
+  "column_break_days",
   "planned_days",
-  "status"
+  "notes",
+  "section_break_status",
+  "status",
+  "leave_application"
  ],
  "fields": [
   {
@@ -22,28 +33,101 @@
    "reqd": 1
   },
   {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Employee Name"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_plan",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Set from the start date.",
    "fieldname": "for_year",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "For Year",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_dates",
+   "fieldtype": "Section Break",
+   "label": "Planned Leave"
+  },
+  {
+   "fieldname": "leave_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Leave Type",
+   "options": "Leave Type",
    "reqd": 1
   },
   {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_days",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Working days in the period (holidays not counted where the leave type excludes them).",
    "fieldname": "planned_days",
-   "fieldtype": "Int",
-   "label": "Total Planned Days"
+   "fieldtype": "Float",
+   "label": "Leave Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
   },
   {
    "default": "Draft",
+   "description": "Pending Manager, then Pending Dept Head, then Approved or Rejected. An approved plan does not use any leave balance: the employee applies for the leave when the time comes.",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Status",
    "options": "Draft\nPending Manager\nPending Dept Head\nApproved\nRejected"
+  },
+  {
+   "description": "The leave application made from this plan.",
+   "fieldname": "leave_application",
+   "fieldtype": "Link",
+   "label": "Applied As",
+   "options": "Leave Application",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-15 13:35:45.073969",
+ "modified": "2026-10-22 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
  "name": "Leave Plan Request",
@@ -100,5 +184,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
+ "title_field": "employee_name",
  "track_changes": 1
 }

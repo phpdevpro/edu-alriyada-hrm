@@ -1,7 +1,7 @@
-# Ministry (Jameah) views — Employees and Students
+# Ministry (Jameah) views — Employees, Faculty and Students
 
 Database views the Ministry of Education's Jameah agent reads, one per section of
-`education/MINISTRY_FIELD_MAPPING.html` (Student 1–10, Employee 5 sections), with the
+`education/MINISTRY_FIELD_MAPPING.html` (Student 1–10, Employee 5, Faculty 8 sections), with the
 spec's column names. Owned by `medical_hrms`; nothing in the Education app is changed.
 The Education app's own `viewJameah*` views are left as they are; ours are named
 `jameah…` (lowercase j) so the two never collide.
@@ -10,6 +10,10 @@ The Education app's own `viewJameah*` views are left as they are; ours are named
 |---|---|
 | `jameahEmployeePersonalInfo` | employee |
 | `jameahEmployeeAcademicQualifications` / `…AcademicExperience` / `…PreviousExperience` / `…ProfessionalCertificates` | Jameah child-table row |
+| `jameahFacultyPersonalInfo` | active Instructor |
+| `jameahFacultyResearch` / `…AcademicQualification` / `…PreviousExperience` / `…ProfessionalCertificates` / `…Awards` | Jameah child-table row of the Instructor (else of their Employee record) |
+| `jameahFacultyAcademicExperience` | Jameah Work Experience row; one current position from the Instructor record when there is none |
+| `jameahFacultyAttachments` | Instructor photo |
 | `jameahStudentPersonalInfo`, `…KSAAddress`, `…Contact`, `…Scholarship` | student |
 | `jameahStudentCompanion`, `…Relatives`, `…HighSchoolCertificate` | guardian / sibling / certificate row |
 | `jameahStudentForeignAddress` | student with a foreign (Student Non Saudi) address |
@@ -28,6 +32,15 @@ Column-by-column sources: [VIEWS.md](VIEWS.md) (generated from `views.py`).
   **Jameah Code Map**. Rows are Verified automatically only when the stored code and the
   name agree with the official list, or the name matches exactly one entry; the reviewed
   exceptions are in `code_map.REVIEWED`. Everything else waits for a person.
+- **Faculty** = active Instructors (Left ones are former faculty). Personal data comes from
+  the Instructor's Jameah fields, else from the Employee record of the same person (linked,
+  or same e-mail) - those Employees are not in the Employee views, so each person is sent
+  once. Child sections use the Instructor's Jameah rows, else the Employee's (a hire's rows
+  come from the job application). Faculty Ranking / Status / Contract Type go through the
+  Code Map. Columns the college system does not record (research type and status, ISBN,
+  academic sub-level, included specialization, course type ...) are sent as NULL.
+  Column names follow the Ministry document exactly, including its spellings
+  `EnglishFourhtName` and `Summury`.
 - **Jameah Settings** holds institution values (UniversityId P18, college code, study
   types, programme duration…). An empty setting is sent as NULL.
 - **Employees** = the configured company only, and never teaching staff (an Instructor

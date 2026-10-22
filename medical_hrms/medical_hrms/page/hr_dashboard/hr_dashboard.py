@@ -94,3 +94,46 @@ def get_hr_doctype_counts():
             counts[dt] = pending[dt] = 0
 
     return {"status": "success", "counts": counts, "pending": pending}
+
+
+@frappe.whitelist()
+def get_leave_overview():
+    """The HR leave section: is each company ready for leave this year, the Sick Leave policy, and today's leave work."""
+    _require_hr_access()
+    from erpnext.setup.doctype.employee.employee import get_holiday_list_for_employee
+    from frappe.utils import getdate, today
+    from hrms.hr.doctype.leave_application.leave_application import get_leave_approver
+    from medical_hrms.setup_leave_defaults import KEY
+
+    now = getdate(today())
+    annual_types = frappe.get_all("Leave Type", filters={KEY: "annual"}, pluck="name")
+    companies = []
+    for company in sorted(set(frappe.get_all("Employee", filters={"status": "Active"}, pluck="company"))):
+        employees = frappe.get_all("Employee", filters={"status": "Active", "company": company}, pluck="name")
+        period = frappe.db.get_value("Leave Period", {"company": company, "is_active": 1, "from_date": ["<=", now], "to_date": [">=", now]},
+            ["name", "from_date", "to_date"], as_dict=True)
+        covered = 0
+        for employee in employees:
+            calendar = get_holiday_list_for_employee(employee, raise_exception=False)
+            bounds = frappe.db.get_value("Holiday List", calendar, ["from_date", "to_date"], as_dict=True) if calendar else None
+            covered += bool(bounds and getdate(bounds.from_date) <= now <= getdate(bounds.to_date))
+        with_annual = set(frappe.get_all("Leave Allocation", pluck="employee", filters={
+            "employee": ["in", employees or [""]], "leave_type": ["in", annual_types or [""]], "docstatus": 1,
+            "from_date": ["<=", now], "to_date": [">=", now]}))
+        companies.append({
+            "company": company, "employees": len(employees), "period": period,
+            "without_holiday_list": len(employees) - covered,
+            "without_approver": sum(1 for employee in employees if not get_leave_approver(employee)),
+            "without_annual_leave": len(set(employees) - with_annual),
+        })
+    return {
+        "companies": companies,
+        "sick_policy": frappe.db.get_value("Leave Policy", {KEY: "medical"}, ["name", "title", "docstatus"], as_dict=True),
+        "counts": {
+            "applications_waiting": frappe.db.count("Leave Application", {"status": "Open", "docstatus": 0}),
+            "plans_waiting": frappe.db.count("Leave Plan Request", {"status": ["like", "Pending%"]}),
+            "returns_waiting": frappe.db.count("Leave Return Request", {"status": ["like", "Pending%"]}),
+            "on_leave_today": frappe.db.count("Leave Application", {"status": "Approved", "docstatus": 1, "from_date": ["<=", now], "to_date": [">=", now]}),
+        },
+        "today": now,
+    }

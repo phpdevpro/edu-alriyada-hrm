@@ -1,4 +1,5 @@
-"""HR-activated sick years and sequential medical-pay-stage validation."""
+"""Sick leave: HR starts a sick leave year from the first sick day; requests use the pay stages in order
+(Sick Leave 1 full pay, 2 at 75%, 3 unpaid)."""
 import frappe
 from frappe.utils import add_days, add_years, flt, getdate
 from medical_hrms.setup_leave_defaults import KEY
@@ -13,26 +14,26 @@ def medical_types():
 def medical_policy():
     name = frappe.db.get_value("Leave Policy", {KEY: "medical", "docstatus": 1}, "name")
     if not name:
-        frappe.throw("HR must review and submit the separate Medical Leave policy first.")
+        frappe.throw("HR must review and submit the separate Sick Leave policy first.")
     return frappe.get_doc("Leave Policy", name)
 
 
 def quotas(policy, types):
     amounts = {row.leave_type: flt(row.annual_allocation) for row in policy.leave_policy_details}
     if len(types) != 3 or set(amounts) != set(types.values()) or any(amounts[name] <= 0 for name in types.values()):
-        frappe.throw("The medical policy must contain exactly the three medical stages with positive day limits.")
+        frappe.throw("The Sick Leave policy must contain exactly the three sick leave stages with positive day limits.")
     return [amounts[types[stage]] for stage in STAGES]
 
 
 def prevent_annual_assignment(doc, method=None):
     if frappe.db.get_value("Leave Policy", doc.leave_policy, KEY) == "medical":
-        frappe.throw("Use HR Dashboard → Activate Medical Leave Year. Medical leave must not use an annual policy assignment.")
+        frappe.throw("Use HR Portal → Start Sick Leave Year. Sick leave must not use a policy assignment.")
 
 
 @frappe.whitelist()
 def activate_year(employee, first_sick_date):
     if frappe.session.user != "Administrator" and not set(frappe.get_roles()).intersection({"HR Manager", "System Manager"}):
-        frappe.throw("Only HR Manager or System Manager can activate a medical leave year.", frappe.PermissionError)
+        frappe.throw("Only HR Manager or System Manager can start a sick leave year.", frappe.PermissionError)
     emp = frappe.get_doc("Employee", employee)
     emp.check_permission("read")
     start = getdate(first_sick_date)
@@ -43,23 +44,23 @@ def activate_year(employee, first_sick_date):
     types = medical_types()
     limits = quotas(policy, types)
     if frappe.db.get_single_value("Payroll Settings", "payroll_based_on") == "Attendance":
-        frappe.throw("Attendance-based partial-pay calculations need payroll review before activating this medical policy. No payroll settings were changed.")
+        frappe.throw("Attendance-based partial-pay calculations need payroll review before starting a sick leave year. No payroll settings were changed.")
     for stage in STAGES:
         leave_type = frappe.get_doc("Leave Type", types[stage])
         if not leave_type.include_holiday or leave_type.is_carry_forward or leave_type.is_earned_leave:
-            frappe.throw("For medical stages, HR must include holidays and disable carry-forward/earned leave on each Leave Type before activation.")
+            frappe.throw("For the sick leave stages, HR must include holidays and disable carry-forward / earned leave on each Leave Type first.")
         if stage == "sick_full" and (leave_type.is_lwp or leave_type.is_ppl):
-            frappe.throw("The first medical stage must be full pay.")
+            frappe.throw("Sick Leave 1 must be full pay.")
         if stage == "sick_partial" and (not leave_type.is_ppl or leave_type.is_lwp or flt(leave_type.fraction_of_daily_salary_per_leave) != 0.75):
-            frappe.throw("The second medical stage must be configured for 75% pay.")
+            frappe.throw("Sick Leave 2 must be set to 75% pay.")
         if stage == "sick_unpaid" and not leave_type.is_lwp:
-            frappe.throw("The last medical stage must be leave without pay.")
+            frappe.throw("Sick Leave 3 must be leave without pay.")
     frappe.db.sql("select name from `tabEmployee` where name=%s for update", employee)
     existing = frappe.db.sql("""select name from `tabLeave Allocation` where employee=%s
         and leave_type in %s and docstatus<2 and from_date<=%s and to_date>=%s for update""",
         (employee, tuple(types.values()), end, start))
     if existing:
-        frappe.throw("An overlapping medical allocation exists. HR must review it; no duplicate allocations were created.")
+        frappe.throw("A sick leave year already overlaps these dates. HR must review it; nothing was created.")
     allocations = []
     for stage, days in zip(STAGES[:2], limits[:2]):
         doc = frappe.get_doc({"doctype": "Leave Allocation", "employee": employee,
@@ -67,7 +68,7 @@ def activate_year(employee, first_sick_date):
             "new_leaves_allocated": days, "leave_policy": policy.name, "carry_forward": 0})
         doc.insert()
         doc.submit()
-        doc.add_comment("Comment", f"Medical year activated by {frappe.session.user}; HR-confirmed first sick date: {start}.")
+        doc.add_comment("Comment", f"Sick leave year started by {frappe.session.user}; first sick day confirmed by HR: {start}.")
         allocations.append(doc.name)
     return {"from_date": start, "to_date": end, "allocations": allocations}
 
@@ -81,12 +82,12 @@ def check_stage_sequence(rows, limits):
         start, end = getdate(row["from_date"]), getdate(row["to_date"])
         days = flt(row["days"])
         if last_end and start <= last_end:
-            raise ValueError("Medical leave requests overlap.")
+            raise ValueError("Sick leave requests overlap.")
         if days <= 0 or days > (end - start).days + 1:
-            raise ValueError("Invalid medical leave duration.")
+            raise ValueError("Invalid sick leave duration.")
         expected = next((i for i, boundary in enumerate(boundaries) if used < boundary), None)
         if expected is None or row["stage"] != expected or used + days > boundaries[expected]:
-            raise ValueError("Medical leave must use full pay, then 75% pay, then unpaid leave in order. Split requests at a pay-stage boundary and ask HR to review dependent requests after changes.")
+            raise ValueError("Sick leave is used in order: Sick Leave 1 (full pay), then 2 (75% pay), then 3 (unpaid). Split the request where one stage ends and ask HR to review later requests after any change.")
         used += days
         last_end = end
 
@@ -101,11 +102,11 @@ def validate_medical_leave(doc, method=None):
         and from_date<=%s and to_date>=%s for update""",
         (doc.employee, types.get("sick_full"), doc.from_date, doc.to_date), as_dict=True)
     if len(windows) != 1:
-        frappe.throw("HR must activate a medical leave year covering this entire request. Split requests crossing sick-year boundaries.")
+        frappe.throw("HR must start a sick leave year (from your first sick day) that covers this whole request. A request that crosses the end of the sick year must be split.")
     window = windows[0]
     policy = frappe.get_doc("Leave Policy", window.leave_policy) if window.leave_policy else None
     if not policy or policy.get(KEY) != "medical" or policy.docstatus != 1:
-        frappe.throw("Medical allocation must reference the submitted Medical Leave policy.")
+        frappe.throw("The sick leave allocation must reference the submitted Sick Leave policy.")
     limits = quotas(policy, types)
     stored = frappe.db.sql("""select name, leave_type, from_date, to_date, total_leave_days from `tabLeave Application`
         where employee=%s and leave_type in %s and docstatus<2
@@ -118,7 +119,7 @@ def validate_medical_leave(doc, method=None):
         rows.append({"from_date": doc.from_date, "to_date": doc.to_date, "days": doc.total_leave_days, "stage": stages[doc.leave_type]})
     rows.sort(key=lambda row: getdate(row["from_date"]))
     if rows and getdate(rows[0]["from_date"]) != getdate(window.from_date):
-        frappe.throw("The first medical request must begin on the HR-confirmed first illness date. Ask HR to review the medical year before changing that date.")
+        frappe.throw("The first sick leave request must start on the first sick day HR recorded. Ask HR to review the sick leave year before changing that date.")
     try:
         check_stage_sequence(rows, limits)
     except ValueError as error:

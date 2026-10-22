@@ -10,8 +10,11 @@
   "employee",
   "employee_name",
   "leave_application",
+  "leave_type",
+  "is_sick_leave",
   "planned_return_date",
   "actual_return_date",
+  "days_late",
   "section_break_medical",
   "fitness_certificate",
   "occupational_health_clearance",
@@ -35,6 +38,7 @@
    "label": "Employee Name"
   },
   {
+   "description": "The approved leave you are coming back from.",
    "fieldname": "leave_application",
    "fieldtype": "Link",
    "label": "Leave Application",
@@ -42,10 +46,26 @@
    "reqd": 1
   },
   {
-   "fetch_from": "leave_application.to_date",
+   "fetch_from": "leave_application.leave_type",
+   "fieldname": "leave_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Leave Type",
+   "options": "Leave Type",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sick_leave",
+   "fieldtype": "Check",
+   "label": "After Sick Leave",
+   "read_only": 1
+  },
+  {
+   "description": "The day after the leave ends.",
    "fieldname": "planned_return_date",
    "fieldtype": "Date",
-   "label": "Planned Return Date",
+   "label": "Expected Back On",
    "read_only": 1
   },
   {
@@ -56,11 +76,21 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_medical",
-   "fieldtype": "Section Break",
-   "label": "Medical / Fitness Clearance"
+   "depends_on": "eval:doc.days_late",
+   "description": "Days after the expected date.",
+   "fieldname": "days_late",
+   "fieldtype": "Int",
+   "label": "Days Late",
+   "read_only": 1
   },
   {
+   "depends_on": "eval:doc.is_sick_leave",
+   "fieldname": "section_break_medical",
+   "fieldtype": "Section Break",
+   "label": "Fitness Clearance (after sick leave)"
+  },
+  {
+   "description": "Required after sick leave.",
    "fieldname": "fitness_certificate",
    "fieldtype": "Attach",
    "label": "Fitness Certificate"
@@ -74,10 +104,11 @@
   {
    "fieldname": "section_break_status",
    "fieldtype": "Section Break",
-   "label": "Workflow Status"
+   "label": "Status"
   },
   {
    "default": "Draft",
+   "description": "Pending HR Review, then Pending Manager Readiness, then (after sick leave only) Pending Occupational Health, then Completed.",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -88,7 +119,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-15 13:35:46.909460",
+ "modified": "2026-10-22 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
  "name": "Leave Return Request",

@@ -31,8 +31,7 @@
 						{
 							id: "requests", icon: "fa-inbox", label: __("Employee Requests"),
 							children: [
-								dt("Permission Request", "fa-clock"), dt("Remote Work Request", "fa-laptop-house"), dt("Leave Plan Request", "fa-calendar-week"),
-								dt("Leave Return Request", "fa-rotate-left"), dt("Salary Certificate Request", "fa-file-invoice"),
+								dt("Permission Request", "fa-clock"), dt("Remote Work Request", "fa-laptop-house"), dt("Salary Certificate Request", "fa-file-invoice"),
 								dt("Pre Approved Overtime Request", "fa-business-time"), dt("Employee Training Request", "fa-chalkboard"),
 								dt("Children Medical Allowance Request", "fa-hand-holding-medical"), dt("Company Car Request", "fa-car"),
 								dt("Contract Renewal Request", "fa-file-signature"), dt("Employee Data Update Request", "fa-user-pen"),
@@ -40,10 +39,12 @@
 						},
 						{
 							id: "leave", icon: "fa-umbrella-beach", label: __("Leave"),
+							// Daily work first (plan -> apply -> return), then the yearly setup in the order it is done.
 							children: [
-								dt("Leave Application", "fa-calendar-check"), dt("Leave Allocation", "fa-scale-balanced"), dt("Leave Policy", "fa-book"),
-								dt("Leave Policy Assignment", "fa-user-tag"), { id: "leave-control-panel", icon: "fa-sliders", label: __("Leave Control Panel"), route: "/app/leave-control-panel", doctype: "Leave Control Panel" },
-								dt("Leave Type", "fa-tags"), dt("Leave Period", "fa-calendar"), dt("Holiday List", "fa-calendar-day"),
+								dt("Leave Application", "fa-calendar-check"), dt("Leave Plan Request", "fa-calendar-week"), dt("Leave Return Request", "fa-rotate-left"),
+								dt("Leave Period", "fa-calendar"), dt("Holiday List", "fa-calendar-day"), dt("Leave Policy", "fa-book"),
+								{ id: "leave-control-panel", icon: "fa-sliders", label: __("Leave Control Panel"), route: "/app/leave-control-panel", doctype: "Leave Control Panel" },
+								dt("Leave Policy Assignment", "fa-user-tag"), dt("Leave Allocation", "fa-scale-balanced"), dt("Leave Type", "fa-tags"),
 							],
 						},
 						{
@@ -78,6 +79,7 @@
 							id: "jameah", icon: "fa-building-columns", label: __("Ministry (Jameah)"),
 							children: [
 								{ id: "jameah-data-check", icon: "fa-clipboard-check", label: __("Jameah Data Check"), route: "/app/jameah-data-check" },
+								{ id: "jameah-missing", icon: "fa-user-xmark", label: __("Employees Missing Ministry Data"), route: "/app/query-report/Employees Missing Ministry Data" },
 								dt("Jameah Code Map", "fa-right-left", __("Code Map")),
 								{ id: "jameah-settings", icon: "fa-gear", label: __("Jameah Settings"), route: "/app/jameah-settings", doctype: "Jameah Settings" },
 							],
@@ -104,8 +106,9 @@
 						{
 							id: "new", icon: "fa-circle-plus", label: __("New Request"),
 							children: [
+								["Leave Plan Request", "fa-calendar-week", __("Leave Plan")], ["Leave Application", "fa-calendar-check", __("Leave Application")],
+								["Leave Return Request", "fa-rotate-left", __("Leave Return")],
 								["Permission Request", "fa-clock", __("Permission Request")], ["Remote Work Request", "fa-laptop-house", __("Remote Work")],
-								["Leave Application", "fa-calendar-check", __("Request Leave")], ["Leave Return Request", "fa-rotate-left", __("Return from Leave")],
 								["Salary Certificate Request", "fa-file-invoice", __("Salary Certificate")], ["Pre Approved Overtime Request", "fa-business-time", __("Overtime")],
 								["Employee Training Request", "fa-chalkboard", __("Training")], ["Children Medical Allowance Request", "fa-hand-holding-medical", __("Medical Allowance")],
 								["Company Car Request", "fa-car", __("Company Car")], ["Employee Data Update Request", "fa-user-pen", __("Update My Data")],
@@ -154,7 +157,7 @@
 		const attrs = `class="mhp-navbtn" data-id="${esc(it.id)}"${it.action ? ` data-action="${esc(it.action)}" data-arg="${esc(it.arg || "")}"` : ""}${current ? ' aria-current="page"' : ""}${extra || ""}`;
 		const inner = `<span class="mhp-navmain"><i class="fa-solid ${esc(it.icon)}" aria-hidden="true"></i><span>${esc(it.label)}</span></span>`;
 		return it.route && !it.children
-			? `<a href="${esc(it.route)}" ${attrs}>${inner}</a>`
+			? `<a href="${esc(encodeURI(it.route))}" ${attrs}>${inner}</a>`
 			: `<button type="button" ${attrs}>${inner}${it.children ? '<i class="fa-solid fa-chevron-down mhp-chev" aria-hidden="true"></i>' : ""}</button>`;
 	}
 

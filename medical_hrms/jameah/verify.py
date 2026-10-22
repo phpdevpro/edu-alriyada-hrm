@@ -237,6 +237,171 @@ def expected_employee_training(c, emps):
 	return out
 
 
+# ---------------------------------------------------------------- faculty
+
+def faculty_population(c):
+	"""Active Instructors, each with the Employee record of the same person: the linked one, else the
+	oldest Employee whose login or company e-mail is the Instructor's e-mail."""
+	emps = {e.name: e for e in rows("Employee", ["*"])}
+	by_email = defaultdict(list)
+	for e in sorted(emps.values(), key=lambda e: e.creation):
+		for addr in {key(e.user_id), key(e.company_email)} - {""}:
+			by_email[addr].append(e)
+	out = {}
+	for i in rows("Instructor", ["*"], {"status": "Active"}):
+		e = emps.get(i.employee) if i.employee else None
+		if not e and key(i.email):
+			e = (by_email.get(key(i.email)) or [None])[0]
+		out[i.name] = frappe._dict(i=i, e=e or frappe._dict())
+	return out
+
+
+def faculty_children(doctype, parentfield, fac):
+	"""(faculty id, faculty, row): the Instructor's rows, or its Employee's when the Instructor has none."""
+	by_parent = defaultdict(list)
+	for r in rows(doctype, ["*"], {"parentfield": parentfield, "parenttype": ["in", ["Instructor", "Employee"]]}):
+		by_parent[(r.parenttype, r.parent)].append(r)
+	for fid, f in fac.items():
+		for r in by_parent.get(("Instructor", fid)) or (by_parent.get(("Employee", f.e.name)) if f.e.get("name") else None) or []:
+			yield fid, f, r
+
+
+def expected_faculty_personal(c, fac):
+	out = {}
+	for fid, f in fac.items():
+		i, e = f.i, f.e
+		either = lambda a, b=None: coalesce(text(i.get(a)), text(e.get(b or a)))
+		gender = coalesce(c.mapped("Gender Edu", i.gender, "Gender"), c.ministry(e.get("gender"), "Gender"))
+		needs = c.ministry(e.get("custom_ministry_special_needs_type"), "Type of special needs") if e.get("custom_is_special_needs") else None
+		out[(fid,)] = {
+			"FacultyId": fid,
+			"ArabicFirstName": either("custom_first_name_ar"), "ArabicSecondName": either("custom_second_name_ar"),
+			"ArabicThirdName": either("custom_third_name_ar"), "ArabicFourthName": either("custom_last_name_ar"),
+			"EnglishFirstName": coalesce(text(i.custom_first_name_en), text(e.get("custom_first_name_en")), text(e.get("first_name"))),
+			"EnglishSecondName": coalesce(text(i.custom_second_name_en), text(e.get("custom_second_name_en")), text(e.get("middle_name"))),
+			"EnglishThirdName": either("custom_third_name_en"),
+			"EnglishFourhtName": coalesce(text(i.custom_last_name_en), text(e.get("custom_last_name_en")), text(e.get("last_name"))),
+			"IdentityTypeCode": c.ministry(i.custom_identity_type or e.get("custom_identity_type"), "Identity type"),
+			"SpecialNeedsTypeCode": needs,
+			"IdentityNumber": coalesce(digits(i.custom_identity_number), digits(e.get("custom_identity_number"))),
+			"BirthPlaceCode": c.ministry(e.get("custom_ministry_place_of_birth"), "Coding cities and governora"),
+			"BirthDate": real_date(e.get("date_of_birth")),
+			"PassportNumber": text(e.get("passport_number")),
+			"HomeCountryIdentityNumber": text(e.get("custom_original_home_id_number")),
+			"IsMaleGender": {"1": 1, "2": 0}.get(gender),
+			"NationalityCode": c.ministry(i.custom_jameah_nationality or e.get("custom_jameah_nationality"), "Nationality"),
+			"MaritalStatusCode": c.mapped("Employee.marital_status", e.get("marital_status"), "Social status"),
+			"ReligionCode": coalesce(c.mapped("Religion", i.instructor_religion, "Religions"), c.ministry(e.get("custom_ministry_religion"), "Religions")),
+			"PostalAddress": text(e.get("current_address")),
+			"CityCode": c.ministry(e.get("custom_ministry_work_city"), "Coding cities and governora"),
+			"ZipCode": digits(e.get("custom_zip_code")),
+			"Email": coalesce(text(i.email), text(e.get("prefered_email")), text(e.get("company_email")), text(e.get("personal_email"))),
+			"HomeTelephoneNumber": digits(e.get("custom_home_telephone_number")),
+			"WorkTelephoneNumber": digits(e.get("custom_work_telephone_number")),
+			"WorkTelephoneExtentionNumber": digits(e.get("custom_work_telephone_extention_number")),
+			"MobileNumber": coalesce(digits(i.mobile_no), digits(e.get("cell_number"))),
+			"IsSpecialNeeds": e.get("custom_is_special_needs") or 0,
+			"SpecialNeedCode": needs,
+			"LastUpdateDate": max(i.modified, e.get("modified") or i.modified),
+		}
+	return out
+
+
+def expected_faculty_research(c, fac):
+	empty = dict.fromkeys(("RType", "RStatus", "RStatus2Code", "RNatureCode", "RDomainCode", "RCategoryCode", "Publisher", "ISBN",
+		"Edition", "PageNumber", "PublishingLocation", "Summury", "Language", "KeyWords"))
+	return {(fid, r.name): {**empty, "FacultyId": fid, "RecordId": r.name, "RTitle": text(r.title), "RPublishDate": real_date(r.publication_date),
+		"RMagazine": text(r.journal), "PublishingURL": text(r.link)}
+		for fid, _f, r in faculty_children("Jameah Research Publication", "custom_jameah_publications", fac)}
+
+
+def expected_faculty_qualifications(c, fac):
+	out = {}
+	for fid, _f, r in faculty_children("Jameah Academic Qualification", "custom_jameah_qualifications", fac):
+		out[(fid, r.name)] = {
+			"FacultyId": fid, "RecordId": r.name,
+			"ScientificDegreeCode": c.ministry(r.degree, "Coding of academic degrees"),
+			"MajorCode": c.ministry(r.specialization, "Specialization Coding Guide"),
+			"MinorCode": c.ministry(r.minor, "Specialization Coding Guide"),
+			"RatingCode": c.ministry(r.assessment_type, "Student Evaluation Coding"),
+			"GPA": r.gpa, "GPATypeCode": c.ministry(r.gpa_type, "Cumulative GPA"),
+			"StudyTypeCode": c.ministry(r.study_type, "Study type coding"),
+			"GraduateFrom": text(r.institute), "Faculty": text(r.faculty),
+			"DateOfScientificDegree": real_date(r.qualification_date), "GraduationYear": r.graduation_year or None,
+			"CityCode": text(r.city), "CountryCode": c.ministry(r.country, "Nationality"),
+			"ResearchTypeCode": None, "IsLastQualificationAuthenticated": None,
+			"IsLastAcademicDataRecord": r.is_last_academic_data_record or 0,
+			"EducationalSubLevelCode": None, "IncludedSpecializationCode": None,
+			"LastAcademicStatusUpdatedate": r.modified.date(),
+		}
+	return out
+
+
+def expected_faculty_experience(c, fac):
+	rows_out = [(fid, f, r, False) for fid, f, r in faculty_children("Jameah Work Experience", "custom_jameah_experience", fac)]
+	with_rows = {fid for fid, *_ in rows_out}
+	# A faculty member without any experience row gets one current position built from the Instructor record.
+	for fid, f in fac.items():
+		if fid not in with_rows:
+			rows_out.append((fid, f, frappe._dict(name=fid, is_latest_work_experience_record=1), True))
+	out = {}
+	for fid, f, r, synthetic in rows_out:
+		i = f.i
+		latest = (r.is_latest_work_experience_record or 0) == 1
+		pick = lambda own, fallback: own if own is not None else (fallback if latest else None)
+		out[(fid, r.name)] = {
+			"FacultyId": fid, "RecordId": r.name, "HasPosition": 1, "IsLatestWorkExperienceRecord": r.is_latest_work_experience_record or 0,
+			"Profession": coalesce(text(r.designation), text(i.instructor_faculty_ranking) if synthetic else None),
+			"InstituteCode": coalesce(c.ministry(r.institute_code, "Coding of educational insti"), c.setting("institute", "Coding of educational insti") if synthetic else None),
+			"LocationCode": coalesce(c.ministry(r.location_code, "Coding cities and governora"), c.setting("study_location_city", "Coding cities and governora") if synthetic else None),
+			"CollegeCode": c.setting("college", "College Coding Guide") if latest else None,
+			"SectionCode": c.ministry(r.section_code, "Coding academic departments"),
+			"MajorCode": None, "MinorCode": None,
+			"TeachingStaffNumber": coalesce(text(r.employee_number), text(i.employee_no) if latest else None),
+			"AcademicRankCode": coalesce(c.ministry(r.profession_rank_code, "Academic ranks"),
+				c.mapped("Faculty Ranking", i.instructor_faculty_ranking, "Academic ranks") if latest else None),
+			"HiringDate": real_date(pick(r.hiring_date, i.instructor_appoinment_date)),
+			"AppointmentTypeCode": c.mapped("Faculty Contract Type", i.instructor_faculty_contract_type, "Type of appointment") if latest else None,
+			"StartWorkingDate": real_date(pick(r.start_date, i.instructor_start_date)),
+			"EndWorkingDate": real_date(r.end_date),
+			"EmploymentStatusCode": coalesce(c.ministry(r.employment_status_code, "Job status"),
+				c.mapped("Faculty Status", i.instructor_faculty_status, "Job status") if latest else None),
+			"FunctionalTasks": text(r.job_duties), "JobType": None,
+			"CurrentAcademicYeardate": real_date(r.current_academic_year_date),
+		}
+	return out
+
+
+def expected_faculty_previous(c, fac):
+	return {(fid, r.name): {
+		"FacultyId": fid, "RecordId": r.name, "Profession": text(r.profession), "OrganizationName": text(r.organization_name),
+		"CityName": text(r.city), "CountryCode": c.ministry(r.country, "Nationality"), "Department": text(r.department), "Section": text(r.section),
+		"StartWorkingDate": real_date(r.start_work_date), "EndWorkingDate": real_date(r.end_work_date), "FunctionalTasks": text(r.functional_tasks),
+	} for fid, _f, r in faculty_children("Jameah Previous Work Experience", "custom_jameah_previous_experience", fac)}
+
+
+def expected_faculty_training(c, fac):
+	year = lambda d: real_date(d).year if real_date(d) else None
+	return {(fid, r.name): {
+		"FacultyId": fid, "RecordId": r.name, "CourseName": text(r.course_name), "CourseTypeCode": None, "Issuer": text(r.provider),
+		"CertificateAwardingGYear": year(r.date), "CoursePeriod": text(r.duration), "CourseCity": text(r.city),
+		"CountryCode": c.ministry(r.country, "Nationality"),
+	} for fid, _f, r in faculty_children("Jameah Training Course", "custom_jameah_training", fac)}
+
+
+def expected_faculty_awards(c, fac):
+	return {(fid, r.name): {
+		"FacultyId": fid, "RecordId": r.name, "AchievementYear": real_date(r.date).year if real_date(r.date) else None,
+		"AchievementTitle": text(r.award_name), "AchievementDonor": text(r.organization),
+	} for fid, _f, r in faculty_children("Jameah Award", "custom_jameah_awards", fac)}
+
+
+def expected_faculty_attachments(c, fac):
+	return {(fid, "Personal Photo"): {
+		"FacultyId": fid, "AttachmentTypeCode": None, "AttachmentURL": (c.cfg.file_base_url or "") + f.i.instructor_image, "AttachmentTitle": "Personal Photo",
+	} for fid, f in fac.items() if f.i.instructor_image}
+
+
 # ---------------------------------------------------------------- students
 
 def names(r):
@@ -624,6 +789,14 @@ EXPECTED = {
 	"jameahEmployeeAcademicExperience": expected_employee_experience,
 	"jameahEmployeePreviousExperience": expected_employee_previous,
 	"jameahEmployeeProfessionalCertificates": expected_employee_training,
+	"jameahFacultyPersonalInfo": expected_faculty_personal,
+	"jameahFacultyResearch": expected_faculty_research,
+	"jameahFacultyAcademicQualification": expected_faculty_qualifications,
+	"jameahFacultyAcademicExperience": expected_faculty_experience,
+	"jameahFacultyPreviousExperience": expected_faculty_previous,
+	"jameahFacultyProfessionalCertificates": expected_faculty_training,
+	"jameahFacultyAwards": expected_faculty_awards,
+	"jameahFacultyAttachments": expected_faculty_attachments,
 	"jameahStudentPersonalInfo": expected_student_personal,
 	"jameahStudentCompanion": expected_student_companion,
 	"jameahStudentForeignAddress": expected_student_foreign_address,
@@ -709,6 +882,7 @@ def compare(view, actual, expected, sample=5):
 def run(views=None, verbose=True):
 	c = Codes()
 	emps = employee_population(c)
+	fac = faculty_population(c)
 	sd = StudentData()
 	spec = json.load(open(SPEC))
 	report = []
@@ -717,7 +891,8 @@ def run(views=None, verbose=True):
 			continue
 		actual = view_rows(view)
 		build = EXPECTED[view.name]
-		expected = build(c, emps) if view.name.startswith("jameahEmployee") else build(c, sd)
+		population = emps if view.name.startswith("jameahEmployee") else (fac if view.name.startswith("jameahFaculty") else sd)
+		expected = build(c, population)
 		r = compare(view, actual, expected)
 		# Contract: the spec's columns, in order, plus our record keys.
 		columns = [col for col, *_ in view.columns]

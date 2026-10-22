@@ -1,11 +1,13 @@
 """Allowlisted employee forms. Never accept identity or approval fields from clients."""
 import frappe
-from frappe.utils import cint
+from frappe import _
+from frappe.utils import add_days, cint, flt, getdate, today
 from medical_hrms.employee_permissions import get_employee_for_user, is_reviewer
 
 FIELDS = {
     "Permission Request": "date from_time to_time reason",
     "Remote Work Request": "from_date to_date work_plan location",
+    "Leave Plan Request": "leave_type from_date to_date notes",
     "Leave Application": "leave_type from_date to_date half_day half_day_date description",
     "Leave Return Request": "leave_application actual_return_date fitness_certificate",
     "Salary Certificate Request": "purpose language_preference addressee include_salary_breakdown",
@@ -51,8 +53,8 @@ def validate_employee_request(doc, method=None):
     employee = employee_identity()
     if doc.employee != employee:
         frappe.throw("You can only submit your own requests.", frappe.PermissionError)
-    if doc.doctype in {"Contract Renewal Request", "Leave Plan Request"}:
-        frappe.throw("This process is managed by HR. Use Request Leave to apply for leave.", frappe.PermissionError)
+    if doc.doctype == "Contract Renewal Request":
+        frappe.throw("Contract renewal is managed by HR.", frappe.PermissionError)
     old = doc.get_doc_before_save()
     if old and (old.employee != employee or old.status != "Draft"):
         frappe.throw("Sent requests cannot be edited by employees.", frappe.PermissionError)
@@ -72,8 +74,61 @@ def validate_employee_request(doc, method=None):
             frappe.throw("Select your own leave application.", frappe.PermissionError)
 
 
+def leave_choices(employee):
+    """Leave types the employee can apply for, in the order they are used: those with an allocation that is
+    still running (with the balance), Sick Leave 3 while a sick leave year is open, then unpaid leave."""
+    from hrms.hr.doctype.leave_application.leave_application import get_leave_balance_on
+    from medical_hrms.medical_leave import medical_types
+    from medical_hrms.setup_leave_defaults import KEY
+
+    sick = medical_types()
+    rows = frappe.db.sql("""select leave_type, min(from_date) from_date from `tabLeave Allocation`
+        where employee=%s and docstatus=1 and to_date>=%s group by leave_type""", (employee, today()), as_dict=True)
+    choices = []
+    for row in rows:
+        on = max(getdate(today()), getdate(row.from_date))
+        balance = flt(get_leave_balance_on(employee, row.leave_type, on))
+        choices.append({"leave_type": row.leave_type, "balance": balance, "label": _("{0} ({1} days left)").format(_(row.leave_type), f"{balance:g}")})
+    held = {c["leave_type"] for c in choices}
+    if sick.get("sick_full") in held and sick.get("sick_unpaid") and sick["sick_unpaid"] not in held:
+        choices.append({"leave_type": sick["sick_unpaid"], "balance": None, "label": _("{0} (after stages 1 and 2)").format(_(sick["sick_unpaid"]))})
+    for name in frappe.get_all("Leave Type", filters={KEY: "unpaid"}, pluck="name"):
+        if name not in held:
+            choices.append({"leave_type": name, "balance": None, "label": _("{0} (agree it with HR first)").format(_(name))})
+    # Annual and other held leave first, then the sick stages in pay order, unpaid leave last.
+    order = {name: i for i, name in enumerate(sick.get(k) for k in ("sick_full", "sick_partial", "sick_unpaid"))}
+    unpaid = set(frappe.get_all("Leave Type", filters={KEY: "unpaid"}, pluck="name"))
+    group = lambda c: 2 if c["leave_type"] in unpaid else (1 if c["leave_type"] in order else 0)
+    choices.sort(key=lambda c: (group(c), order.get(c["leave_type"], 0), c["leave_type"]))
+    return choices
+
+
 @frappe.whitelist()
-def save_request(doctype, values, send=False):
+def my_leave_types():
+    return leave_choices(employee_identity())
+
+
+@frappe.whitelist()
+def leave_return_context(leave_application):
+    """For the Leave Return form: is it after sick leave (fitness certificate needed), and when was the employee due back."""
+    from medical_hrms.medical_leave import medical_types
+
+    employee = employee_identity()
+    leave = frappe.db.get_value("Leave Application", leave_application, ["employee", "leave_type", "to_date"], as_dict=True)
+    if not leave or leave.employee != employee:
+        frappe.throw("Select your own leave application.", frappe.PermissionError)
+    return {"is_sick_leave": leave.leave_type in medical_types().values(), "expected_back_on": add_days(leave.to_date, 1), "leave_type": leave.leave_type}
+
+
+def _link_plan(plan, application, employee):
+    row = frappe.db.get_value("Leave Plan Request", plan, ["employee", "status", "leave_application"], as_dict=True)
+    if not row or row.employee != employee or row.status != "Approved" or row.leave_application:
+        frappe.throw("Only your own approved leave plan that has not been applied for yet can be used.", frappe.PermissionError)
+    frappe.db.set_value("Leave Plan Request", plan, "leave_application", application)
+
+
+@frappe.whitelist()
+def save_request(doctype, values, send=False, plan=None):
     employee = employee_identity()
     allowed = fields_for(doctype)
     values = frappe.parse_json(values)
@@ -99,6 +154,8 @@ def save_request(doctype, values, send=False):
         })
         # Open is the native pending-review state. Only an approver submits it.
         doc.insert()
+        if plan:
+            _link_plan(plan, doc.name, employee)
         return {"name": doc.name, "status": doc.status}
     pending = next(status for status in meta.get_field("status").options.splitlines() if status.startswith("Pending"))
     doc = frappe.get_doc({"doctype": doctype, **values, "employee": employee, "status": pending if cint(send) else "Draft"})
@@ -139,6 +196,9 @@ def validate_employee_leave(doc, method=None):
     if "Employee" not in frappe.get_roles() or doc.employee != get_employee_for_user():
         return  # Core permissions govern designated approvers handling other staff.
     from hrms.hr.doctype.leave_application.leave_application import get_leave_approver
+    if doc.is_new() and doc.leave_type not in {c["leave_type"] for c in leave_choices(doc.employee)}:
+        held = ", ".join(c["leave_type"] for c in leave_choices(doc.employee)) or "none yet - ask HR to assign your annual leave"
+        frappe.throw(f"You do not hold {doc.leave_type}. Leave you can apply for: {held}.")
     if doc.status != "Open" or doc.docstatus != 0:
         frappe.throw("Only your leave approver or HR can approve, reject, or submit leave.", frappe.PermissionError)
     if doc.leave_approver != get_leave_approver(doc.employee):

@@ -1,5 +1,7 @@
 # Medical HRMS — Task and Progress Sheet
 
+> **21 Oct 2026:** superseded by `project_tracking/Medical_HRMS_Jameah_Task_Tracker.xlsx` (Medical HRMS + Jameah, with dates and a change log). Tasks HR-01 – HR-32 keep their IDs there. This file is kept for history.
+
 As of: 1 October 2026  
 Environment: local development/test site; not a production readiness certificate.
 

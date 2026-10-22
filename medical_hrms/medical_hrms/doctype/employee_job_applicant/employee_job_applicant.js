@@ -34,15 +34,51 @@ frappe.ui.form.on("Employee Job Applicant", {
 	},
 });
 
+// Fields the Employee form requires that the public application form does not ask for (or the
+// applicant may have left empty): asked here so the new Employee can be saved without "Missing Fields".
+// Keys are Employee fieldnames; create_employee_from_applicant accepts only these (EMPLOYEE_DETAIL_FIELDS).
+function employee_detail_fields(frm, branches) {
+	const d = frm.doc;
+	// The Employee is created in the default company (job_application.get_default_company).
+	const company = frappe.defaults.get_global_default("company") || frappe.defaults.get_user_default("Company");
+	const ministry = (category) => () => ({ query: "medical_hrms.ministry_lookup_query.get_ministry_codes", filters: { code_category: category } });
+	return [
+		{ fieldtype: "Section Break", label: __("Employee Record") },
+		{ fieldname: "department", fieldtype: "Link", options: "Department", label: __("Academic Department"), reqd: 1, default: d.department,
+			get_query: () => ({ filters: { is_group: 0, ...(company ? { company } : {}) } }) },
+		{ fieldname: "branch", fieldtype: "Link", options: "Branch", label: __("Geographical Work Location"), reqd: 1, default: branches.length === 1 ? branches[0].name : "" },
+		...(d.gender ? [] : [{ fieldname: "gender", fieldtype: "Link", options: "Jameah Ministry Code", label: __("Gender"), reqd: 1, get_query: ministry("Gender"),
+			description: __("Not given on the application.") }]),
+		{ fieldtype: "Column Break" },
+		{ fieldname: "custom_ministry_work_city", fieldtype: "Link", options: "Jameah Ministry Code", label: __("City (Geographical Place of Business)"), reqd: 1,
+			default: d.custom_ministry_work_city, get_query: ministry("Coding cities and governora") },
+		{ fieldname: "custom_ministry_job_rank", fieldtype: "Link", options: "Jameah Ministry Code", label: __("Job Rank"), reqd: 1,
+			default: d.custom_ministry_job_rank, get_query: ministry("Job ranks") },
+		...(d.date_of_birth ? [] : [{ fieldname: "date_of_birth", fieldtype: "Date", label: __("Date of Birth"), reqd: 1, description: __("Not given on the application.") }]),
+		{ fieldtype: "Section Break", label: __("Login and Academic Records") },
+	];
+}
+
+const EMPLOYEE_DETAIL_FIELDS = ["department", "branch", "gender", "custom_ministry_work_city", "custom_ministry_job_rank", "date_of_birth"];
+
 function show_create_employee_dialog(frm) {
+	frappe.db.get_list("Branch", { fields: ["name"], limit: 2 }).then(
+		(branches) => open_create_employee_dialog(frm, branches || []),
+		() => open_create_employee_dialog(frm, []),
+	);
+}
+
+function open_create_employee_dialog(frm, branches) {
 	const dialog = new frappe.ui.Dialog({
 		title: __("Create Employee"),
 		fields: [
+			...employee_detail_fields(frm, branches),
 			{
-				fieldname: "department",
+				fieldname: "edu_department",
 				fieldtype: "Link",
 				options: "Department Edu",
-				label: __("Department"),
+				label: __("Education Department"),
+				description: __("Academic department in the Education system, for the Instructor / Head of Department record."),
 				// The hire becomes Head of this department.
 				reqd: ["Head of Department", "Department Head"].includes(frm.doc.role) ? 1 : 0,
 			},
@@ -73,13 +109,16 @@ function show_create_employee_dialog(frm) {
 		primary_action_label: __("Create Employee"),
 		primary_action: (values) => {
 			const company_email = values.email_choice === "Company Email" ? values.company_email : "";
+			const employee_details = {};
+			EMPLOYEE_DETAIL_FIELDS.forEach((f) => { if (values[f]) employee_details[f] = values[f]; });
 			dialog.hide();
 			frappe.call({
 				method: "medical_hrms.medical_hrms.recruitment.job_application.create_employee_from_applicant",
 				args: {
 					job_applicant: frm.doc.name,
-					department: values.department,
+					department: values.edu_department,
 					company_email: company_email,
+					employee_details: employee_details,
 				},
 				freeze: true,
 				callback: (r) => {

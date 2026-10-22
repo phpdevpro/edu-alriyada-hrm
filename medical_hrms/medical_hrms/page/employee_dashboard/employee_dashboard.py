@@ -1,11 +1,13 @@
 import frappe
 from frappe import _
+from frappe.utils import add_days, getdate, today
 from medical_hrms.monthly_leave_policy import dashboard_summary
 
 
 REQUEST_DOCTYPES = (
 	"Permission Request",
 	"Remote Work Request",
+	"Leave Plan Request",
 	"Leave Application",
 	"Leave Return Request",
 	"Salary Certificate Request",
@@ -59,6 +61,36 @@ def _empty_response():
 		"counts": {},
 		"recent_requests": [],
 	}
+
+
+def leave_flow(employee):
+	"""The employee's leave, as the next step for each item: a return to send, leave in progress or coming up,
+	requests waiting for approval, and approved plans not applied for yet."""
+	now = getdate(today())
+	steps = []
+	returned = set(frappe.get_all("Leave Return Request", filters={"employee": employee}, pluck="leave_application"))
+	for app in frappe.get_all("Leave Application", filters={"employee": employee, "docstatus": ["<", 2], "status": ["in", ["Open", "Approved"]]},
+			fields=["name", "leave_type", "from_date", "to_date", "status", "docstatus", "total_leave_days"], order_by="from_date"):
+		start, end = getdate(app.from_date), getdate(app.to_date)
+		item = {"leave_type": app.leave_type, "from_date": app.from_date, "to_date": app.to_date, "days": app.total_leave_days, "name": app.name}
+		if app.status == "Open":
+			steps.append({**item, "step": "waiting", "doctype": "Leave Application"})
+		elif app.docstatus == 1 and end < now and app.name not in returned and end >= add_days(now, -60):
+			steps.append({**item, "step": "return_due", "doctype": "Leave Application", "back_on": add_days(end, 1)})
+		elif app.docstatus == 1 and start <= now <= end:
+			steps.append({**item, "step": "on_leave", "doctype": "Leave Application"})
+		elif app.docstatus == 1 and start > now:
+			steps.append({**item, "step": "upcoming", "doctype": "Leave Application"})
+	for plan in frappe.get_all("Leave Plan Request", filters={"employee": employee, "status": ["not in", ["Rejected", "Draft"]], "to_date": [">=", now]},
+			fields=["name", "leave_type", "from_date", "to_date", "planned_days", "status", "leave_application"], order_by="from_date"):
+		item = {"leave_type": plan.leave_type, "from_date": plan.from_date, "to_date": plan.to_date, "days": plan.planned_days, "name": plan.name, "doctype": "Leave Plan Request"}
+		if plan.status == "Approved" and not plan.leave_application:
+			steps.append({**item, "step": "plan_approved"})
+		elif plan.status.startswith("Pending"):
+			steps.append({**item, "step": "plan_waiting", "status": plan.status})
+	order = ["return_due", "on_leave", "plan_approved", "waiting", "plan_waiting", "upcoming"]
+	steps.sort(key=lambda s: (order.index(s["step"]), str(s["from_date"])))
+	return steps
 
 
 @frappe.whitelist()
@@ -130,6 +162,7 @@ def get_dashboard_data():
 	return {
 		"status": "success",
 		"leave_summary": dashboard_summary(employee.name),
+		"leave_flow": leave_flow(employee.name),
 		"user": {
 			"full_name": user.full_name or user.first_name or employee.employee_name,
 			"email": frappe.session.user,

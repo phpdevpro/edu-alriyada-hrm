@@ -97,6 +97,77 @@ class TestJameahEmployeeViews(unittest.TestCase):
 			self.assertFalse(result["invalid_codes"], result["view"])
 
 
+FACULTY_VIEWS = [v.name for v in views.faculty_views()]
+
+
+def bare_instructor(status="Active"):
+	"""An Instructor with no Employee and no Jameah rows of its own."""
+	return frappe.db.sql("""SELECT i.name FROM tabInstructor i WHERE i.status = %s AND IFNULL(i.employee, '') = ''
+		AND NOT EXISTS (SELECT 1 FROM `tabJameah Academic Qualification` q WHERE q.parenttype = 'Instructor' AND q.parent = i.name)
+		AND NOT EXISTS (SELECT 1 FROM `tabJameah Work Experience` x WHERE x.parenttype = 'Instructor' AND x.parent = i.name)
+		AND NOT EXISTS (SELECT 1 FROM tabEmployee e WHERE e.user_id = i.email OR e.company_email = i.email)
+		ORDER BY i.name LIMIT 1""", status)[0][0]
+
+
+@unittest.skipUnless(frappe.db and frappe.db.exists("Company", "Al Riyada College") and frappe.db.table_exists("Instructor"), "needs the RCHS company and Instructors")
+class TestJameahFacultyViews(unittest.TestCase):
+	def setUp(self):
+		frappe.set_user("Administrator")
+		frappe.db.set_single_value("Jameah Settings", "employee_company", "Al Riyada College")
+		self.employee = make_employee(
+			first_name="Faculty", custom_first_name_ar="سارة", custom_last_name_ar="الحربي", custom_identity_number="1099123460",
+			custom_jameah_qualifications=[dict(
+				is_last_academic_data_record=1, degree=C("Coding of academic degrees", "4"), specialization=C("Specialization Coding Guide", "KL01"),
+				assessment_type=C("Student Evaluation Coding", "3"), gpa=4.6, gpa_type=C("Cumulative GPA", "1"), study_type=C("Study type coding", "0"),
+				institute="King Abdulaziz University", faculty="College of Nursing", qualification_date="2014-06-15", graduation_year=2014,
+				city="Jeddah", country=C("Nationality", "101"))],
+			custom_jameah_experience=[dict(
+				is_latest_work_experience_record=1, current_academic_year_date="2025-09-01", employment_status_code=C("Job status", "11"),
+				institute_code=C("Coding of educational insti", "P18"), location_code=C("Coding cities and governora", "0202000"),
+				section_code=C("Coding academic departments", "KL03"), profession_rank_code=C("Job ranks", "01"))],
+		)
+		self.instructor = bare_instructor()
+		frappe.db.set_value("Instructor", self.instructor, {"employee": self.employee.name, "custom_identity_number": "", "custom_jameah_nationality": None,
+			"custom_first_name_ar": "", "custom_last_name_ar": "", "instructor_faculty_ranking": "Lecturer"})
+
+	def tearDown(self):
+		frappe.db.rollback()
+
+	def test_sent_once_as_faculty_with_employee_data(self):
+		self.assertFalse(view_rows("jameahEmployeePersonalInfo", EmployeeId=self.employee.name))
+		row = view_rows("jameahFacultyPersonalInfo", FacultyId=self.instructor)[0]
+		self.assertEqual((row.IdentityNumber, row.NationalityCode, row.ArabicFirstName, row.ArabicFourthName), ("1099123460", "101", "سارة", "الحربي"))
+		self.assertEqual(str(row.BirthDate), "1985-03-14")
+
+	def test_employee_rows_when_instructor_has_none(self):
+		q = view_rows("jameahFacultyAcademicQualification", FacultyId=self.instructor)
+		self.assertEqual([r.RecordId for r in q], [self.employee.custom_jameah_qualifications[0].name])
+		self.assertEqual((q[0].ScientificDegreeCode, q[0].RatingCode), ("4", "3"))
+		x = view_rows("jameahFacultyAcademicExperience", FacultyId=self.instructor)
+		self.assertEqual(len(x), 1)
+		# A Job rank is not an Academic rank: the Instructor's faculty ranking (Lecturer = 14) is sent instead.
+		self.assertEqual((x[0].InstituteCode, x[0].AcademicRankCode), ("P18", "14"))
+
+	def test_current_position_built_from_instructor(self):
+		other = bare_instructor()  # the setUp instructor now has an Employee, so this is another one
+		frappe.db.set_value("Instructor", other, {"instructor_faculty_ranking": "Assistant Professor", "instructor_start_date": "2019-09-01"})
+		x = view_rows("jameahFacultyAcademicExperience", FacultyId=other)
+		self.assertEqual(len(x), 1)
+		self.assertEqual((x[0].RecordId, x[0].IsLatestWorkExperienceRecord, x[0].AcademicRankCode, str(x[0].StartWorkingDate)), (other, 1, "13", "2019-09-01"))
+
+	def test_former_faculty_not_sent(self):
+		left = frappe.db.get_value("Instructor", {"status": "Left"}, "name")
+		if not left:
+			self.skipTest("no Left instructor")
+		for name in FACULTY_VIEWS:
+			self.assertFalse(view_rows(name, FacultyId=left), name)
+
+	def test_views_match_source_records(self):
+		for result in verify.run(views=FACULTY_VIEWS, verbose=False):
+			self.assertTrue(result["ok"], (result["view"], result["mismatches"], result["examples"][:3], result["missing"], result["extra"]))
+			self.assertFalse(result["invalid_codes"], result["view"])
+
+
 class TestJameahCodeMap(unittest.TestCase):
 	def tearDown(self):
 		frappe.db.rollback()

@@ -214,3 +214,163 @@ Source data to correct,بيانات المصدر المطلوب تصحيحها
 The views send these as they are (or empty); fix them in the source records.,ترسلها العروض كما هي (أو فارغة)؛ صحّحها في السجلات المصدرية.
 Checking the Ministry views…,جارٍ فحص عروض الوزارة…
 Open,افتح,Open a page
+Employee Record,سجل الموظف
+Academic Department,القسم الأكاديمي
+Geographical Work Location,موقع العمل الجغرافي
+Not given on the application.,لم يُذكر في طلب التوظيف.
+City (Geographical Place of Business),المدينة (مكان العمل الجغرافي)
+Job Rank,المرتبة الوظيفية
+Login and Academic Records,الدخول والسجلات الأكاديمية
+Education Department,القسم في نظام التعليم
+"Academic department in the Education system, for the Instructor / Head of Department record.",القسم الأكاديمي في نظام التعليم، لسجل عضو هيئة التدريس / رئيس القسم.
+Email to Use,البريد المستخدم
+Use Personal Email,استخدام البريد الشخصي
+Academic staff need an official college address (…@alriyada.edu.sa) for their Instructor record.,يحتاج أعضاء الهيئة الأكاديمية إلى بريد رسمي للكلية (…@alriyada.edu.sa) لسجل عضو هيئة التدريس.
+Employee {0},الموظف {0}
+Instructor {0},عضو هيئة التدريس {0}
+Academic Advisor {0},المرشد الأكاديمي {0}
+Created: {0},تم الإنشاء: {0}
+Show complete employees too,عرض الموظفين المكتملين أيضًا
+Download Data Sheet,تنزيل ورقة البيانات
+Preparing the sheet...,جارٍ تجهيز الورقة...
+"{0} employees, {1} required cells empty",{0} موظف، {1} خانة مطلوبة فارغة
+Check / Import Data Sheet,فحص / استيراد ورقة البيانات
+Upload the filled sheet. Check first: nothing is saved and you get a result sheet with each row's status. Then import.,ارفع الورقة بعد تعبئتها. افحصها أولًا: لا يُحفظ شيء وتحصل على ورقة نتائج بحالة كل صف. ثم استوردها.
+Filled Data Sheet (.xlsx),ورقة البيانات المعبأة (.xlsx)
+Check (nothing is saved),فحص (لا يُحفظ شيء)
+Attach the filled sheet first.,أرفق الورقة المعبأة أولًا.
+Save the changes in this sheet to the Employee records?,حفظ التغييرات الموجودة في هذه الورقة في سجلات الموظفين؟
+Importing...,جارٍ الاستيراد...
+Checking...,جارٍ الفحص...
+No rows found,لم يُعثر على صفوف
+Imported.,تم الاستيراد.
+Checked - nothing was saved.,تم الفحص - لم يُحفظ شيء.
+Open the result sheet,فتح ورقة النتائج
+Missing Ministry data (Employee form field),بيانات الوزارة الناقصة (حقل نموذج الموظف)
+Employees sent to the Ministry,الموظفون المرسلون إلى الوزارة
+With missing data,ببيانات ناقصة
+Only an HR Manager can export or import the Employee data sheet.,يمكن لمدير الموارد البشرية فقط تصدير ورقة بيانات الموظفين أو استيرادها.
+{0} '{1}' is not in the Ministry list,{0} «{1}» غير موجود في قائمة الوزارة
+Date of Birth '{0}' is not a date (use YYYY-MM-DD),تاريخ الميلاد «{0}» ليس تاريخًا (استخدم YYYY-MM-DD)
+Special Needs must be Yes or No,يجب أن تكون قيمة ذوي الاحتياجات الخاصة Yes أو No
+Mobile '{0}' is not a phone number,الجوال «{0}» ليس رقم هاتف
+Email '{0}' is not valid,البريد «{0}» غير صالح
+Employee {0} is not one of the employees sent to the Ministry (grey columns changed?),الموظف {0} ليس من الموظفين المرسلين إلى الوزارة (هل غُيّرت الأعمدة الرمادية؟)
+Updated: {0},تم التحديث: {0}
+Will update: {0},سيُحدَّث: {0}
+Employees Missing Ministry Data,موظفون ببيانات وزارة ناقصة
+"Each employee with Ministry-mandatory data still empty, named as the Employee form field.",كل موظف لا تزال بيانات الوزارة الإلزامية لديه فارغة، باسم الحقل في نموذج الموظف.
+Leave Plan,خطة الإجازة
+Leave Return,العودة من الإجازة
+Open this year's leave period for each company and tick 'Is Active'.,افتح فترة إجازات هذا العام لكل شركة وفعّل خيار 'نشط'.
+Official holidays and weekends for the year; set it as the company default.,العطلات الرسمية وعطلات نهاية الأسبوع للعام؛ اجعلها القائمة الافتراضية للشركة.
+Annual leave 21 or 30 days; the Sick Leave policy with its 3 pay stages.,الإجازة السنوية 21 أو 30 يومًا؛ وسياسة الإجازة المرضية بمراحل الأجر الثلاث.
+Assign the annual leave policy to employees together; this gives them their balance.,عيّن سياسة الإجازة السنوية للموظفين معًا؛ وبذلك يحصلون على أرصدتهم.
+Leave Approvers,معتمدو الإجازات
+"Set who approves leave: on each Department, or on the Employee record.",حدّد من يعتمد الإجازات: في كل قسم، أو في سجل الموظف.
+HR Settings > Employee Monthly Limits: half-day leave and work-from-home days per month.,إعدادات الموارد البشرية > الحدود الشهرية للموظف: إجازة نصف يوم وأيام العمل من المنزل في الشهر.
+"From the yearly setup to the employee's return, in order: the employee plans, applies, the manager approves, the employee comes back.",من الإعداد السنوي حتى عودة الموظف، بالترتيب: يخطط الموظف، ثم يقدّم الطلب، ثم يعتمد المدير، ثم يعود الموظف.
+Leave setup check,فحص إعداد الإجازات
+"Separate from annual leave. On an employee's first sick day, start their sick leave year: requests then use Sick Leave 1 (30 days, full pay), 2 (60 days, 75% pay) and 3 (30 days, unpaid) in that order.",منفصلة عن الإجازة السنوية. في أول يوم مرضي للموظف ابدأ سنة إجازته المرضية: تُستخدم الطلبات بعدها الإجازة المرضية 1 (30 يومًا بأجر كامل) ثم 2 (60 يومًا بأجر 75%) ثم 3 (30 يومًا بدون أجر) بهذا الترتيب.
+Start Sick Leave Year,بدء سنة الإجازة المرضية
+Leave Policies,سياسات الإجازات
+Daily leave work,أعمال الإجازات اليومية
+Leave applications waiting,طلبات إجازة بانتظار الاعتماد
+Waiting for the leave approver.,بانتظار معتمد الإجازات.
+Leave plans waiting,خطط إجازة بانتظار الاعتماد
+Waiting for the manager or department head.,بانتظار المدير أو رئيس القسم.
+Leave returns to complete,طلبات عودة من الإجازة للإكمال
+"Employees back from leave; after sick leave, occupational health clears them.",موظفون عادوا من الإجازة؛ وبعد الإجازة المرضية تصرّح لهم الصحة المهنية بالعودة.
+On leave today,في إجازة اليوم
+Approved leave that covers today.,إجازة معتمدة تشمل اليوم.
+"Yearly setup, in this order",الإعداد السنوي، بهذا الترتيب
+Also:,أيضًا:
+Enter the employee's first sick day. This opens their sick leave year (one year from that day) with Sick Leave 1 and 2; annual leave is not touched. Check the Sick Leave policy and payroll settings first.,أدخل أول يوم مرضي للموظف. يفتح ذلك سنة إجازته المرضية (سنة من ذلك اليوم) مع الإجازة المرضية 1 و2؛ ولا تتأثر الإجازة السنوية. راجع سياسة الإجازة المرضية وإعدادات الرواتب أولًا.
+First Sick Day,أول يوم مرضي
+Sick leave year started: {0} to {1}.,بدأت سنة الإجازة المرضية: من {0} إلى {1}.
+{0} active employees,{0} موظفًا نشطًا
+Leave period active: {0} to {1},فترة الإجازات نشطة: من {0} إلى {1}
+No active leave period for today,لا توجد فترة إجازات نشطة لليوم
+{0} employees have no holiday list covering today,{0} موظفًا ليس لديهم قائمة عطلات تشمل اليوم
+Holiday list set for everyone,قائمة العطلات محددة للجميع
+{0} employees have no leave approver,{0} موظفًا ليس لديهم معتمد إجازات
+Every employee has a leave approver,لكل موظف معتمد إجازات
+{0} employees have no annual leave this year,{0} موظفًا ليس لديهم إجازة سنوية هذا العام
+Every employee has annual leave this year,لكل موظف إجازة سنوية هذا العام
+Policy: {0} (submitted),السياسة: {0} (معتمدة)
+Policy {0} is a draft: submit it before starting a sick leave year.,السياسة {0} مسودة: اعتمدها قبل بدء سنة إجازة مرضية.
+No Sick Leave policy found.,لم يتم العثور على سياسة للإجازة المرضية.
+No active employees.,لا يوجد موظفون نشطون.
+Plan your leave dates for the year; your manager approves the plan,خطط مواعيد إجازاتك للعام؛ ويعتمد مديرك الخطة
+Apply for leave you hold; your manager approves it,قدّم طلبًا لإجازة لديك رصيد منها؛ ويعتمدها مديرك
+Tell HR you are back after a leave,أبلغ الموارد البشرية بعودتك بعد الإجازة
+"Plan when you want to take leave this year. Your manager and then your department head approve the plan. It does not use your balance: when the time comes, open the approved plan here and click Apply now.",خطط متى تريد أخذ إجازتك هذا العام. يعتمد مديرك ثم رئيس قسمك الخطة. لا تُخصم الخطة من رصيدك: عند حلول الموعد افتح الخطة المعتمدة هنا واضغط قدّم الآن.
+"Only the leave you hold is listed, with the days you have left. Your manager approves the request and HR is informed. For sick leave, tell HR on your first sick day so they can start your sick leave year.",تظهر فقط الإجازات التي لديك رصيد منها مع الأيام المتبقية. يعتمد مديرك الطلب ويتم إبلاغ الموارد البشرية. في الإجازة المرضية أبلغ الموارد البشرية في أول يوم مرضي لتبدأ سنة إجازتك المرضية.
+"Choose the leave you are coming back from and the day you returned to work. After sick leave, attach your fitness certificate.",اختر الإجازة التي تعود منها واليوم الذي عدت فيه إلى العمل. بعد الإجازة المرضية أرفق شهادة اللياقة.
+No leave to apply for yet,لا توجد إجازة يمكن طلبها بعد
+You do not hold any leave yet. HR assigns your annual leave at the start of the leave year; ask HR if it is missing.,ليس لديك رصيد إجازات بعد. تخصص الموارد البشرية إجازتك السنوية في بداية سنة الإجازات؛ تواصل معها إن لم تجدها.
+You were due back on {0}.,كان موعد عودتك في {0}.
+Your leave ended on {0}. Tell HR you are back.,انتهت إجازتك في {0}. أبلغ الموارد البشرية بعودتك.
+Send Leave Return,إرسال العودة من الإجازة
+On leave until {0}.,في إجازة حتى {0}.
+Plan approved for {1}. Apply when the time comes.,تم اعتماد الخطة لـ {1}. قدّم الطلب عند حلول الموعد.
+Apply now,قدّم الآن
+Waiting for your manager's approval ({1}).,بانتظار اعتماد مديرك ({1}).
+Leave plan waiting for approval ({1}).,خطة الإجازة بانتظار الاعتماد ({1}).
+Approved: starts on {2} ({1}).,معتمدة: تبدأ في {2} ({1}).
+Nothing to do: no leave in progress or waiting. Use Leave Plan or Leave Application below to plan or apply.,لا شيء مطلوب: لا توجد إجازة جارية أو بانتظار الاعتماد. استخدم خطة الإجازة أو طلب الإجازة أدناه للتخطيط أو التقديم.
+HR has not set up the holiday calendar yet,لم تُعد الموارد البشرية تقويم العطلات بعد
+{0} of {1} used this month,استُخدم {0} من {1} هذا الشهر
+Half-day leave,إجازة نصف يوم
+Work from home (days),العمل من المنزل (أيام)
+What's next,الخطوة التالية
+Balances,الأرصدة
+No leave assigned to you yet. HR assigns annual leave at the start of the leave year.,لم تُخصص لك إجازات بعد. تخصص الموارد البشرية الإجازة السنوية في بداية سنة الإجازات.
+This month's limits,حدود هذا الشهر
+Choose one of this employee's leave applications.,اختر أحد طلبات الإجازة الخاصة بهذا الموظف.
+Only an approved leave can be returned from.,لا يمكن العودة إلا من إجازة معتمدة.
+A return for this leave was already sent ({0}).,تم إرسال عودة لهذه الإجازة مسبقًا ({0}).
+The return date cannot be before the leave started ({0}).,لا يمكن أن يسبق تاريخ العودة بداية الإجازة ({0}).
+Occupational health clearance is only needed after sick leave.,تصريح الصحة المهنية مطلوبة فقط بعد الإجازة المرضية.
+Attach the fitness certificate: it is required when returning from sick leave.,أرفق شهادة اللياقة: فهي مطلوبة عند العودة من الإجازة المرضية.
+"After sick leave, record the occupational health clearance (cleared for full or modified duty) before completing.",بعد الإجازة المرضية سجّل تصريح الصحة المهنية (لائق لعمل كامل أو معدّل) قبل الإكمال.
+"After sick leave: record the occupational health clearance, then set Status to Completed.",بعد الإجازة المرضية: سجّل تصريح الصحة المهنية، ثم اجعل الحالة مكتمل.
+These dates overlap another leave plan ({0}).,تتداخل هذه التواريخ مع خطة إجازة أخرى ({0}).
+The linked leave application belongs to another employee.,طلب الإجازة المرتبط يخص موظفًا آخر.
+Approved plan. The employee applies for this leave from the Employee Portal (Apply now) when the time comes.,خطة معتمدة. يقدّم الموظف طلب هذه الإجازة من بوابة الموظف (قدّم الآن) عند حلول الموعد.
+Open Leave Application,فتح طلب الإجازة
+The approved leave you are coming back from.,الإجازة المعتمدة التي تعود منها.
+After Sick Leave,بعد إجازة مرضية
+Expected Back On,موعد العودة المتوقع
+The day after the leave ends.,اليوم التالي لانتهاء الإجازة.
+Actual Return Date,تاريخ العودة الفعلي
+Days after the expected date.,الأيام بعد الموعد المتوقع.
+Fitness Clearance (after sick leave),تصريح اللياقة (بعد الإجازة المرضية)
+Fitness Certificate,شهادة اللياقة
+Required after sick leave.,مطلوبة بعد الإجازة المرضية.
+Occupational Health Clearance,تصريح الصحة المهنية
+Cleared for Full Duty,لائق لعمل كامل
+Cleared for Modified Duty,لائق لعمل معدّل
+Not Cleared,غير لائق
+"Pending HR Review, then Pending Manager Readiness, then (after sick leave only) Pending Occupational Health, then Completed.",بانتظار مراجعة الموارد البشرية، ثم بانتظار جاهزية المدير، ثم (بعد الإجازة المرضية فقط) بانتظار الصحة المهنية، ثم مكتمل.
+Pending HR Review,بانتظار مراجعة الموارد البشرية
+Pending Manager Readiness,بانتظار جاهزية المدير
+Pending Occupational Health,بانتظار الصحة المهنية
+For Year,للعام
+Set from the start date.,يُحدد من تاريخ البداية.
+Planned Leave,الإجازة المخطط لها
+Leave Days,أيام الإجازة
+Working days in the period (holidays not counted where the leave type excludes them).,أيام العمل في الفترة (لا تُحسب العطلات إذا كان نوع الإجازة يستثنيها).
+"Pending Manager, then Pending Dept Head, then Approved or Rejected. An approved plan does not use any leave balance: the employee applies for the leave when the time comes.",بانتظار المدير، ثم بانتظار رئيس القسم، ثم معتمدة أو مرفوضة. الخطة المعتمدة لا تُخصم من رصيد الإجازات: يقدّم الموظف طلب الإجازة عند حلول الموعد.
+Pending Manager,بانتظار المدير
+Pending Dept Head,بانتظار رئيس القسم
+Applied As,قُدّمت كطلب
+The leave application made from this plan.,طلب الإجازة المقدّم من هذه الخطة.
+Sick Leave 1 - Full Pay,الإجازة المرضية 1 - بأجر كامل
+Sick Leave 2 - 75% Pay,الإجازة المرضية 2 - بأجر 75%
+Sick Leave 3 - Unpaid,الإجازة المرضية 3 - بدون أجر
+Leave Period,فترة الإجازات
+{0} ({1} days left),{0} (المتبقي: {1} يوم)
+{0} (after stages 1 and 2),{0} (بعد المرحلتين 1 و2)
+{0} (agree it with HR first),{0} (اتفق عليها مع الموارد البشرية أولًا)
+Leave Without Pay,إجازة بدون أجر

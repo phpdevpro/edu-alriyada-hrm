@@ -653,8 +653,14 @@ def reject_application(job_applicant):
 	return {"status": "Rejected"}
 
 
+# Employee fields HR completes in the Create Employee dialog (mandatory on Employee, optional or missing
+# on the public application form). `department` here is the HR Department; the top-level `department`
+# argument is the Education academic department (Department Edu) for the Instructor / HOD records.
+EMPLOYEE_DETAIL_FIELDS = ("department", "branch", "gender", "custom_ministry_work_city", "custom_ministry_job_rank", "date_of_birth")
+
+
 @frappe.whitelist()
-def create_employee_from_applicant(job_applicant, department=None, company_email=None):
+def create_employee_from_applicant(job_applicant, department=None, company_email=None, employee_details=None):
 	frappe.has_permission(APPLICANT_DOCTYPE, "write", throw=True)
 	applicant = frappe.get_doc(APPLICANT_DOCTYPE, job_applicant)
 
@@ -748,6 +754,11 @@ def create_employee_from_applicant(job_applicant, department=None, company_email
 
 	for source_field, target_field in EMPLOYEE_CHILD_TABLE_MAP.items():
 		copy_child_table(applicant, employee, source_field, target_field)
+
+	details = frappe.parse_json(employee_details) if employee_details else {}
+	for fieldname in EMPLOYEE_DETAIL_FIELDS:
+		if (details or {}).get(fieldname):
+			employee.set(fieldname, details[fieldname])
 
 	# The public application form cannot realistically capture every field the
 	# ministry customizations mark mandatory on Employee/Employee child tables

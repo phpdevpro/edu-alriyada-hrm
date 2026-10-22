@@ -120,6 +120,184 @@ Spec section: **Employee Professional Certificates & Training Courses**. One row
 | `CourseCity` | String | `NULLIF(TRIM(r.city), '')` |  |  |
 | `CourseCountry` | Lookup | `cn.ministry_code` | Nationality |  |
 
+## `jameahFacultyPersonalInfo`
+
+Spec section: **Faculty Personal Information**. One row per: FacultyId.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `i.name` |  | Instructor ID (record key). |
+| `ArabicFirstName` | String | `COALESCE(NULLIF(TRIM(i.custom_first_name_ar), ''), NULLIF(TRIM(e.custom_first_name_ar), ''))` |  | Instructor, else the Employee record. |
+| `ArabicSecondName` | String | `COALESCE(NULLIF(TRIM(i.custom_second_name_ar), ''), NULLIF(TRIM(e.custom_second_name_ar), ''))` |  |  |
+| `ArabicThirdName` | String | `COALESCE(NULLIF(TRIM(i.custom_third_name_ar), ''), NULLIF(TRIM(e.custom_third_name_ar), ''))` |  |  |
+| `ArabicFourthName` | String | `COALESCE(NULLIF(TRIM(i.custom_last_name_ar), ''), NULLIF(TRIM(e.custom_last_name_ar), ''))` |  | Arabic last name. |
+| `EnglishFirstName` | String | `COALESCE(NULLIF(TRIM(i.custom_first_name_en), ''), NULLIF(TRIM(e.custom_first_name_en), ''), NULLIF(TRIM(e.first_name), ''))` |  |  |
+| `EnglishSecondName` | String | `COALESCE(NULLIF(TRIM(i.custom_second_name_en), ''), NULLIF(TRIM(e.custom_second_name_en), ''), NULLIF(TRIM(e.middle_name), ''))` |  |  |
+| `EnglishThirdName` | String | `COALESCE(NULLIF(TRIM(i.custom_third_name_en), ''), NULLIF(TRIM(e.custom_third_name_en), ''))` |  |  |
+| `EnglishFourhtName` | String | `COALESCE(NULLIF(TRIM(i.custom_last_name_en), ''), NULLIF(TRIM(e.custom_last_name_en), ''), NULLIF(TRIM(e.last_name), ''))` |  | Spelled as in the Ministry document. |
+| `IdentityTypeCode` | Lookup | `it.ministry_code` | Identity type |  |
+| `SpecialNeedsTypeCode` | Lookup | `(CASE WHEN IFNULL(e.custom_is_special_needs, 0) = 1 THEN sn.ministry_code END)` | Type of special needs | Employee record; only when IsSpecialNeeds = 1. |
+| `IdentityNumber` | Integer | `COALESCE(NULLIF(REGEXP_REPLACE(IFNULL(i.custom_identity_number, ''), '[^0-9]', ''), ''), NULLIF(REGEXP_REPLACE(IFNULL(e.custom_identity_number, ''), '[^0-9]'...` |  |  |
+| `BirthPlaceCode` | Lookup | `bp.ministry_code` | Coding cities and governora | Employee record. |
+| `BirthDate` | Date | `(CASE WHEN e.date_of_birth >= '1920-01-01' THEN e.date_of_birth END)` |  | Employee record. |
+| `PassportNumber` | String | `NULLIF(TRIM(e.passport_number), '')` |  |  |
+| `HomeCountryIdentityNumber` | String | `NULLIF(TRIM(e.custom_original_home_id_number), '')` |  |  |
+| `IsMaleGender` | Boolean | `(CASE COALESCE(gi.ministry_code, ge.ministry_code) WHEN '1' THEN 1 WHEN '2' THEN 0 END)` |  | 1 = male, 0 = female (Instructor gender, else the Employee record). |
+| `NationalityCode` | Lookup | `nt.ministry_code` | Nationality |  |
+| `MaritalStatusCode` | Lookup | `ms.ministry_code` | Social status |  |
+| `ReligionCode` | Lookup | `COALESCE(rli.ministry_code, rle.ministry_code)` | Religions |  |
+| `PostalAddress` | String | `NULLIF(TRIM(e.current_address), '')` |  |  |
+| `CityCode` | Lookup | `wc.ministry_code` | Coding cities and governora | City of the place of work (Employee record). |
+| `ZipCode` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(e.custom_zip_code, ''), '[^0-9]', ''), '')` |  |  |
+| `Email` | String | `COALESCE(NULLIF(TRIM(i.email), ''), NULLIF(TRIM(e.prefered_email), ''), NULLIF(TRIM(e.company_email), ''), NULLIF(TRIM(e.personal_email), ''))` |  | College e-mail, else the Employee's e-mails. |
+| `HomeTelephoneNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(e.custom_home_telephone_number, ''), '[^0-9]', ''), '')` |  |  |
+| `WorkTelephoneNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(e.custom_work_telephone_number, ''), '[^0-9]', ''), '')` |  |  |
+| `WorkTelephoneExtentionNumber` | Integer | `NULLIF(REGEXP_REPLACE(IFNULL(e.custom_work_telephone_extention_number, ''), '[^0-9]', ''), '')` |  |  |
+| `MobileNumber` | Integer | `COALESCE(NULLIF(REGEXP_REPLACE(IFNULL(i.mobile_no, ''), '[^0-9]', ''), ''), NULLIF(REGEXP_REPLACE(IFNULL(e.cell_number, ''), '[^0-9]', ''), ''))` |  |  |
+| `IsSpecialNeeds` | Boolean | `IFNULL(e.custom_is_special_needs, 0)` |  |  |
+| `SpecialNeedCode` | Lookup | `(CASE WHEN IFNULL(e.custom_is_special_needs, 0) = 1 THEN sn2.ministry_code END)` | Type of special needs | Same as SpecialNeedsTypeCode (the spec lists both). |
+| `LastUpdateDate` | Date | `GREATEST(i.modified, IFNULL(e.modified, i.modified))` |  |  |
+
+## `jameahFacultyResearch`
+
+Spec section: **Faculty Research and Published Scientific Papers**. One row per: FacultyId, RecordId.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `r.faculty_id` |  | Instructor ID (record key). |
+| `RecordId` | Key | `r.name` |  | Row ID (record key). |
+| `RType` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `RStatus` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `RStatus2Code` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `RNatureCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `RDomainCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `RCategoryCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `RTitle` | String | `NULLIF(TRIM(r.title), '')` |  |  |
+| `RPublishDate` | Date | `(CASE WHEN r.publication_date >= '1920-01-01' THEN r.publication_date END)` |  |  |
+| `Publisher` | String | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `ISBN` | Integer | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `RMagazine` | String | `NULLIF(TRIM(r.journal), '')` |  | Journal. |
+| `Edition` | Integer | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `PageNumber` | Integer | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `PublishingLocation` | String | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `Summury` | String | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. Spelled as in the Ministry document. |
+| `Language` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `PublishingURL` | String | `NULLIF(TRIM(r.link), '')` |  |  |
+| `KeyWords` | String | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+
+## `jameahFacultyAcademicQualification`
+
+Spec section: **Faculty Academic Qualification**. One row per: FacultyId, RecordId.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `r.faculty_id` |  | Instructor ID (record key). |
+| `RecordId` | Key | `r.name` |  | Row ID (record key). |
+| `ScientificDegreeCode` | Lookup | `dg.ministry_code` | Coding of academic degrees |  |
+| `MajorCode` | Lookup | `mj.ministry_code` | Specialization Coding Guide |  |
+| `MinorCode` | Lookup | `mn.ministry_code` | Specialization Coding Guide |  |
+| `RatingCode` | Lookup | `at.ministry_code` | Student Evaluation Coding | The Ministry 'appreciation' list (excellent, very good...), as for Employees. |
+| `GPA` | Number | `r.gpa` |  |  |
+| `GPATypeCode` | Lookup | `gt.ministry_code` | Cumulative GPA |  |
+| `StudyTypeCode` | Lookup | `st.ministry_code` | Study type coding |  |
+| `GraduateFrom` | String | `NULLIF(TRIM(r.institute), '')` |  |  |
+| `Faculty` | String | `NULLIF(TRIM(r.faculty), '')` |  |  |
+| `DateOfScientificDegree` | Date | `(CASE WHEN r.qualification_date >= '1920-01-01' THEN r.qualification_date END)` |  |  |
+| `GraduationYear` | Integer | `NULLIF(r.graduation_year, 0)` |  |  |
+| `CityCode` | String | `NULLIF(TRIM(r.city), '')` |  | City name as entered. |
+| `CountryCode` | Lookup | `cn.ministry_code` | Nationality |  |
+| `ResearchTypeCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `IsLastQualificationAuthenticated` | Boolean | `CAST(NULL AS UNSIGNED)` |  | The college system does not record this yet. |
+| `IsLastAcademicDataRecord` | Boolean | `IFNULL(r.is_last_academic_data_record, 0)` |  |  |
+| `EducationalSubLevelCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `IncludedSpecializationCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `LastAcademicStatusUpdatedate` | Date | `DATE(r.modified)` |  | When the qualification row was last changed. |
+
+## `jameahFacultyAcademicExperience`
+
+Spec section: **Faculty Academic Experience**. One row per: FacultyId, RecordId.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `r.faculty_id` |  | Instructor ID (record key). |
+| `RecordId` | Key | `r.name` |  | Row ID; the Instructor ID for the current position built from the Instructor record. |
+| `HasPosition` | Boolean | `1` |  |  |
+| `IsLatestWorkExperienceRecord` | Boolean | `IFNULL(r.is_latest_work_experience_record, 0)` |  |  |
+| `Profession` | String | `COALESCE(NULLIF(TRIM(r.designation), ''), CASE WHEN r.synthetic = 1 THEN NULLIF(TRIM(i.instructor_faculty_ranking), '') END)` |  | Job title; the faculty rank for a position built from the Instructor record. |
+| `InstituteCode` | Lookup | `COALESCE(ic.ministry_code, CASE WHEN r.synthetic = 1 THEN ici.ministry_code END)` | Coding of educational insti |  |
+| `LocationCode` | Lookup | `COALESCE(lc.ministry_code, CASE WHEN r.synthetic = 1 THEN lci.ministry_code END)` | Coding cities and governora |  |
+| `CollegeCode` | Lookup | `(CASE WHEN IFNULL(r.is_latest_work_experience_record, 0) = 1 THEN cc.ministry_code END)` | College Coding Guide | Jameah Settings college, for the current position. |
+| `SectionCode` | Lookup | `sc.ministry_code` | Coding academic departments |  |
+| `MajorCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `MinorCode` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `TeachingStaffNumber` | String | `COALESCE(NULLIF(TRIM(r.employee_number), ''), CASE WHEN IFNULL(r.is_latest_work_experience_record, 0) = 1 THEN NULLIF(TRIM(i.employee_no), '') END)` |  | Instructor employee number for the current position. |
+| `AcademicRankCode` | Lookup | `COALESCE(ar.ministry_code, CASE WHEN IFNULL(r.is_latest_work_experience_record, 0) = 1 THEN ari.ministry_code END)` | Academic ranks | Row rank, else the Instructor's faculty ranking (Code Map) for the current position. |
+| `HiringDate` | Date | `(CASE WHEN COALESCE(r.hiring_date, CASE WHEN IFNULL(r.is_latest_work_experience_record, 0) = 1 THEN i.instructor_appoinment_date END) >= '1920-01-01' THEN CO...` |  |  |
+| `AppointmentTypeCode` | Lookup | `(CASE WHEN IFNULL(r.is_latest_work_experience_record, 0) = 1 THEN apt.ministry_code END)` | Type of appointment | Instructor contract type (Code Map), for the current position. |
+| `StartWorkingDate` | Date | `(CASE WHEN COALESCE(r.start_date, CASE WHEN IFNULL(r.is_latest_work_experience_record, 0) = 1 THEN i.instructor_start_date END) >= '1920-01-01' THEN COALESCE...` |  |  |
+| `EndWorkingDate` | Date | `(CASE WHEN r.end_date >= '1920-01-01' THEN r.end_date END)` |  |  |
+| `EmploymentStatusCode` | Lookup | `COALESCE(es.ministry_code, CASE WHEN IFNULL(r.is_latest_work_experience_record, 0) = 1 THEN esi.ministry_code END)` | Job status | Row status, else the Instructor's faculty status (Code Map) for the current position. |
+| `FunctionalTasks` | String | `NULLIF(TRIM(r.job_duties), '')` |  |  |
+| `JobType` | Lookup | `CAST(NULL AS CHAR)` |  | The college system does not record this yet. |
+| `CurrentAcademicYeardate` | Date | `(CASE WHEN r.current_academic_year_date >= '1920-01-01' THEN r.current_academic_year_date END)` |  |  |
+
+## `jameahFacultyPreviousExperience`
+
+Spec section: **Faculty Previous Experience**. One row per: FacultyId, RecordId.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `r.faculty_id` |  | Instructor ID (record key). |
+| `RecordId` | Key | `r.name` |  | Row ID (record key). |
+| `Profession` | String | `NULLIF(TRIM(r.profession), '')` |  |  |
+| `OrganizationName` | String | `NULLIF(TRIM(r.organization_name), '')` |  |  |
+| `CityName` | String | `NULLIF(TRIM(r.city), '')` |  |  |
+| `CountryCode` | Lookup | `cn.ministry_code` | Nationality |  |
+| `Department` | String | `NULLIF(TRIM(r.department), '')` |  |  |
+| `Section` | String | `NULLIF(TRIM(r.section), '')` |  |  |
+| `StartWorkingDate` | Date | `(CASE WHEN r.start_work_date >= '1920-01-01' THEN r.start_work_date END)` |  |  |
+| `EndWorkingDate` | Date | `(CASE WHEN r.end_work_date >= '1920-01-01' THEN r.end_work_date END)` |  |  |
+| `FunctionalTasks` | String | `NULLIF(TRIM(r.functional_tasks), '')` |  |  |
+
+## `jameahFacultyProfessionalCertificates`
+
+Spec section: **Faculty Professional Certificates & Training Courses**. One row per: FacultyId, RecordId.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `r.faculty_id` |  | Instructor ID (record key). |
+| `RecordId` | Key | `r.name` |  | Row ID (record key). |
+| `CourseName` | String | `NULLIF(TRIM(r.course_name), '')` |  |  |
+| `CourseTypeCode` | Lookup | `CAST(NULL AS CHAR)` |  | Course type is free text; the Ministry list of course types is not in the system. |
+| `Issuer` | String | `NULLIF(TRIM(r.provider), '')` |  |  |
+| `CertificateAwardingGYear` | Integer | `YEAR((CASE WHEN r.date >= '1920-01-01' THEN r.date END))` |  |  |
+| `CoursePeriod` | String | `NULLIF(TRIM(r.duration), '')` |  | Duration in days. |
+| `CourseCity` | String | `NULLIF(TRIM(r.city), '')` |  |  |
+| `CountryCode` | Lookup | `cn.ministry_code` | Nationality |  |
+
+## `jameahFacultyAwards`
+
+Spec section: **Faculty Awards and Achievements**. One row per: FacultyId, RecordId.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `r.faculty_id` |  | Instructor ID (record key). |
+| `RecordId` | Key | `r.name` |  | Row ID (record key). |
+| `AchievementYear` | Integer | `YEAR((CASE WHEN r.date >= '1920-01-01' THEN r.date END))` |  |  |
+| `AchievementTitle` | String | `NULLIF(TRIM(r.award_name), '')` |  |  |
+| `AchievementDonor` | String | `NULLIF(TRIM(r.organization), '')` |  |  |
+
+## `jameahFacultyAttachments`
+
+Spec section: **Faculty Attachments**. One row per: FacultyId, AttachmentTitle.
+
+| Column | Type | Source (SQL) | Ministry list | Note |
+|---|---|---|---|---|
+| `FacultyId` | Key | `i.name` |  | Instructor ID (record key). |
+| `AttachmentTypeCode` | Lookup | `CAST(NULL AS CHAR)` |  | The Ministry has not published an attachment type list. |
+| `AttachmentURL` | String | `CONCAT(IFNULL(cfg.file_base_url, ''), i.instructor_image)` |  | File Base URL from Jameah Settings + file path. |
+| `AttachmentTitle` | String | `'Personal Photo'` |  | The Instructor photo; no other faculty documents are recorded. |
+
 ## `jameahStudentPersonalInfo`
 
 Spec section: **1. Personal Information**. One row per: StudentId.

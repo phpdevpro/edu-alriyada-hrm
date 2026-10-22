@@ -23,11 +23,13 @@ const esc = (value) => frappe.utils.escape_html(String(value ?? ""));
 let currentEmployee = null;
 
 // [title, doctype, description, icon, tone]
+// The leave services first, in the order they are used: plan, apply, come back.
 const employeeServices = [
+	[__("Leave Plan"), "Leave Plan Request", __("Plan your leave dates for the year; your manager approves the plan"), "fa-calendar-week", "sky"],
+	[__("Leave Application"), "Leave Application", __("Apply for leave you hold; your manager approves it"), "fa-calendar-check", ""],
+	[__("Leave Return"), "Leave Return Request", __("Tell HR you are back after a leave"), "fa-rotate-left", "violet"],
 	[__("Permission Request"), "Permission Request", __("Request short permission or time away"), "fa-clock", ""],
 	[__("Remote Work"), "Remote Work Request", __("Request remote work for specific dates"), "fa-laptop-house", "sky"],
-	[__("Request Leave"), "Leave Application", __("Apply for leave and track your approval"), "fa-calendar-check", ""],
-	[__("Return from Leave"), "Leave Return Request", __("Confirm your return and medical clearance"), "fa-rotate-left", "violet"],
 	[__("Salary Certificate"), "Salary Certificate Request", __("Request an official salary certificate"), "fa-file-invoice", ""],
 	[__("Overtime"), "Pre Approved Overtime Request", __("Request overtime pre-approval"), "fa-business-time", "amber"],
 	[__("Training"), "Employee Training Request", __("Request professional training"), "fa-chalkboard", "sky"],
@@ -106,14 +108,37 @@ function emdMyRequests(doctype) {
 	}});
 }
 
-function emdNewRequest(doctype) {
+const LEAVE_INTRO = {
+	"Leave Plan Request": __("Plan when you want to take leave this year. Your manager and then your department head approve the plan. It does not use your balance: when the time comes, open the approved plan here and click Apply now."),
+	"Leave Application": __("Only the leave you hold is listed, with the days you have left. Your manager approves the request and HR is informed. For sick leave, tell HR on your first sick day so they can start your sick leave year."),
+	"Leave Return Request": __("Choose the leave you are coming back from and the day you returned to work. After sick leave, attach your fitness certificate."),
+};
+
+// Leave types the employee holds, as Select options "Annual Leave (19 days left)".
+function emdLeaveTypeField(field) {
+	return frappe.call({ method: "medical_hrms.self_service.my_leave_types" }).then((r) => {
+		const choices = r.message || [];
+		return choices.length ? Object.assign({}, field, { fieldtype: "Select", options: [{ label: "", value: "" }, ...choices.map((c) => ({ label: c.label, value: c.leave_type }))] }) : null;
+	});
+}
+
+function emdNewRequest(doctype, prefill, plan) {
 	if (!currentEmployee) {
 		frappe.msgprint(__("Your user account is not linked to an Employee record. Please contact HR."));
 		return;
 	}
 	const employee = currentEmployee.name;
-	frappe.call({method: "medical_hrms.self_service.form_schema", args: {doctype}, callback: (r) => {
-		const schema = r.message || [];
+	frappe.call({method: "medical_hrms.self_service.form_schema", args: {doctype}, callback: async (r) => {
+		let schema = r.message || [];
+		const leaveTypeIndex = schema.findIndex((field) => field.fieldname === "leave_type");
+		if (leaveTypeIndex > -1) {
+			const select = await emdLeaveTypeField(schema[leaveTypeIndex]);
+			if (!select) {
+				frappe.msgprint({ title: __("No leave to apply for yet"), message: __("You do not hold any leave yet. HR assigns your annual leave at the start of the leave year; ask HR if it is missing.") });
+				return;
+			}
+			schema = schema.map((field, i) => (i === leaveTypeIndex ? select : field));
+		}
 		const timeFields = schema.filter(field => field.fieldtype === "Time");
 		const fields = schema.flatMap(field => {
 			if (field.fieldtype !== "Time") return [field];
@@ -130,11 +155,14 @@ function emdNewRequest(doctype) {
 		});
 		fields.forEach(field => {
 			if (field.fieldtype === "Attach") field.options = {restrictions: {allow_public: false}};
-			if (field.fieldname === "leave_application") field.get_query = () => ({filters: {employee}});
+			if (field.fieldname === "leave_application") {
+				field.get_query = () => ({filters: {employee, status: "Approved", docstatus: 1}});
+				field.onchange = () => emdReturnContext(dialog);
+			}
 		});
 		const dialog = new frappe.ui.Dialog({
 			title: __(doctype),
-			fields: [{fieldtype: "HTML", options: `<p>${__("This request is linked to your login automatically. Approval and clearance decisions are handled by HR.")}</p>${doctype === "Leave Application" ? `<p>${__("Annual and medical/sick leave use separate entitlements. Select the correct leave type; ask HR which medical pay category applies. No default casual-leave allowance is included.")}</p>` : ""}`}, ...fields],
+			fields: [{fieldtype: "HTML", options: `<p>${LEAVE_INTRO[doctype] || __("This request is linked to your login automatically. Approval and clearance decisions are handled by HR.")}</p>`}, ...fields],
 			primary_action_label: __("Send Request"),
 			primary_action: () => save(true),
 			secondary_action_label: doctype === "Leave Application" ? undefined : __("Save Draft"),
@@ -161,14 +189,28 @@ function emdNewRequest(doctype) {
 			saving = true;
 			frappe.call({
 				method: "medical_hrms.self_service.save_request",
-				args: {doctype, values: JSON.stringify(values), send: send ? 1 : 0},
+				args: {doctype, values: JSON.stringify(values), send: send ? 1 : 0, plan: plan || undefined},
 				freeze: true,
 				callback: () => { dialog.hide(); frappe.show_alert({message: send ? __("Request sent for review") : __("Draft saved"), indicator: "green"}); load_dashboard(); },
 				always: () => { saving = false; },
 			});
 		};
 		dialog.show();
+		if (prefill) dialog.set_values(prefill).then(() => doctype === "Leave Return Request" && emdReturnContext(dialog));
 	}});
+}
+
+// Leave Return: show when the employee was due back, and ask for the fitness certificate only after sick leave.
+function emdReturnContext(dialog) {
+	const leave = dialog.get_value("leave_application");
+	if (!leave || !dialog.fields_dict.fitness_certificate) return;
+	frappe.call({ method: "medical_hrms.self_service.leave_return_context", args: { leave_application: leave } }).then((r) => {
+		const c = r.message || {};
+		dialog.set_df_property("fitness_certificate", "reqd", c.is_sick_leave ? 1 : 0);
+		dialog.set_df_property("fitness_certificate", "hidden", c.is_sick_leave ? 0 : 1);
+		dialog.set_df_property("actual_return_date", "description", __("You were due back on {0}.", [frappe.datetime.str_to_user(c.expected_back_on)]));
+		if (!dialog.get_value("actual_return_date")) dialog.set_value("actual_return_date", c.expected_back_on);
+	});
 }
 
 function emdTimeTo24Hour(hour, minute, period) {
@@ -263,7 +305,7 @@ function load_dashboard(first) {
 			$("#emd-pending").text(stats.pending || 0);
 			$("#emd-approved").text(stats.approved || 0);
 			$("#emd-leave").text(stats.leave_applications || 0);
-			emdRenderLeaveSummary(data.leave_summary);
+			emdRenderLeaveSummary(data.leave_summary, data.leave_flow);
 			render_banner(data);
 			$("#emd-profile-link").attr("href", "#").off("click").on("click", (event) => {
 				event.preventDefault();
@@ -276,19 +318,50 @@ function load_dashboard(first) {
 	});
 }
 
-function emdRenderLeaveSummary(summary) {
+// What the employee should do next with their leave, one line per item, with the button for that step.
+const LEAVE_STEP = {
+	return_due: { icon: "fa-rotate-left", tone: "amber", text: __("Your leave ended on {0}. Tell HR you are back."), button: __("Send Leave Return") },
+	on_leave: { icon: "fa-umbrella-beach", tone: "teal", text: __("On leave until {0}.") },
+	plan_approved: { icon: "fa-calendar-check", tone: "sky", text: __("Plan approved for {1}. Apply when the time comes."), button: __("Apply now") },
+	waiting: { icon: "fa-hourglass-half", tone: "amber", text: __("Waiting for your manager's approval ({1}).") },
+	plan_waiting: { icon: "fa-hourglass-half", tone: "", text: __("Leave plan waiting for approval ({1}).") },
+	upcoming: { icon: "fa-calendar-day", tone: "teal", text: __("Approved: starts on {2} ({1}).") },
+};
+
+function emdLeaveSteps(steps) {
+	if (!steps.length) return `<p class="mhp-muted">${__("Nothing to do: no leave in progress or waiting. Use Leave Plan or Leave Application below to plan or apply.")}</p>`;
+	const day = (d) => frappe.datetime.str_to_user(d);
+	return `<div class="mhp-rows">${steps.map((s, i) => {
+		const k = LEAVE_STEP[s.step];
+		const period = `${esc(__(s.leave_type))}, ${day(s.from_date)} – ${day(s.to_date)}${s.days ? `, ${esc(s.days)} ${__("days")}` : ""}`;
+		const text = esc(k.text).replace("{0}", day(s.to_date)).replace("{1}", period).replace("{2}", day(s.from_date));
+		return `<div class="mhp-row"><div style="display:flex;gap:12px;align-items:flex-start"><span class="mhp-tile-icon ${k.tone}" style="width:34px;height:34px;font-size:14px"><i class="fa-solid ${k.icon}" aria-hidden="true"></i></span>
+			<div><b>${text}</b><small>${esc(s.name)}</small></div></div>
+			${k.button ? `<button type="button" class="mhp-btn primary sm emd-leave-step" data-i="${i}">${esc(k.button)}</button>` : ""}</div>`;
+	}).join("")}</div>`;
+}
+
+function emdRenderLeaveSummary(summary, steps) {
 	if (!summary) return;
-	const rows = Object.entries(summary.balances || {}).map(([type, balance]) => `<tr><td>${esc(type)}</td><td class="num">${esc(balance.total_leaves)}</td><td class="num">${esc(balance.leaves_taken)}</td><td class="num">${esc(balance.leaves_pending_approval)}</td><td class="num"><b>${esc(balance.remaining_leaves)}</b></td></tr>`).join("");
-	const monthly = (label, usage) => {
-		const used = usage.used === null ? __("Holiday calendar setup needed") : `${usage.used} ${__("used / pending")}`;
-		const limit = usage.limit === null ? __("Monthly limit not enabled") : `${usage.limit} ${__("allowed")}${usage.used === null ? "" : ` · ${Math.max(0, usage.limit - usage.used)} ${__("remaining")}`}`;
-		return `<div class="mhp-row"><div><b>${esc(label)}</b><small>${esc(used)}</small></div><span class="mhp-pill">${esc(limit)}</span></div>`;
+	steps = steps || [];
+	const rows = Object.entries(summary.balances || {}).map(([type, balance]) => `<tr><td>${esc(__(type))}</td><td class="num">${esc(balance.total_leaves)}</td><td class="num">${esc(balance.leaves_taken)}</td><td class="num">${esc(balance.leaves_pending_approval)}</td><td class="num"><b>${esc(balance.remaining_leaves)}</b></td></tr>`).join("");
+	const limit = (label, usage) => {
+		if (usage.limit === null) return "";
+		const text = usage.used === null ? __("HR has not set up the holiday calendar yet") : __("{0} of {1} used this month", [usage.used, usage.limit]);
+		return `<div class="mhp-row"><div><b>${esc(label)}</b><small>${esc(text)}</small></div><span class="mhp-pill ${usage.used !== null && usage.used >= usage.limit ? "amber" : "teal"}">${esc(usage.used === null ? "—" : __("{0} left", [Math.max(0, usage.limit - usage.used)]))}</span></div>`;
 	};
+	const limits = limit(__("Half-day leave"), summary.half_day) + limit(__("Work from home (days)"), summary.remote_work);
 	$("#emd-leave-summary").html(`
-		<h3><i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i>${__("My Leave Balances")}</h3>
-		${rows ? `<div class="mhp-tablewrap"><table class="mhp-table"><thead><tr><th>${__("Leave Type")}</th><th class="num">${__("Allocated")}</th><th class="num">${__("Taken")}</th><th class="num">${__("Pending")}</th><th class="num">${__("Balance")}</th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p>${__("No active leave allocations. Contact HR to configure your entitlement.")}</p>`}
-		<p class="mhp-muted" style="margin:10px 0 18px">${__("Balances follow your active allocations; pending requests are shown separately.")}</p>
-		<h3 style="font-size:16px"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i>${__("Monthly Usage")} — ${esc(summary.month)}</h3>
-		<div class="mhp-rows">${monthly(summary.half_day.leave_type ? `${__("Half-day requests")} (${summary.half_day.leave_type})` : __("Half-day requests"), summary.half_day)}${monthly(__("Work-from-home working days"), summary.remote_work)}</div>`);
+		<h3><i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i>${__("My Leave")}</h3>
+		<h4 class="mhp-card-title" style="font-size:15px;margin:4px 0 8px">${__("What's next")}</h4>
+		${emdLeaveSteps(steps)}
+		<h4 class="mhp-card-title" style="font-size:15px;margin:22px 0 8px">${__("Balances")}</h4>
+		${rows ? `<div class="mhp-tablewrap"><table class="mhp-table"><thead><tr><th>${__("Leave Type")}</th><th class="num">${__("Allocated")}</th><th class="num">${__("Taken")}</th><th class="num">${__("Waiting for approval")}</th><th class="num">${__("Left")}</th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p>${__("No leave assigned to you yet. HR assigns annual leave at the start of the leave year.")}</p>`}
+		${limits ? `<h4 class="mhp-card-title" style="font-size:15px;margin:22px 0 8px">${__("This month's limits")} — ${esc(summary.month)}</h4><div class="mhp-rows">${limits}</div>` : ""}`);
+	$("#emd-leave-summary .emd-leave-step").on("click", function () {
+		const s = steps[Number($(this).attr("data-i"))];
+		if (s.step === "return_due") emdNewRequest("Leave Return Request", { leave_application: s.name });
+		if (s.step === "plan_approved") emdNewRequest("Leave Application", { leave_type: s.leave_type, from_date: s.from_date, to_date: s.to_date }, s.name);
+	});
 }
 })();

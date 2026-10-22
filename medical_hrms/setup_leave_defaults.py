@@ -9,7 +9,7 @@ from frappe.utils import getdate, today
 KEY = "custom_medical_hrms_default_key"
 NOTES = "custom_medical_hrms_policy_notes"
 GUIDANCE = {
-    "medical": "MEDICAL LEAVE ONLY: sequential sick-pay stages, separate from annual leave. HR must submit this policy and use Activate Medical Leave Year on the HR dashboard, starting on the first illness date. Do not assign through the annual Leave Control Panel. The unpaid stage is enforced by medical checks, not a Leave Allocation.",
+    "medical": "SICK LEAVE ONLY: three pay stages in order (1 full pay, 2 at 75%, 3 unpaid), separate from annual leave. HR must submit this policy and use HR Portal > Start Sick Leave Year, starting on the first sick day. Do not assign through the Leave Control Panel. Stage 3 (unpaid) is enforced by the sick-leave checks, not a Leave Allocation.",
     "annual": "Annual leave only. Medical/sick leave is a separate entitlement and must not be deducted from this balance. HR must confirm carry-forward and holiday-counting rules.",
     "sick_full": "Separate medical/sick entitlement: first 30 days at full pay within the sick-leave year starting on the first sick-leave date. Do not allocate this from annual leave. Tier progression requires HR verification.",
     "sick_partial": "Separate medical/sick entitlement: following 60 days at 75% pay in the same sick-leave year. HR must verify prior sick usage and payroll configuration before use; this category alone does not automate progression.",
@@ -18,6 +18,15 @@ GUIDANCE = {
     "annual_21": "ANNUAL LEAVE ONLY: 21 days. Starter for employees below five consecutive years with the employer where Saudi Labour Law applies. Medical/sick leave is separate. Casual leave is not included. HR must confirm eligibility before assigning.",
     "annual_30": "ANNUAL LEAVE ONLY: 30 days. Starter for employees with five or more consecutive years with the employer where Saudi Labour Law applies. Medical/sick leave is separate. Casual leave is not included. HR must confirm eligibility before assigning.",
 }
+
+
+# The sick-pay stages in the order they are used; the number in the name keeps every list in that order.
+SICK_STAGES = (
+    ("sick_full", "Sick Leave 1 - Full Pay", {"include_holiday": 1}),
+    ("sick_partial", "Sick Leave 2 - 75% Pay", {"is_ppl": 1, "fraction_of_daily_salary_per_leave": 0.75, "include_holiday": 1}),
+    ("sick_unpaid", "Sick Leave 3 - Unpaid", {"is_lwp": 1, "include_holiday": 1}),
+)
+SICK_POLICY_TITLE = "Medical HRMS - Sick Leave (3 Pay Stages, Separate Sick Year)"
 
 
 def _ensure_marker_fields():
@@ -73,14 +82,13 @@ def _policy(key, title, annual_type, days):
 def execute():
     _ensure_marker_fields()
     annual = _leave_type("annual", "Annual Leave", aliases=("Annual",), is_carry_forward=1)
-    _leave_type("sick_full", "Sick Leave - Full Pay", include_holiday=1)
-    _leave_type("sick_partial", "Sick Leave - 75 Percent Pay", is_ppl=1, fraction_of_daily_salary_per_leave=0.75, include_holiday=1)
-    _leave_type("sick_unpaid", "Sick Leave - Unpaid", is_lwp=1, include_holiday=1)
+    for key, label, settings in SICK_STAGES:
+        _leave_type(key, label, **settings)
     _leave_type("unpaid", "Unpaid Leave", aliases=("Leave Without Pay",), is_lwp=1)
     _policy("annual_21", "Medical HRMS - Annual Leave 21 Days (HR Review)", annual, 21)
     _policy("annual_30", "Medical HRMS - Annual Leave 30 Days (HR Review)", annual, 30)
     if not frappe.db.exists("Leave Policy", {KEY: "medical"}):
-        frappe.get_doc({"doctype": "Leave Policy", "title": "Medical HRMS - Medical Leave (Separate Sick Year)", KEY: "medical",
+        frappe.get_doc({"doctype": "Leave Policy", "title": SICK_POLICY_TITLE, KEY: "medical",
             "leave_policy_details": [{"leave_type": frappe.db.get_value("Leave Type", {KEY: key}, "name"), "annual_allocation": days}
                 for key, days in (("sick_full", 30), ("sick_partial", 60), ("sick_unpaid", 30))],
         }).insert(ignore_permissions=True)
