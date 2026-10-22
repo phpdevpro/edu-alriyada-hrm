@@ -1,0 +1,89 @@
+PASS LGN-01 [Login] HR Manager logs in and lands on /app/hr-dashboard
+PASS LGN-02 [Login] HR User logs in and lands on /app/hr-dashboard
+PASS LGN-03 [Login] Employee logs in and lands on /app/employee-dashboard
+PASS LGN-04 [Login] Instructor (also an Employee) logs in and lands on /app/instructor-dashboard
+PASS NAV-01 [Navigation] Employee: no breadcrumb leads to 'Not permitted'
+PASS NAV-02 [Navigation] HR Manager: no breadcrumb leads to 'Not permitted'
+PASS LGN-05 [Login] Wrong password shows an error and stays on the login page
+PASS ESS-01 [Employee self-service] Employee logs in and lands on the Employee Dashboard
+PASS ESS-02 [Employee self-service] Header shows own name, Employee ID and 10 service cards
+PASS ESS-03 [Employee self-service] Leave balance shows the Annual Leave allocation (21 days)
+PASS ESS-04 [Employee self-service] Permission Request with hour/minute/AM-PM pickers -> Pending
+PASS ESS-05 [Employee self-service] Incomplete time (hour without minute) is rejected in the dialog
+PASS ESS-06 [Employee self-service] Remote Work Request: fill dialog and Send -> Pending
+PASS ESS-07 [Employee self-service] Salary Certificate Request: fill dialog and Send -> Pending
+PASS ESS-08 [Employee self-service] Pre Approved Overtime Request: fill dialog and Send -> Pending
+PASS ESS-09 [Employee self-service] Employee Training Request: fill dialog and Send -> Pending
+PASS ESS-10 [Employee self-service] Company Car Request: fill dialog and Send -> Pending
+PASS ESS-11 [Employee self-service] Employee Data Update Request: fill dialog and Send -> Pending
+PASS ESS-12 [Employee self-service] Children Medical Allowance: upload a private invoice in the dialog and Send
+PASS ESS-13 [Employee self-service] Save Draft keeps the request in Draft
+PASS ESS-14 [Leave] Request Leave: Annual Leave 2 days -> Open, approver set by HR
+PASS ESS-15 [Employee self-service] Counters and Recent Requests refresh after sending
+PASS ESS-16 [Employee self-service] 'N request(s)' opens My Requests; View shows the details
+PASS ESS-17 [Employee self-service] My Profile quick link shows own record summary
+PASS SEC-01 [Security] Request lists show only the employee's own records
+PASS SEC-02 [Security] Another employee's request is refused (form URL, API, details)
+PASS SEC-03 [Security] Employee sees only their own Employee record
+PASS SEC-04 [Security] Employee cannot edit their own Employee master record
+PASS SEC-05 [Security] Employee cannot approve their own request
+PASS SEC-06 [Security] Employee cannot file for someone else or inject a status
+PASS SEC-07 [Security] Contract Renewal and Leave Plan cannot be filed by employees
+PASS SEC-08 [Security] Employee cannot approve or submit their own leave
+PASS SEC-09 [Security] Employee is refused the HR Dashboard, presence page, Jameah page and their APIs
+PASS SEC-10 [Security] Employee cannot read applicants or create application links
+PASS SEC-11 [Security] A login with no Employee record cannot use self-service
+PASS SEC-12 [Security] A staff login without HR/Employee roles is refused both dashboards
+PASS HRD-01 [HR Dashboard] HR Manager logs in and lands on the HR Dashboard
+PASS HRD-02 [HR Dashboard] Stat cards load
+PASS HRD-03 [HR Dashboard] Every link on the HR Dashboard opens without an error
+PASS HRD-04 [HR Dashboard] Medical HRMS workspace renders
+PASS APR-01 [HR approval] HR approves the Permission Request in the form
+PASS APR-02 [HR approval] HR rejects the Training Request
+PASS APR-03 [HR approval] Salary Certificate moves Pending -> Issued
+PASS APR-04 [Leave] Leave approver approves and submits the Leave Application
+PASS APR-05 [Leave] Employee dashboard shows the approval and the balance 21 -> 19
+PASS APR-06 [Employee self-service] Return from Leave: employee picks their approved leave and sends
+PASS APR-07 [HR approval] HR User sees every request list, including Leave Return Request
+PASS APR-08 [Security] HR can open the private invoice; another employee cannot
+PASS EMP-01 [Employee master] HR edits and saves an Employee who has a login
+PASS EMP-02 [Ministry lookups] Gender only offers Ministry gender codes
+PASS EMP-03 [Ministry lookups] Every Ministry lookup field is filtered to its own list
+PASS EMP-04 [Ministry lookups] A code from the wrong list is refused with a clear message
+PASS EMP-05 [Ministry identity] An invalid ID number is refused in the form
+PASS EMP-06 [Ministry identity] A duplicate ID number is refused
+PASS EMP-07 [Jameah] Employee form -> View -> Ministry (Jameah) Data opens
+PASS EMP-08 [Ministry identity] Non-Saudi (Iqama) employee: form keeps the Iqama number, opens unchanged and saves
+PASS LIC-01 [Medical licenses] HR creates a Medical License for the employee
+PASS LIC-02 [Medical licenses] Employees see only their own license
+PASS REC-01 [Recruitment] An invalid application link shows the 'invalid link' message
+PASS REC-02 [Recruitment] HR cannot create a link that would grant an admin role
+PASS REC-03 [Recruitment] Academic (Instructor) applicant -> HR hires -> Employee + Instructor + login
+PASS REC-04 [Recruitment] Academic Advisor applicant -> Employee + Advisor record (phone normalised, no error)
+PASS REC-05 [Recruitment] Non-academic applicant -> Employee (corrected Appreciation list)
+PASS REC-08 [Recruitment] An academic hire with a personal e-mail is refused up front; nothing is created
+PASS REC-06 [Jameah] Form selections -> Employee record -> Ministry views carry the same codes
+PASS REC-07 [Jameah] Teaching hires (Instructor, Advisor) are not sent as Employees
+PASS REC-10 [Recruitment] A new hire's Employee record saves straight away (no 'Missing Fields')
+PASS REC-09 [Recruitment] A hired employee opens without 'Not Saved'; answers that don't apply are not stored
+PASS PRS-01 [Academic presence] Faculty Schedules for 6-12 Sep 2026 list sessions
+PASS PRS-02 [Academic presence] Faculty filter narrows to one faculty member
+PASS PRS-03 [Academic presence] Proctor Schedules tab loads
+PASS PRS-04 [Academic presence] Students on Campus for 8 Sep 2026: hourly table, 858 expected
+PASS PRS-05 [Academic presence] Faculty After 4 PM lists people with an evidence source
+PASS PRS-06 [Academic presence] Export (Excel CSV) downloads a file
+PASS JM-01 [Jameah] Jameah Data Check: 0 invalid codes, 23 views (Employee, Faculty, Student), settings and review lists
+PASS JM-02 [Jameah] Jameah Settings: picker filtered; wrong-list code refused in form and server
+PASS JM-03 [Jameah] Code Map: values waiting for review; picker limited to the row's list
+PASS RPT-01 [Ministry data] HR Manager: Employees Missing Ministry Data report opens with the data-sheet buttons
+PASS RPT-02 [Ministry data] HR User: the report opens without Download / Import
+PASS SHL-01 [Portal shell] Employee Portal: menu > New Request > Permission Request opens the request form
+PASS SHL-03 [Portal shell] Leaving to a standard list brings Frappe's navbar back; going back restores the portal
+PASS SHL-04 [Portal shell] An employee refused an HR page still has the navbar (not stranded)
+FAIL SHL-05 [Portal shell] Dark mode and Arabic (right-to-left) switch from the top bar, and back -- TimeoutError: Timeout 90000ms exceeded.
+=========================== logs ===========================
+waiting for navigation until 'load'
+============================================================
+PASS SHL-02 [Portal shell] HR User: the menu only lists pages they can open; breadcrumb leads home
+FAIL SWP-01 [Error sweep] HR Manager: visit every reachable page, list and new form - no errors -- AssertionError: ['/app/user-profile: navigation-timeout Page.wait_for_function: Timeout 60000ms exceeded.', '/app/user/qa.hr.manager%40rchs-qa.test: console-error ling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "apps/frappe/frappe/permissions.py", line 879, in wrapper\n  ', '/app/user/qa.hr.manager%40rchs-qa.test: error-dialog Not permitted\nUser qa.hr.manager@rchs-qa.test does not have doctype access via role permission for document Page\nNo permission for Page']
+FAIL SWP-02 [Error sweep] HR User: visit every reachable page, list and new form - no errors -- AssertionError: ['/app/user-profile: navigation-timeout Page.wait_for_function: Timeout 60000ms exceeded.', '/app/user/qa.hr.user%40rchs-qa.test: console-error ling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "apps/frappe/frappe/permissions.py", line 879, in wrapper\n  ', '/app/user/qa.hr.user%40rchs-qa.test: error-dialog Not permitted\nUser qa.hr.user@rchs-qa.test does not have doctype access via role permission for document Page\nNo permission for Page']
