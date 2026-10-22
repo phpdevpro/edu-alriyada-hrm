@@ -795,17 +795,30 @@ def fill_application(gp, email, idno):
 				chosen[(row ? row.parentElement.id + '.' : '') + el.name] = el.value;
 			} else if (/_ar$/.test(el.name)) el.value = 'محمد';
 			else if (el.type === 'email') el.value = email;
-			else if (el.type === 'tel') el.value = el.name.includes('extention') ? '321' : '0500000777';
+			else if (el.name.includes('extention')) el.value = '321';
+			else if (el.type === 'tel') el.value = '0500000777';
 			else if (el.type === 'number') el.value = el.name === 'graduation_year' ? '2015' : '4';
 			else if (el.type === 'date') el.value = '2015-06-30';
 			else if (el.type === 'url') el.value = 'https://example.com/cv.pdf';
 			else if (el.name === 'custom_identity_number') el.value = idno;
-			else if (/name/.test(el.name)) el.value = 'Qa' + idno.slice(-3);
+			else if (/name/.test(el.name)) el.value = 'Qa' + idno.slice(-3).replace(/\d/g, d => 'abcdefghij'[d]);  // letters only (form rule)
 			else if (!el.value) el.value = 'QA ' + el.name + ' ' + idno;
 			el.dispatchEvent(new Event('change', {bubbles: true}));
 		});
 		return chosen;
 	}""", [email, idno])
+
+
+def walk_to_review(gp):
+	"""The form is a step-by-step wizard (22 Oct): Next through every step like an applicant, then tick the consent."""
+	for _ in range(15):
+		if gp.is_visible("#ja-submit-btn"):
+			break
+		gp.click("#ja-next-btn"); gp.wait_for_timeout(500)
+		refused = gp.eval_on_selector_all(".ja-step-error", "els => els.map(e => e.textContent.trim()).filter(Boolean)")
+		assert not refused, f"a step refused Next: {refused} {gp.eval_on_selector_all('.ja-field-error', 'els => els.map(e => e.textContent.trim()).filter(Boolean)')}"
+	assert gp.is_visible("#ja-submit-btn"), "never reached the review step"
+	gp.check("#ja-consent")
 
 
 def apply_and_hire(b, h, category, role, email, idno, company_email, refused_email=None):
@@ -827,6 +840,7 @@ def apply_and_hire(b, h, category, role, email, idno, company_email, refused_ema
 	chosen = fill_application(g.page, email, idno)
 	bad = g.page.eval_on_selector_all("#ja-form :invalid", "els => els.map(e => e.name || e.id)")
 	assert not bad, f"form still invalid: {bad}"
+	walk_to_review(g.page)
 	with g.page.expect_response(lambda r: "submit_application" in r.url, timeout=30000) as info:
 		g.page.click("#ja-submit-btn")
 	g.page.wait_for_timeout(800)

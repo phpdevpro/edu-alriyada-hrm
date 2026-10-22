@@ -194,3 +194,23 @@ class TestJameahCodeMap(unittest.TestCase):
 		settings = frappe.get_single("Jameah Settings")
 		settings.college = C("Gender", "1")
 		self.assertRaises(frappe.ValidationError, settings.save)
+
+
+class TestJameahSummaryRefresh(unittest.TestCase):
+	def test_second_refresh_is_skipped_while_one_runs(self):
+		from frappe.database import get_db
+
+		from medical_hrms.jameah import summary
+
+		# Another connection (as the hourly job would be) holds the rebuild lock.
+		other = get_db(host=frappe.conf.db_host, user=frappe.conf.db_user or frappe.conf.db_name, password=frappe.conf.db_password,
+			port=frappe.conf.db_port, cur_db_name=frappe.conf.db_name, socket=frappe.conf.db_socket)
+		lock = f"{frappe.conf.db_name}:{summary.TABLE}"[:64]
+		try:
+			self.assertEqual(other.sql("SELECT GET_LOCK(%s, 0)", lock)[0][0], 1)
+			before = frappe.db.get_single_value("Jameah Settings", "academic_summary_refreshed_on")
+			self.assertIsNone(summary.refresh())
+			self.assertEqual(frappe.db.get_single_value("Jameah Settings", "academic_summary_refreshed_on"), before)
+		finally:
+			other.sql("SELECT RELEASE_LOCK(%s)", lock)
+			other.close()

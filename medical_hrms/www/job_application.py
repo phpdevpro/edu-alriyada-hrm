@@ -27,6 +27,7 @@ FORM_CODE_CATEGORIES = [
 	"Religions",
 	"Residential status coding",
 	"Specialization Coding Guide",
+	"Student Evaluation Coding",  # Appreciation on academic qualifications (Ministry grade list)
 	"Study type coding",
 	"Type of special needs",
 ]

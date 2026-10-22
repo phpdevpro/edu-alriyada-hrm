@@ -1866,7 +1866,7 @@
 					<div class="ja-field"><label>{{ _("Work Telephone Number") }}</label>
 						<input type="tel" name="custom_work_telephone_number"></div>
 					<div class="ja-field"><label>{{ _("Work Telephone Extension") }}</label>
-						<input type="tel" inputmode="numeric" name="custom_work_telephone_extention_number"></div>
+						<input type="text" inputmode="numeric" maxlength="6" name="custom_work_telephone_extention_number"></div>
 					<div class="ja-field"><label>{{ _("City (Place of Business)") }}</label>
 						<select name="custom_ministry_work_city" data-category="Coding cities and governora"></select></div>
 					<div class="ja-field"><label>{{ _("Job Rank") }}</label>
@@ -2304,6 +2304,7 @@
 		arabic: {{ _("Please use Arabic letters only.") | tojson }},
 		english: {{ _("Please use English letters only.") | tojson }},
 		phoneLocal: {{ _("Enter your number without the country code.") | tojson }},
+		extension: {{ _("Use digits only (up to 6).") | tojson }},
 		searchCountry: {{ _("Search country or code") | tojson }},
 		noCountry: {{ _("No country found") | tojson }},
 		countryLabel: {{ _("Country code") | tojson }},
@@ -2912,6 +2913,8 @@
 		if (nameKind(el) === "ar" && (!ARABIC_RE.test(v) || ARABIC_DIGITS_RE.test(v))) return T.arabic;
 		if (nameKind(el) === "en" && !ENGLISH_RE.test(v)) return T.english;
 		if (el.type === "email" && !EMAIL_RE.test(v)) return T.email;
+		// An extension is a few digits, not a phone number (the 7-15 digit rule below would refuse "321").
+		if (name === "custom_work_telephone_extention_number") return /^\d{1,6}$/.test(v) ? "" : T.extension;
 		var phoneBox = el.closest && el.closest(".ja-phone");
 		if (phoneBox) {
 			var national = nationalDigits(v);

@@ -127,7 +127,22 @@ def official_credit_hours(student_ids):
 
 
 def refresh():
-	"""Rebuild the summary in one transaction, so readers never see a half-built table."""
+	"""Rebuild the summary in one transaction, so readers never see a half-built table.
+
+	One rebuild at a time (the hourly job, a migrate, or Refresh on the Jameah Data Check page): when
+	another is running, this one is skipped at once instead of waiting on the table lock until the
+	database gives up - which used to fail a migrate that overlapped the hourly job."""
+	lock = f"{frappe.conf.db_name}:{TABLE}"[:64]
+	if not frappe.db.sql("SELECT GET_LOCK(%s, 0)", lock)[0][0]:
+		print("Jameah academic summary: another refresh is running; this one is skipped.")
+		return None
+	try:
+		return _rebuild()
+	finally:
+		frappe.db.sql("SELECT RELEASE_LOCK(%s)", lock)
+
+
+def _rebuild():
 	ensure_table()
 	now = now_datetime()
 	frappe.db.sql(f"DELETE FROM `{TABLE}`")
