@@ -4,14 +4,14 @@ Rule: when an item changes, update its Status / Done on / Last updated here (wit
 line to changelog.py, then run build_all.py.
 """
 
-D21, D22 = "21 Oct 2026", "22 Oct 2026"
+D21, D22, D23 = "21 Oct 2026", "22 Oct 2026", "23 Oct 2026"
 STATUSES = ["Open", "Done", "Blocked", "Not needed"]
 SRV, DEV, OWNER, HR, ACAD, MIN, TEST = "Server admin", "Developer (Abdul Hakeem)", "Project owner", "HR", "Academic Affairs", "Ministry contact (Ms. Najah)", "Testing team"
 
 # (ID, group, item, how / where, owner, needed by, ref, status, done on, added on, last updated)
 CHECKLIST = [
 	# ------------------------------------------------------------ deployment
-	("CL-01", "1. Deploy to the live server", "Pull the new branch", "In apps/medical_hrms on the server: git fetch, then check out the branch named in the latest Change Log line.", SRV, "Before UAT", "HR-58", "Open", "", D21, D21),
+	("CL-01", "1. Deploy to the live server", "Pull develop", "In apps/medical_hrms on the server: git fetch, then check out develop (every branch merged into it on 23 Oct; see the latest Change Log line).", SRV, "Before UAT", "HR-58, HR-71", "Open", "", D21, D23),
 	("CL-02", "1. Deploy to the live server", "Migrate", "bench --site <site> migrate. Read the output: no errors; send any line 'Kept (they hold data ...)' to the developer (TC-ERR-05). The migrate also renames the three sick-leave types to Sick Leave 1 / 2 / 3 (balances kept, TC-LV-17).", SRV, "Before UAT", "HR-51, HR-68", "Open", "", D21, D22),
 	("CL-03", "1. Deploy to the live server", "Build, clear cache, restart", "bench build --app medical_hrms; bench --site <site> clear-cache; bench restart. Needed for the new HR / Employee Portal, the new report and the Arabic translations.", SRV, "Before UAT", "HR-66", "Open", "", D21, D21),
 	("CL-04", "1. Deploy to the live server", "Scheduler and long-queue worker running", "bench --site <site> doctor. The hourly Jameah refresh now runs on the long queue (about 7 minutes), so a long-queue worker must run.", SRV, "After deploy", "JM-18", "Open", "", D21, D21),
@@ -37,7 +37,7 @@ CHECKLIST = [
 	("CL-21", "4. HR data", "Academic Holiday List", "Set it in HR Settings > Academic Schedules & Presence.", HR, "Before UAT", "HR-57", "Open", "", D21, D21),
 	("CL-28", "4. HR data", "Leave period for Al Riyada College", "HR Portal > Leave > Yearly setup 1: Leave Period for this year, company Al Riyada College, tick Is Active.", HR, "Before UAT", "HR-69", "Open", "", D22, D22),
 	("CL-29", "4. HR data", "Holiday list for Al Riyada College", "Step 2: Holiday List with the official holidays and weekends; set it as the default holiday list on the Company.", HR, "Before UAT", "HR-69, DEC-10", "Open", "", D22, D22),
-	("CL-30", "4. HR data", "Leave approvers", "Step 5: set the leave approver on each Department (Leave Approvers table) or on each Employee. 3 of 4 employees have none today.", HR, "Before UAT", "HR-69", "Open", "", D22, D22),
+	("CL-30", "4. HR data", "Leave approvers", "Step 5: set the leave approver on each Department (Leave Approvers table) or on each Employee. Check the Leave setup check on the live server for how many have none.", HR, "Before UAT", "HR-69", "Open", "", D22, D23),
 	("CL-31", "4. HR data", "Annual leave balances", "Steps 3-4: submit the annual leave policy (21 or 30 days) and assign it with Leave Control Panel; the Leave setup check turns green.", HR, "Before UAT", "HR-69", "Open", "", D22, D22),
 	("CL-32", "4. HR data", "Sick Leave policy", "Review and submit 'Medical HRMS - Sick Leave (3 Pay Stages, Separate Sick Year)'; Finance checks the 75% pay on a salary slip.", "HR + Finance", "Before UAT", "HR-20, DEC-14", "Open", "", D22, D22),
 	("CL-22", "4. HR data", "Attendance devices", "Connect the devices so Faculty After 4 PM uses real check-out times.", "HR + IT", "Later", "HR-56", "Open", "", D21, D21),
@@ -48,4 +48,8 @@ CHECKLIST = [
 	("CL-33", "5. Reviews and testing", "Leave flow UAT", "An employee and their manager go through TC-LV-09 - TC-LV-17: plan, apply now, approve, return (also after sick leave).", TEST, "UAT", "HR-68", "Open", "", D22, D22),
 	("CL-26", "5. Reviews and testing", "Arabic interface", "Switch to AR and repeat a few test cases (HR Portal, Employee Portal, application form).", TEST, "UAT", "—", "Open", "", D21, D21),
 	("CL-27", "5. Reviews and testing", "Developer copy of Education up to date", "On the development machine the Education checkout is behind its master branch; update it before testing there (git pull --ff-only).", OWNER, "Now", "—", "Open", "", D21, D21),
+	# ------------------------------------------------------------ team and repository
+	("CL-34", "6. Team and repository", "Delete the merged branches on GitHub", "After UAT: feature/uat-2026-10-22, feature/hr-portal-design, feature/jameah-ministry-views, fix/hrm-e2e-approval-permission-bugs, ministry-lookup, employee-applicant (all merged into develop; their history stays in develop).", OWNER, "After UAT", "HR-71", "Open", "", D23, D23),
+	("CL-35", "6. Team and repository", "Assign the open tasks", "Task Tracker, Tasks sheet: put a team member in the Owner column of each open task (e.g. HR-73, HR-16, HR-17, HR-25, JM-15, JM-19).", OWNER, "Now", "HR-73", "Open", "", D23, D23),
+	("CL-36", "6. Team and repository", "Checks before every release", "python3 tests/checks/files.py; fx.py tests/checks/site.py; python3 tests/checks/api_methods.py; then the browser suite (tests/e2e/README.md). All must pass.", DEV, "Every release", "HR-72", "Open", "", D23, D23),
 ]

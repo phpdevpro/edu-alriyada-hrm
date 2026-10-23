@@ -6,6 +6,7 @@ from frappe.utils import cint
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_ministry_codes(doctype, txt, searchfield, start, page_len, filters, **kwargs):
+	filters = frappe.parse_json(filters) if isinstance(filters, str) else filters  # a direct API call sends JSON text
 	category = filters.get("code_category") if isinstance(filters, dict) else None
 	if not category:
 		frappe.throw(_("Code category is required"))

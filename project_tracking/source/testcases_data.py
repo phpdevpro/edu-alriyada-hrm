@@ -140,6 +140,8 @@ CASES = [
 		"Refused (403/404). HR can open it.", "Critical", "Security", "APR-08"),
 	("TC-SEC-09", "Security & privacy", "Job application cannot grant admin rights", HR, "—", "Create a Job Application Link and look at the Role list.", "—",
 		"Only hireable roles are offered (Employee, Instructor, Academic Advisor...), never System Manager or HR roles.", "Critical", "Security", "REC-02"),
+	("TC-SEC-10", "Security & privacy", "Server methods refuse the wrong role", "Developer", "QA logins loaded (qa_fixtures.py), bench running.", "python3 tests/checks/api_methods.py", "—",
+		"Every method: refused (403) for a visitor except the job form and receipt; HR-only methods refused for employees; no server error (500); no method left out of the check.", "Critical", "Security", "tests/checks/api_methods.py"),
 	# ------------------------------------------------------------ employee master
 	("TC-EMP-01", "Employee master & Ministry fields", "Edit and save an employee who has a login", HR, "Employee with a user login.", "Change the mobile number; Save.", "New mobile",
 		"Saved with no error (this used to fail with 'Could not find Gender').", "Critical", "Regression", "EMP-01"),
@@ -251,6 +253,14 @@ CASES = [
 		"No red errors. If one appears, screenshot the console and record the time and page.", "Medium", "Monitoring", "Error sweep SWP-01..04"),
 	("TC-ERR-05", "Errors & monitoring", "Migrate output after deploying", ADM, "New branch pulled on the server.", "Run bench --site <site> migrate and read the output.", "—",
 		"No errors. If it prints 'Kept (they hold data, check before removing by hand)', send that line to the developer.", "Medium", "Monitoring", "—"),
+	("TC-ERR-06", "Errors & monitoring", "Every Medical HRMS page and form opens", HR, "Logged in as HR Manager (then repeat as HR User).", "Open each Medical HRMS doctype list, its New form and its newest saved record; the four pages, the report and both workspaces.", "—",
+		"Each opens; no red error, no 'Not permitted' for HR, no blank page.", "High", "Regression", "SWP-01/02"),
+	("TC-ERR-07", "Errors & monitoring", "Employees' own request lists open", EMP, "Logged in as an employee.", "Open the list of each self-service request type (Permission Request ... Employee Medical License) and the Employee Self Service workspace.", "—",
+		"Each opens with only the employee's own records; no error.", "Medium", "Regression", "SWP-03"),
+	("TC-ERR-08", "Errors & monitoring", "Every file of the app is valid", "Developer", "A checkout of develop.", "python3 tests/checks/files.py", "—",
+		"PROBLEMS: 0 (Python compiles, JS parses, JSON loads, translations keep their placeholders, no stray files).", "High", "Regression", "tests/checks/files.py"),
+	("TC-ERR-09", "Errors & monitoring", "Every hook, doctype and record is valid on the site", "Developer", "Site migrated.", "../../env/bin/python tests/e2e/fx.py tests/checks/site.py", "—",
+		"PROBLEMS: 0; every hook, patch and asset resolves; saved records pass validation.", "High", "Regression", "tests/checks/site.py"),
 ]
 
 # Owner checks (live server, decisions, HR data) are in checklist_data.py.

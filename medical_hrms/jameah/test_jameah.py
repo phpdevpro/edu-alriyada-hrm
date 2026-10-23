@@ -202,10 +202,12 @@ class TestJameahSummaryRefresh(unittest.TestCase):
 
 		from medical_hrms.jameah import summary
 
+		lock = f"{frappe.conf.db_name}:{summary.TABLE}"[:64]
+		if not frappe.db.sql("SELECT IS_FREE_LOCK(%s)", lock)[0][0]:
+			self.skipTest("a real summary refresh is running (it holds the lock)")
 		# Another connection (as the hourly job would be) holds the rebuild lock.
 		other = get_db(host=frappe.conf.db_host, user=frappe.conf.db_user or frappe.conf.db_name, password=frappe.conf.db_password,
 			port=frappe.conf.db_port, cur_db_name=frappe.conf.db_name, socket=frappe.conf.db_socket)
-		lock = f"{frappe.conf.db_name}:{summary.TABLE}"[:64]
 		try:
 			self.assertEqual(other.sql("SELECT GET_LOCK(%s, 0)", lock)[0][0], 1)
 			before = frappe.db.get_single_value("Jameah Settings", "academic_summary_refreshed_on")

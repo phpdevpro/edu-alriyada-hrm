@@ -4,6 +4,7 @@ Run: pwenv/bin/python e2e_full.py   (bench on :8000; qa_fixtures.py applied)
 Every result and every captured error carries a timestamp.
 """
 import datetime, json, os, re, sys, time, traceback
+from urllib.parse import quote
 from datetime import date, timedelta
 from playwright.sync_api import sync_playwright
 
@@ -1087,8 +1088,25 @@ def jameah_pages(b):
 MHRMS_DOCTYPES = ["Permission Request", "Remote Work Request", "Leave Plan Request", "Leave Return Request", "Salary Certificate Request",
 	"Pre Approved Overtime Request", "Employee Training Request", "Children Medical Allowance Request", "Company Car Request",
 	"Contract Renewal Request", "Employee Data Update Request", "Employee Medical License", "Employee Job Applicant", "Job Application Link",
-	"Jameah Code Map", "Jameah Ministry Code", "Jameah College", "Jameah Facility", "Employee", "Leave Application", "Leave Allocation",
-	"Attendance", "Expense Claim", "Travel Request", "Holiday List", "Leave Policy"]
+	"Jameah Code Map", "Jameah Ministry Code", "Jameah College", "Jameah Facility", "Jameah Academic Department", "Jameah Agency", "Jameah Branch",
+	"Jameah Deanery", "Employee", "Leave Application", "Leave Allocation", "Attendance", "Expense Claim", "Travel Request", "Holiday List", "Leave Policy"]
+# what employees file themselves (their own lists and forms are swept too)
+SELF_SERVICE = MHRMS_DOCTYPES[:12]
+
+
+def latest_records(doctypes):
+	"""/app/<doctype>/<newest record> for each doctype that has one, so saved forms are opened too, not only new ones."""
+	h, routes = CTX.get("hr"), []
+	if not h:
+		return routes
+	for d in doctypes:
+		try:
+			rows = h.rpc("frappe.client.get_list", {"doctype": d, "fields": ["name"], "order_by": "modified desc", "limit_page_length": 1})["message"]
+		except Exception:
+			continue
+		if rows:
+			routes.append(f"/app/{d.lower().replace(' ', '-')}/{quote(str(rows[0]['name']), safe='')}")
+	return routes
 
 
 def sweep_role(b, label, user, password, routes):
@@ -1105,7 +1123,7 @@ def sweep_role(b, label, user, password, routes):
 		queue += [h for h in s.page.eval_on_selector_all("a[href^='/app/']", "els => els.map(e => e.getAttribute('href'))") if h not in queue]
 	except Exception:
 		pass
-	for route in list(dict.fromkeys(queue))[:160]:
+	for route in list(dict.fromkeys(queue))[:220]:
 		before = len(ISSUES)
 		try:
 			s.goto(route)
@@ -1219,9 +1237,11 @@ def error_sweep(b):
 	slug = lambda dt: dt.lower().replace(" ", "-")
 	hr_routes = ["/app/hr-dashboard", "/app/medical-hrms", "/app/jameah-data-check", "/app/jameah-settings", "/app/hr-academic-presence/faculty",
 		"/app/hr-academic-presence/students", "/app/hr-academic-presence/proctors", "/app/hr-academic-presence/after_hours", "/app/leave-control-panel",
-		"/app/holiday-list", "/app/expense-claim/new"] + [f"/app/{slug(d)}" for d in MHRMS_DOCTYPES] + [f"/app/{slug(d)}/new" for d in MHRMS_DOCTYPES if d not in ("Jameah Ministry Code", "Employee")]
-	emp_routes = ["/app/employee-dashboard", "/app/leave-application", "/app/attendance-request", "/app/expense-claim", "/app/employee",
-		"/app/employee-medical-license"]
+		"/app/holiday-list", "/app/expense-claim/new", "/app/query-report/Employees Missing Ministry Data"] \
+		+ [f"/app/{slug(d)}" for d in MHRMS_DOCTYPES] + [f"/app/{slug(d)}/new" for d in MHRMS_DOCTYPES if d not in ("Jameah Ministry Code", "Employee")] \
+		+ latest_records(MHRMS_DOCTYPES)
+	emp_routes = ["/app/employee-dashboard", "/app/employee-self-service", "/app/leave-application", "/app/attendance-request", "/app/expense-claim",
+		"/app/employee", "/app/employee-medical-license"] + [f"/app/{slug(d)}" for d in SELF_SERVICE]
 	roles = [("SWP-01", "HR Manager", U["hr.manager"], PW, hr_routes), ("SWP-02", "HR User", U["hr.user"], PW, hr_routes),
 		("SWP-03", "Employee", U["emp1"], PW, emp_routes), ("SWP-04", "Instructor (also Employee)", INSTRUCTOR[0], INSTRUCTOR[1], ["/app/instructor-dashboard"] + emp_routes)]
 	for tid, label, user, pwd, routes in roles:

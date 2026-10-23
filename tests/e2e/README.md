@@ -2,7 +2,8 @@
 
 A real browser (Playwright, headless Chromium) works through every HR and employee function,
 recruitment, Academic Presence, the Jameah pages, the HR / Employee Portal, and an error sweep of
-every reachable page per role. Each check records pass / fail with the time; every error pop-up,
+every reachable page per role: for HR Manager and HR User every Medical HRMS doctype (list, new form and its
+newest saved record), the four pages, the report and both workspaces; for employees their own request lists. Each check records pass / fail with the time; every error pop-up,
 script error and server error is captured with its time and page.
 
 **Test sites only.** `qa_fixtures.py` creates QA logins with known passwords (`@rchs-qa.test`), so it
@@ -17,7 +18,7 @@ and `qa_cleanup.py` refuse to run unless the site is named in `QA_TEST_SITE`. Ne
     cd apps/medical_hrms
     export QA_TEST_SITE=site1.local
     QA_COMMIT=1 ../../env/bin/python tests/e2e/fx.py tests/e2e/qa_fixtures.py      # QA logins, employees, leave
-    ~/.qa-venv/bin/python tests/e2e/e2e_full.py                                    # all sections (~17 min)
+    ~/.qa-venv/bin/python tests/e2e/e2e_full.py                                    # all sections (~20 min)
     ~/.qa-venv/bin/python tests/e2e/e2e_full.py recruitment jameah_pages            # or chosen sections
     python3 tests/e2e/write_automated_results.py && python3 project_tracking/source/build_all.py
     QA_CLEAN=all QA_COMMIT=1 ../../env/bin/python tests/e2e/fx.py tests/e2e/qa_cleanup.py   # remove QA data
@@ -29,3 +30,13 @@ Unit tests and the Ministry view check run separately:
 
     bench --site site1.local run-tests --module medical_hrms.jameah.test_jameah
     bench --site site1.local execute medical_hrms.jameah.verify.run
+
+## Notes
+
+- Start a full run just after the hourly Jameah academic summary refresh has finished (Scheduled Job
+  `summary.refresh`): while it runs (10-13 minutes on an 8 GB machine) pages load slowly and checks time out.
+- `qa_cleanup.py` runs the follow-up jobs of its deletions at once (shares, versions, linked Contacts).
+  Left to the background worker they ran a few seconds later and changed the QA users that
+  `qa_fixtures.py` had just created again.
+- The application form is a step-by-step wizard: `walk_to_review()` clicks Next through the steps and ticks
+  the consent, like an applicant. English names must be letters only.

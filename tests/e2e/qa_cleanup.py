@@ -11,18 +11,17 @@ if _os.environ.get("QA_TEST_SITE") != frappe.local.site:
 
 import os
 
-from frappe.model import delete_doc as _delete_doc
-
-# Frappe removes a deleted document's shares, versions and comments in a background job after commit.
-# Run it now instead: run later, it removes the self-share of a QA user that qa_fixtures creates again
-# straight after (that user then cannot open their own My Settings / profile).
+# Deleting documents queues follow-up jobs (Frappe removes shares, versions and comments; linked Contacts are
+# updated) that a worker runs a few seconds after commit. Run them now instead: run later, they change the
+# QA users and their Contacts that qa_fixtures creates again straight after (a user lost its self-share and
+# could not open My Settings; creating a user failed with TimestampMismatchError on its Contact).
 _enqueue = frappe.enqueue
 
 
-def _enqueue_now(method, **kwargs):
-	if method == "frappe.model.delete_doc.delete_dynamic_links":
-		return _delete_doc.delete_dynamic_links(kwargs["doctype"], kwargs["name"])
-	return _enqueue(method, **kwargs)
+def _enqueue_now(method, *args, **kwargs):
+	kwargs.pop("enqueue_after_commit", None)
+	kwargs["now"] = True
+	return _enqueue(method, *args, **kwargs)
 
 
 frappe.enqueue = _enqueue_now
