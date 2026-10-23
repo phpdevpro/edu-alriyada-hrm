@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Medical HRMS &amp; Jameah - Installation and Setup Guide</title>
+<link rel="stylesheet" href="guide.css">
+</head><body>
+
+<section class="cover">
+	<div class="band">
+		<div class="logo"><img src="../images/rchs-logo.png" alt="RCHS"></div>
+		<div class="kicker">Al-Riyada College for Health Sciences · Medical HRMS</div>
+		<h1>Installation and Setup Guide</h1>
+		<div class="sub">Install Medical HRMS and the Jameah (Ministry) data views on a Frappe server, set them up for the college, and check that everything works.</div>
+	</div>
+	<div class="meta">
+		<b>For</b><span>The server administrator who installs and updates the system, and the system owner who sets it up (HR Manager / System Manager).</span>
+		<b>Covers</b><span>Medical HRMS app (<code>medical_hrms</code>) including the Jameah views, branch <code>develop</code>.</span>
+		<b>Version</b><span>23 October 2026</span>
+		<b>Built by</b><span>Abdul Hakeem (Medical HRMS and Jameah lead)</span>
+		<b>See also</b><span>User Guide (how HR, managers, employees and testers use the system).</span>
+	</div>
+</section>
+
+<section class="toc">
+	<h2>Contents</h2>
+	<ol>
+		<li>What gets installed</li>
+		<li>Before you start</li>
+		<li>Install on a new site<ol><li>Install the app</li><li>What migrate sets up</li></ol></li>
+		<li>Update an existing server</li>
+		<li>Check the installation</li>
+		<li>First-time setup<ol><li>Users and roles</li><li>Company and e-mail</li><li>Leave, in this order</li><li>Sick leave</li><li>Monthly limits and academic presence</li></ol></li>
+		<li>Jameah (Ministry) setup<ol><li>The 23 views</li><li>Jameah Settings</li><li>Jameah Code Map</li><li>Jameah Data Check</li><li>Academic figures</li><li>Verify every view</li><li>Account for the Ministry agent</li><li>Completing staff data</li></ol></li>
+		<li>Testing the installation</li>
+		<li>Troubleshooting</li>
+		<li>Command reference</li>
+	</ol>
+</section>
+
+<!-- ============================================================ 1 -->
+<h1><span class="num">1</span>What gets installed</h1>
+<p class="lead">Medical HRMS is one Frappe app, <code>medical_hrms</code>. It adds the college's HR processes on top of the standard Frappe HR (HRMS) app, and the Jameah views the Ministry's data agent reads. The standard apps are not modified.</p>
+<table>
+	<thead><tr><th style="width:32%">Part</th><th>What it gives the college</th></tr></thead>
+	<tbody>
+		<tr><td class="k">HR Portal</td><td>One page for HR: requests waiting for a decision, leave setup check and sick leave, recruitment, Ministry data, academic presence (<code>/app/hr-dashboard</code>).</td></tr>
+		<tr><td class="k">Employee Portal</td><td>Self-service for every employee: 11 request types, the leave flow (plan, apply, return), balances and monthly limits (<code>/app/employee-dashboard</code>).</td></tr>
+		<tr><td class="k">Requests</td><td>Permission, Remote Work, Salary Certificate, Overtime pre-approval, Training, Children Medical Allowance, Company Car, Employee Data Update, Leave Plan, Leave Return, Contract Renewal (HR only), Medical Licence.</td></tr>
+		<tr><td class="k">Leave</td><td>Editable starter leave types and policies (annual 21 / 30 days), sick leave in 3 pay stages with its own sick year, monthly half-day and work-from-home limits.</td></tr>
+		<tr><td class="k">Recruitment</td><td>Job Application Links, the public application form, review, and Create Employee (with login and, for academic roles, Instructor / Academic Advisor / Head of Department records).</td></tr>
+		<tr><td class="k">Ministry codes</td><td>9,867 official Ministry lookup codes, loaded on every migrate, used on Employee and applicant fields.</td></tr>
+		<tr><td class="k">Jameah views</td><td>23 read-only database views in the Ministry's format: Employees 5, Faculty 8, Students 10, with a Data Check page, a Code Map and an independent verification.</td></tr>
+		<tr><td class="k">Academic presence</td><td>Faculty and proctor schedules, students on campus per hour, faculty after 4 PM.</td></tr>
+	</tbody>
+</table>
+
+<!-- ============================================================ 2 -->
+<h1><span class="num">2</span>Before you start</h1>
+<ul>
+	<li>A Frappe <b>v15</b> bench with these apps installed on the site: <code>frappe</code>, <code>erpnext</code>, <code>hrms</code>, <code>education</code>.</li>
+	<li>MariaDB, Redis and Node (as for any Frappe bench). Medical HRMS needs no extra packages.</li>
+	<li>Workers running for the <b>short, default and long</b> queues, and the <b>scheduler</b> enabled. The Jameah academic figures are rebuilt every hour on the long queue.</li>
+	<li>Access to the GitHub repository <code>phpdevpro/edu-alriyada-hrm</code>. The branch to install is <code>develop</code>.</li>
+	<li>A backup of the site before you install or update: <code>bench --site &lt;site&gt; backup --with-files</code>.</li>
+</ul>
+<div class="warn"><b>The education app must be current</b>The Ministry GPA and credit hours use the college's official calculation that comes with the latest <code>education</code> app (master branch). Update it on the server in the same deployment.</div>
+
+<!-- ============================================================ 3 -->
+<h1><span class="num">3</span>Install on a new site</h1>
+<h2>3.1 Install the app</h2>
+<p>Run these commands as the bench user, in the bench folder. Replace <code>&lt;site&gt;</code> with the site name.</p>
+<pre>cd ~/frappe-bench
+bench get-app git@github.com:phpdevpro/edu-alriyada-hrm.git --branch develop
+bench --site &lt;site&gt; install-app medical_hrms
+bench --site &lt;site&gt; migrate
+bench build --app medical_hrms
+bench --site &lt;site&gt; clear-cache
+bench restart</pre>
+<p>The app folder must end up as <code>apps/medical_hrms</code>, and <code>sites/apps.txt</code> must list each app on its own line (see Troubleshooting).</p>
+<div class="note"><b>Read the migrate output</b>It must finish without a <code>Traceback</code>. The last part rebuilds the Jameah academic figures and takes a few minutes. If it prints a line starting with <i>Kept (they hold data ...)</i>, send that line to the developer.</div>
+
+<h2>3.2 What migrate sets up</h2>
+<p>Every <code>migrate</code> runs the app's setup steps, so a new site and an updated site end up the same. Nothing has to be run by hand.</p>
+<table>
+	<thead><tr><th style="width:36%">Step</th><th>What it does</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Ministry codes</td><td>Loads or updates the official Ministry lookup codes (Jameah Ministry Code).</td></tr>
+		<tr><td class="k">Ministry fields</td><td>Adds the Ministry and Jameah fields and tables to Employee and Instructor (identity, nationality, job rank, qualifications, experience, ...).</td></tr>
+		<tr><td class="k">Jameah</td><td>Creates the Jameah doctypes and settings, refreshes the Code Map, creates the 23 views and rebuilds the academic figures.</td></tr>
+		<tr><td class="k">HR permissions</td><td>Gives HR roles the access their pages need (for example read on Company, Holiday List, Instructor).</td></tr>
+		<tr><td class="k">Employee Self Service</td><td>Creates the employees' workspace.</td></tr>
+		<tr><td class="k">Leave starter records</td><td>Creates the leave types (annual, Sick Leave 1 / 2 / 3, unpaid) and draft policies if they are missing. Existing records and HR's changes are kept.</td></tr>
+		<tr><td class="k">Monthly limits, presence</td><td>Adds the HR Settings fields for monthly half-day / work-from-home limits and for academic presence.</td></tr>
+		<tr><td class="k">Patches</td><td>One-time data changes listed in <code>patches.txt</code> (for example the sick-leave renaming).</td></tr>
+	</tbody>
+</table>
+<div class="warn"><b>Do not run the old setup scripts</b>Earlier notes listed scripts such as <code>configure_hrm_request_governance</code>, <code>quick_grant_hr_permissions</code> and <code>apply_hr_workspace_layout</code>. Do not run them: the doctypes now carry their own permissions, and <code>configure_hrm_request_governance</code> would replace them.</div>
+
+<!-- ============================================================ 4 -->
+<h1><span class="num">4</span>Update an existing server</h1>
+<ol class="steps">
+	<li>Back up the site: <code>bench --site &lt;site&gt; backup --with-files</code>.</li>
+	<li>Get the new code:
+<pre>cd ~/frappe-bench/apps/medical_hrms
+git fetch origin
+git checkout develop
+git pull --ff-only origin develop</pre></li>
+	<li>Update the <code>education</code> app to its current master in the same deployment (see section 2).</li>
+	<li>Apply it:
+<pre>cd ~/frappe-bench
+bench --site &lt;site&gt; migrate
+bench build --app medical_hrms
+bench --site &lt;site&gt; clear-cache
+bench restart</pre></li>
+	<li>Run the checks in section 5.</li>
+</ol>
+<div class="tip"><b>Timing</b>The hourly Jameah refresh makes pages slower for a few minutes while it runs. A migrate never fails because of it any more (only one refresh runs at a time), but schedule updates outside busy hours.</div>
+
+<!-- ============================================================ 5 -->
+<h1><span class="num">5</span>Check the installation</h1>
+<table>
+	<thead><tr><th style="width:34%">Check</th><th>How</th><th style="width:28%">Expected</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Scheduler and workers</td><td><code>bench --site &lt;site&gt; doctor</code></td><td>Scheduler enabled; workers for short, default and long.</td></tr>
+		<tr><td class="k">Ministry views</td><td><code>bench --site &lt;site&gt; execute medical_hrms.jameah.verify.run</code></td><td>Every view <b>OK</b> (23).</td></tr>
+		<tr><td class="k">Error Log</td><td>Open <code>/app/error-log</code>, newest first.</td><td>No new errors since the update.</td></tr>
+		<tr><td class="k">HR login</td><td>Log in as an HR Manager.</td><td>The HR Portal opens.</td></tr>
+		<tr><td class="k">Employee login</td><td>Log in as an employee whose user is linked to an Employee record.</td><td>The Employee Portal opens with their name.</td></tr>
+		<tr><td class="k">System e-mail</td><td>Email Account <i>Notifications</i> → send a test e-mail.</td><td>The e-mail arrives.</td></tr>
+		<tr><td class="k">Logo</td><td>Open <code>/files/rchs-logo.png</code>.</td><td>The college logo shows.</td></tr>
+	</tbody>
+</table>
+<figure class="half"><img src="../images/01_login.png" alt=""><figcaption><b>Figure 1.</b> The login page. HR users land on the HR Portal and employees on the Employee Portal.</figcaption></figure>
+
+<!-- ============================================================ 6 -->
+<h1><span class="num">6</span>First-time setup</h1>
+<p class="lead">Done once by the system owner (HR Manager or System Manager) after the first installation, and checked at the start of every leave year.</p>
+
+<h2>6.1 Users and roles</h2>
+<p>Every person who logs in needs a <b>User</b>. Employees also need their User linked on their <b>Employee</b> record (field <span class="ui">User ID</span>); this gives them the Employee role and the Employee Portal.</p>
+<table>
+	<thead><tr><th style="width:30%">Role</th><th>Who has it</th><th style="width:38%">What it allows</th></tr></thead>
+	<tbody>
+		<tr><td class="k">HR Manager</td><td>Head of HR, HR system owner</td><td>Everything in the HR Portal, including the staff data sheets, starting a sick leave year, Jameah Settings and the Code Map.</td></tr>
+		<tr><td class="k">HR User</td><td>HR officers</td><td>Process requests, employees, leave and recruitment. Read-only on Jameah Settings and the Code Map; cannot use the staff data sheets or start a sick leave year.</td></tr>
+		<tr><td class="k">Employee</td><td>Every member of staff</td><td>The Employee Portal: own requests, own leave, own records only.</td></tr>
+		<tr><td class="k">Leave Approver</td><td>Managers named as leave approver</td><td>Approve the leave of the employees they approve for.</td></tr>
+		<tr><td class="k">Department Head</td><td>Heads of department</td><td>Approve training, travel and expense claims above the department-head limit.</td></tr>
+		<tr><td class="k">Finance Manager / Accounts Manager</td><td>Finance</td><td>The finance step on money requests and amounts above the finance limit.</td></tr>
+		<tr><td class="k">Education Manager</td><td>Academic Affairs</td><td>Jameah Data Check, Jameah Settings and the Code Map.</td></tr>
+		<tr><td class="k">System Manager</td><td>IT</td><td>Everything (administration).</td></tr>
+	</tbody>
+</table>
+<p>Approval limits by amount (checked when a request is approved):</p>
+<table>
+	<thead><tr><th style="width:30%">Request</th><th>Department Head</th><th>HR Manager</th><th>Finance</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Training</td><td>above 10,000</td><td>above 30,000</td><td>above 50,000</td></tr>
+		<tr><td class="k">Travel</td><td>above 15,000</td><td>—</td><td>above 50,000</td></tr>
+		<tr><td class="k">Expense claim</td><td>above 5,000</td><td>—</td><td>above 20,000</td></tr>
+		<tr><td class="k">Company car</td><td>—</td><td>—</td><td>always (final approval)</td></tr>
+		<tr><td class="k">Children medical allowance</td><td colspan="3">at most 3 children per academic year; at most 30,000 approved per child</td></tr>
+	</tbody>
+</table>
+
+<h2>6.2 Company and e-mail</h2>
+<ul>
+	<li>Check the <b>Company</b> record of the college (Al Riyada College): default holiday list (section 6.3) and the company e-mail domain.</li>
+	<li>Academic hires must use their official college e-mail (<code>@alriyada.edu.sa</code>) as Company Email; the Create Employee dialog asks for it.</li>
+	<li>Open Email Account <b>Notifications</b>, enter its password again and save, then send a test e-mail. Until this works the system cannot send e-mails.</li>
+</ul>
+
+<h2>6.3 Leave, in this order</h2>
+<p>The HR Portal has a <span class="ui">Leave</span> section with a <b>Leave setup check</b> per company and the yearly setup steps in order. Work through the steps until every line of the check is green.</p>
+<figure><img src="../images/12_hr_leave.png" alt=""><figcaption><b>Figure 2.</b> HR Portal → Leave. The setup check shows what is missing per company (orange, with a Fix link) and what is done (green). Below: daily leave work and the yearly setup steps.</figcaption></figure>
+<ol class="steps">
+	<li><span class="ui">Leave Period</span>: create this year's leave period for the company and tick <i>Is Active</i>. Migrate creates an <i>inactive</i> starter period; check its dates and activate it.</li>
+	<li><span class="ui">Holiday List</span>: enter the official holidays and weekends for the year and set it as the company's default holiday list.</li>
+	<li><span class="ui">Leave Policy</span>: review the draft policies (annual leave 21 days, annual leave 30 days for five or more years of service, and the Sick Leave policy) and <b>submit</b> the ones the college uses.</li>
+	<li><span class="ui">Leave Control Panel</span>: assign the annual leave policy to the employees together. This gives them their balance.</li>
+	<li><span class="ui">Leave Approvers</span>: set who approves leave, on each Department (Leave Approvers table) or on each Employee.</li>
+	<li><span class="ui">Monthly Limits</span>: HR Settings → Employee Monthly Limits (section 6.5).</li>
+</ol>
+<div class="warn"><b>Until this is done, employees cannot apply for leave</b>An employee with no annual leave assigned sees "No leave to apply for yet". Check the Leave setup check first when someone reports a leave problem.</div>
+
+<h2>6.4 Sick leave</h2>
+<p>Sick leave is separate from annual leave and follows the Saudi Labour Law: <b>Sick Leave 1</b> 30 days full pay, then <b>Sick Leave 2</b> 60 days at 75% pay, then <b>Sick Leave 3</b> 30 days unpaid, within one sick year that starts on the employee's first sick day.</p>
+<ol class="steps">
+	<li>Submit the policy <i>Medical HRMS - Sick Leave (3 Pay Stages, Separate Sick Year)</i>. Finance checks the 75% pay on a salary slip.</li>
+	<li>On an employee's first sick day, HR opens HR Portal → Leave → <span class="ui">Start Sick Leave Year</span>, picks the employee and the first sick day. This creates their Sick Leave 1 and 2 balances for one year; annual leave is not touched.</li>
+	<li>The employee then applies for sick leave from the Employee Portal; the stages are used in order and a request that crosses a stage must be split.</li>
+</ol>
+<figure class="small"><img src="../images/13_sick_leave_year.png" alt=""><figcaption><b>Figure 3.</b> Start Sick Leave Year (HR Manager).</figcaption></figure>
+
+<h2>6.5 Monthly limits and academic presence</h2>
+<p>In <b>HR Settings</b>:</p>
+<table>
+	<thead><tr><th style="width:42%">Field</th><th>Meaning</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Enable Monthly Half-day Limit</td><td>Limit half-day leave per calendar month.</td></tr>
+		<tr><td class="k">Leave Type Subject to Half-day Limit</td><td>Which leave type the half-day limit applies to (usually annual leave).</td></tr>
+		<tr><td class="k">Half-day Requests per Calendar Month</td><td>The limit.</td></tr>
+		<tr><td class="k">Enable Monthly Work-from-home Limit</td><td>Limit remote-work days per calendar month.</td></tr>
+		<tr><td class="k">Work-from-home Working Days per Calendar Month</td><td>The limit.</td></tr>
+		<tr><td class="k">Academic Holiday List</td><td>Holiday list used by Academic Presence (days without classes).</td></tr>
+		<tr><td class="k">Suspends Regular Classes</td><td>Event types that cancel classes on that day.</td></tr>
+		<tr><td class="k">Faculty After-hours Cut-off</td><td>The time used by "Faculty After 4 PM".</td></tr>
+	</tbody>
+</table>
+
+<!-- ============================================================ 7 -->
+<h1><span class="num">7</span>Jameah (Ministry) setup</h1>
+<p class="lead">Jameah is the Ministry's data system. Its agent reads the college's data from read-only database views in the Ministry's format. Medical HRMS creates and maintains these views; this section sets them up and checks them.</p>
+
+<h2>7.1 The 23 views</h2>
+<table>
+	<thead><tr><th style="width:18%">Group</th><th>Views</th><th style="width:26%">One row per</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Employees (5)</td><td>jameahEmployeePersonalInfo, …AcademicQualifications, …AcademicExperience, …PreviousExperience, …ProfessionalCertificates</td><td>Non-teaching employee of the reported company; table row</td></tr>
+		<tr><td class="k">Faculty (8)</td><td>jameahFacultyPersonalInfo, …Research, …AcademicQualification, …AcademicExperience, …PreviousExperience, …ProfessionalCertificates, …Awards, …Attachments</td><td>Active Instructor; table row</td></tr>
+		<tr><td class="k">Students (10)</td><td>jameahStudentPersonalInfo, …Companion, …ForeignAddress, …Relatives, …KSAAddress, …HighSchoolCertificate, …Contact, …Scholarship, …AcademicDetails, …Attachments</td><td>Student; guardian / certificate / document row</td></tr>
+	</tbody>
+</table>
+<ul>
+	<li><b>Codes, not names</b>: lookup columns carry the official Ministry code. A value that is not a valid code for its list is sent empty, never guessed.</li>
+	<li>Teaching staff are sent once, as <b>Faculty</b>, never also as Employees.</li>
+	<li>Column names follow the Ministry document exactly (including its spellings <code>EnglishFourhtName</code> and <code>Summury</code>).</li>
+</ul>
+
+<h2>7.2 Jameah Settings</h2>
+<p>Open <b>HR Portal → Ministry (Jameah) → Jameah Settings</b>. Values left empty are sent empty. Academic Affairs confirms them with the Ministry.</p>
+<table>
+	<thead><tr><th style="width:42%">Setting</th><th>Meaning</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Educational Institution (UniversityId)</td><td>RCHS is <b>P18</b> in the Ministry list.</td></tr>
+		<tr><td class="k">College (AdmissionCollegeId / CurrentCollegeId)</td><td>The college code the Ministry assigned to RCHS.</td></tr>
+		<tr><td class="k">Country of Study</td><td>Country of the campus.</td></tr>
+		<tr><td class="k">Study Location City</td><td>Campus city, used when a student has no study city.</td></tr>
+		<tr><td class="k">Study Type for Regular / Bridging Students</td><td>Study type sent for regular and for bridging students.</td></tr>
+		<tr><td class="k">GPA Type</td><td>The grading scale of the GPA column.</td></tr>
+		<tr><td class="k">Program Duration and Unit</td><td>Standard duration of the programme.</td></tr>
+		<tr><td class="k">File Base URL</td><td>Prefix for attachment links, e.g. <code>https://erp.alriyada.edu.sa</code>.</td></tr>
+		<tr><td class="k">Company Reported as Employees</td><td>Only this company's (non-teaching) employees are sent.</td></tr>
+	</tbody>
+</table>
+<figure><img src="../images/32_jameah_settings.png" alt=""><figcaption><b>Figure 4.</b> Jameah Settings.</figcaption></figure>
+
+<h2>7.3 Jameah Code Map</h2>
+<p>Some college lists keep their own codes (for example every city has code 90). The <b>Code Map</b> links each college value to the official Ministry code. Rows whose code and name agree with the official list are verified automatically; the others wait for a person.</p>
+<ol class="steps">
+	<li>Open <b>Ministry (Jameah) → Code Map</b>, filter <i>Status = Needs Review</i>.</li>
+	<li>Open a row, pick the Ministry code, set <i>Status = Verified</i>, save.</li>
+	<li>Until a row is verified, that value is sent empty.</li>
+</ol>
+<figure><img src="../images/33_jameah_code_map.png" alt=""><figcaption><b>Figure 5.</b> Jameah Code Map.</figcaption></figure>
+
+<h2>7.4 Jameah Data Check</h2>
+<p>The <b>Jameah Data Check</b> page shows what the views would send right now: invalid codes (must be 0), values waiting for a code, settings not filled, mandatory columns with gaps and problems in the source records. Use it after every data change.</p>
+<figure><img src="../images/31_jameah_data_check.png" alt=""><figcaption><b>Figure 6.</b> Jameah Data Check. Buttons at the top open the Code Map and Settings and refresh the academic figures.</figcaption></figure>
+
+<h2>7.5 Academic figures</h2>
+<p>GPA, credit hours and the latest enrolment come from a summary table rebuilt every hour (long queue, about 10 minutes), after every migrate, and with <span class="ui">Refresh Academic Figures</span> on the Data Check page. They equal the transcript (the college's official calculation). Only one rebuild runs at a time.</p>
+
+<h2>7.6 Verify every view</h2>
+<pre>bench --site &lt;site&gt; execute medical_hrms.jameah.verify.run</pre>
+<p>Rebuilds every view independently in Python and compares it with the database view value by value. Every line must say <b>OK</b>; it also lists mandatory gaps and invalid codes per view.</p>
+
+<h2>7.7 Account for the Ministry agent</h2>
+<pre>bench --site &lt;site&gt; execute medical_hrms.jameah.views.grant_statements</pre>
+<p>Prints the <code>CREATE USER</code> and <code>GRANT SELECT</code> statements for a read-only account that can read the 23 views and nothing else. Run them as the MariaDB administrator with a strong password, then give the Ministry the host, port, database, user and password.</p>
+
+<h2>7.8 Completing staff data</h2>
+<p><b>Non-teaching staff</b> (HR Manager): open <b>Ministry (Jameah) → Employees Missing Ministry Data</b>. The report lists every employee the views send with each Ministry-mandatory value still empty.</p>
+<ol class="steps">
+	<li><span class="ui">Download Data Sheet</span>: an Excel sheet with the current values; empty mandatory cells are red and Ministry lists are dropdowns.</li>
+	<li>HR fills it in.</li>
+	<li><span class="ui">Check / Import Data Sheet</span> → <span class="ui">Check (nothing is saved)</span>: a result sheet lists each row's status.</li>
+	<li>When the check is clean, <span class="ui">Import</span>: values are saved through the normal Employee checks.</li>
+</ol>
+<figure><img src="../images/30_missing_ministry_report.png" alt=""><figcaption><b>Figure 7.</b> Employees Missing Ministry Data, with the data sheet buttons.</figcaption></figure>
+<p><b>Teaching staff</b> (existing Instructors without an Employee record): the administrator exports a sheet for HR, HR fills it, then it is checked and imported:</p>
+<pre>bench --site &lt;site&gt; execute medical_hrms.instructor_data_sheet.export_sheet
+<span class="c"># HR fills the sheet and uploads it (Desk &gt; File); check it (nothing is saved):</span>
+bench --site &lt;site&gt; execute medical_hrms.instructor_data_sheet.import_sheet --kwargs "{'file': '/private/files/&lt;name&gt;.xlsx'}"
+<span class="c"># when the check is clean, import for real:</span>
+bench --site &lt;site&gt; execute medical_hrms.instructor_data_sheet.import_sheet --kwargs "{'file': '/private/files/&lt;name&gt;.xlsx', 'commit': 1}"</pre>
+
+<!-- ============================================================ 8 -->
+<h1><span class="num">8</span>Testing the installation</h1>
+<div class="warn"><b>Test sites only</b>The automatic browser tests create test logins with known passwords. They refuse to run unless the site is named in <code>QA_TEST_SITE</code>. Never run them on the live server.</div>
+<table>
+	<thead><tr><th style="width:27%">Test</th><th>Command (from <code>apps/medical_hrms</code>)</th><th style="width:28%">Passes when</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Every file</td><td><code>python3 tests/checks/files.py</code></td><td>PROBLEMS: 0</td></tr>
+		<tr><td class="k">Every hook, doctype and record</td><td><code>../../env/bin/python tests/e2e/fx.py tests/checks/site.py</code></td><td>PROBLEMS: 0</td></tr>
+		<tr><td class="k">Every server method, by role</td><td><code>python3 tests/checks/api_methods.py</code> (bench running, QA logins loaded)</td><td>TO REVIEW: 0</td></tr>
+		<tr><td class="k">Unit tests</td><td><code>bench --site &lt;test site&gt; run-tests --app medical_hrms</code> (once per test site: <code>bench --site &lt;test site&gt; set-config allow_tests true</code>)</td><td>OK</td></tr>
+		<tr><td class="k">Ministry views</td><td><code>bench --site &lt;site&gt; execute medical_hrms.jameah.verify.run</code></td><td>Every view OK</td></tr>
+		<tr><td class="k">Browser suite (95 checks)</td><td>See <code>tests/e2e/README.md</code>: load the QA data, run <code>e2e_full.py</code>, remove the QA data</td><td>95/95 passed</td></tr>
+	</tbody>
+</table>
+<p>Results of these checks go into the <b>Test Cases</b> workbook in <code>project_tracking/</code> (column <i>Last automated run</i>). The testing team then works through the same workbook by hand; see the User Guide, section "Testing the system".</p>
+<div class="tip"><b>Start the browser suite just after the hourly Jameah refresh</b>While the refresh runs, pages load slowly and checks can time out.</div>
+
+<!-- ============================================================ 9 -->
+<h1><span class="num">9</span>Troubleshooting</h1>
+<table>
+	<thead><tr><th style="width:36%">Problem</th><th>What to do</th></tr></thead>
+	<tbody>
+		<tr><td class="k">"App medical_hrms not in apps.txt"</td><td>Put each app on its own line in <code>sites/apps.txt</code> (frappe, erpnext, payments, education, hrms, medical_hrms), then install and migrate again.</td></tr>
+		<tr><td class="k">An employee sees "No leave to apply for yet"</td><td>They have no annual leave assigned: HR Portal → Leave setup check (section 6.3).</td></tr>
+		<tr><td class="k">"Failed to decrypt key ... password" in the Error Log</td><td>Email Account <i>Notifications</i>: enter the password again and save (section 6.2).</td></tr>
+		<tr><td class="k">Pages slow for a few minutes every hour</td><td>The Jameah academic summary is being rebuilt. Check the Scheduled Job Log (<i>summary.refresh</i>). On the live server, report it if it is noticeable.</td></tr>
+		<tr><td class="k">An HR user without the Employee role gets "Not permitted" on Employee Self Service</td><td>Expected: that workspace is for employees. HR works from the HR Portal.</td></tr>
+		<tr><td class="k">Academic hire refused with "College E-mail Needed"</td><td>Enter the official <code>@alriyada.edu.sa</code> address as Company Email in the Create Employee dialog.</td></tr>
+		<tr><td class="k">A Ministry column is empty</td><td>Jameah Data Check: a setting not filled, a Code Map row not verified, or data missing on the record (report / data sheet).</td></tr>
+		<tr><td class="k">Logo missing on every page</td><td>Upload <code>rchs-logo.png</code> again (Website Settings / File).</td></tr>
+	</tbody>
+</table>
+
+<!-- ============================================================ 10 -->
+<h1><span class="num">10</span>Command reference</h1>
+<pre><span class="c"># install (first time)</span>
+bench get-app git@github.com:phpdevpro/edu-alriyada-hrm.git --branch develop
+bench --site &lt;site&gt; install-app medical_hrms
+
+<span class="c"># every update</span>
+cd apps/medical_hrms &amp;&amp; git fetch origin &amp;&amp; git checkout develop &amp;&amp; git pull --ff-only origin develop &amp;&amp; cd ../..
+bench --site &lt;site&gt; migrate
+bench build --app medical_hrms
+bench --site &lt;site&gt; clear-cache &amp;&amp; bench restart
+
+<span class="c"># checks</span>
+bench --site &lt;site&gt; doctor
+bench --site &lt;site&gt; execute medical_hrms.jameah.verify.run
+
+<span class="c"># Jameah</span>
+bench --site &lt;site&gt; execute medical_hrms.jameah.views.grant_statements      <span class="c"># read-only account for the Ministry</span>
+
+<span class="c"># Ministry codes from a new Ministry workbook</span>
+bench --site &lt;site&gt; execute medical_hrms.import_ministry_excel_to_jameah_codes.execute --kwargs "{'file_path':'/absolute/path/Ministry Code - (Translated).xlsx'}"
+
+<span class="c"># teaching-staff data sheet</span>
+bench --site &lt;site&gt; execute medical_hrms.instructor_data_sheet.export_sheet
+bench --site &lt;site&gt; execute medical_hrms.instructor_data_sheet.import_sheet --kwargs "{'file': '/private/files/&lt;name&gt;.xlsx'}"</pre>
+<p class="small">Documents in the repository: <code>README.md</code>, <code>DEVELOPER_SETUP.md</code>, <code>medical_hrms/jameah/README.md</code> and <code>VIEWS.md</code> (every Ministry column and its source), <code>project_tracking/</code> (Task Tracker, Test Cases, Checklist).</p>
+
+</body></html>

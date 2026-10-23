@@ -13,3 +13,4 @@ medical_hrms.setup_employee_job_applicant_field
 medical_hrms.update_employee_academic_experience_fields
 medical_hrms.patches.remove_duplicate_job_applicant_ministry_fields
 medical_hrms.patches.sick_leave_stage_names
+medical_hrms.patches.compute_request_durations

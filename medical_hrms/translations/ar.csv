@@ -569,3 +569,5 @@ your work experience,خبراتك العملية
 {0} days left,متبقي {0} أيام
 {0} must contain English letters only.,يجب أن يحتوي {0} على أحرف إنجليزية فقط.
 Use digits only (up to 6).,أرقام فقط (حتى 6 أرقام).
+To Time must be after From Time.,يجب أن يكون وقت النهاية بعد وقت البداية.
+To Date cannot be before From Date.,لا يمكن أن يسبق تاريخ النهاية تاريخ البداية.

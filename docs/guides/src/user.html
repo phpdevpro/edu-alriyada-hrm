@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Medical HRMS &amp; Jameah - User Guide</title>
+<link rel="stylesheet" href="guide.css">
+</head><body>
+
+<section class="cover">
+	<div class="band">
+		<div class="logo"><img src="../images/rchs-logo.png" alt="RCHS"></div>
+		<div class="kicker">Al-Riyada College for Health Sciences · Medical HRMS</div>
+		<h1>User Guide</h1>
+		<div class="sub">How employees, HR staff and managers use Medical HRMS every day, how HR keeps the Ministry (Jameah) data complete, and how testers check that it works.</div>
+	</div>
+	<div class="meta">
+		<b>For</b><span>Employees · HR officers and the HR Manager · managers and leave approvers · Academic Affairs · the testing team.</span>
+		<b>Covers</b><span>Employee Portal, HR Portal, leave, requests, recruitment, Ministry (Jameah) data, Academic Presence, user acceptance testing.</span>
+		<b>Version</b><span>23 October 2026</span>
+		<b>Built by</b><span>Abdul Hakeem (Medical HRMS and Jameah lead)</span>
+		<b>See also</b><span>Installation and Setup Guide (server installation and first-time setup).</span>
+	</div>
+</section>
+
+<section class="toc">
+	<h2>Contents</h2>
+	<ol>
+		<li>Getting started<ol><li>Logging in</li><li>The portal screen</li><li>Arabic and English</li></ol></li>
+		<li>Employees: the Employee Portal<ol><li>Your dashboard</li><li>My Leave</li><li>Planning leave</li><li>Applying for leave</li><li>Coming back from leave</li><li>Sick leave</li><li>Other requests</li><li>Your requests and their status</li></ol></li>
+		<li>HR: the HR Portal<ol><li>Dashboard</li><li>Processing a request</li><li>Request steps</li></ol></li>
+		<li>HR: leave<ol><li>Leave applications</li><li>Leave plans</li><li>Leave returns</li><li>Leave section and yearly setup</li><li>Starting a sick leave year</li></ol></li>
+		<li>HR: recruitment<ol><li>Create an application link</li><li>What the applicant does</li><li>Review and hire</li></ol></li>
+		<li>HR: employee records and Ministry data</li>
+		<li>HR: academic presence</li>
+		<li>Ministry (Jameah) pages</li>
+		<li>Managers and approvers</li>
+		<li>Testing the system</li>
+		<li>Questions and answers</li>
+	</ol>
+</section>
+
+<!-- ============================================================ 1 -->
+<h1><span class="num">1</span>Getting started</h1>
+<h2>1.1 Logging in</h2>
+<p>Open the college system in your browser and log in with your college e-mail and password. The system takes you to your own page:</p>
+<table>
+	<thead><tr><th style="width:36%">You are</th><th>You land on</th></tr></thead>
+	<tbody>
+		<tr><td class="k">HR Manager or HR officer</td><td>The <b>HR Portal</b> (<code>/app/hr-dashboard</code>)</td></tr>
+		<tr><td class="k">Employee</td><td>The <b>Employee Portal</b> (<code>/app/employee-dashboard</code>)</td></tr>
+		<tr><td class="k">Instructor, Head of Department, advisor</td><td>Your own college portal, as before. If you also have an Employee record you can open the Employee Portal for your requests and leave.</td></tr>
+	</tbody>
+</table>
+<figure class="half"><img src="../images/01_login.png" alt=""><figcaption><b>Figure 1.</b> The login page.</figcaption></figure>
+
+<h2>1.2 The portal screen</h2>
+<p>Both portals look the same. On the left is the <b>menu</b>, grouped in sections; at the top, the <b>breadcrumb</b> (where you are), the <b>EN / AR</b> language switch, dark mode, notifications and your account menu (My Profile, My Settings, Log out). <span class="ui">Collapse menu</span> at the bottom gives more room. On a phone the menu opens from the menu button at the top.</p>
+<figure><img src="../images/10_hr_portal.png" alt=""><figcaption><b>Figure 2.</b> The HR Portal. The menu only shows pages you are allowed to open.</figcaption></figure>
+
+<h2>1.3 Arabic and English</h2>
+<p>Click <span class="ui">AR</span> or <span class="ui">EN</span> at the top. The page reloads in that language and remembers your choice; Arabic pages read right to left.</p>
+<figure><img src="../images/19_hr_portal_arabic.png" alt=""><figcaption><b>Figure 3.</b> The HR Portal in Arabic.</figcaption></figure>
+
+<!-- ============================================================ 2 -->
+<h1><span class="num">2</span>Employees: the Employee Portal</h1>
+<h2>2.1 Your dashboard</h2>
+<p>At the top are your name, department, designation and Employee ID, then a reminder of anything waiting for a decision, and four counters: <b>My Requests</b>, <b>Pending</b>, <b>Approved</b> and <b>Leave Applications</b>.</p>
+<figure><img src="../images/40_employee_portal.png" alt=""><figcaption><b>Figure 4.</b> The Employee Portal.</figcaption></figure>
+
+<h2>2.2 My Leave</h2>
+<p>The <b>My Leave</b> panel tells you what to do next and how much leave you have.</p>
+<ul>
+	<li><b>What's next</b>: for example a leave waiting for your manager, a planned leave you can now apply for (<span class="ui">Apply now</span>), or a leave that ended and needs a return (<span class="ui">Send Leave Return</span>).</li>
+	<li><b>Balances</b>: for each leave type, the days Allocated, Taken, Waiting for approval and Left.</li>
+	<li><b>This month's limits</b>: half-day leave and work-from-home days used this month, if HR switched these limits on.</li>
+</ul>
+<figure><img src="../images/41_my_leave.png" alt=""><figcaption><b>Figure 5.</b> My Leave.</figcaption></figure>
+
+<p>Leave follows one flow, and the three leave cards come first on your dashboard in that order:</p>
+<div class="flow avoid" style="margin:2mm 0 4mm">
+	<span class="chip c-step">1 Leave Plan</span><span class="arrow">→</span>
+	<span class="chip c-step">2 Leave Application</span><span class="arrow">→</span>
+	<span class="chip c-pending">manager approves</span><span class="arrow">→</span>
+	<span class="chip c-step">3 Leave Return</span>
+</div>
+<figure><img src="../images/42_services.png" alt=""><figcaption><b>Figure 6.</b> The request cards. <span class="ui">New Request</span> opens the form; "N request(s)" lists the ones you sent.</figcaption></figure>
+
+<h2>2.3 Planning leave (Leave Plan)</h2>
+<ol class="steps">
+	<li>Click <span class="ui">Leave Plan → New Request</span>.</li>
+	<li>Choose the leave type and the dates you plan to take, add a note if you like, and click <span class="ui">Send Request</span>.</li>
+	<li>Your manager and then your department head approve the plan. A plan does <b>not</b> use your balance.</li>
+	<li>When the time comes, My Leave shows "Plan approved"; click <span class="ui">Apply now</span>. The leave application opens with the plan's dates filled in.</li>
+</ol>
+<figure class="half"><img src="../images/44_leave_plan_dialog.png" alt=""><figcaption><b>Figure 7.</b> Leave Plan.</figcaption></figure>
+
+<h2>2.4 Applying for leave (Leave Application)</h2>
+<ol class="steps">
+	<li>Click <span class="ui">Leave Application → New Request</span> (or <span class="ui">Apply now</span> on an approved plan).</li>
+	<li>Pick the <b>Leave Type</b>. Only leave you hold is listed, with the days you have left, for example <i>Annual Leave (21 days left)</i>. <i>Leave Without Pay</i> is last: agree it with HR first.</li>
+	<li>Enter the dates (tick <span class="ui">Half Day</span> for half a day) and the reason, then <span class="ui">Send Request</span>.</li>
+	<li>Your leave approver approves it and HR is informed. You see the result in My Leave and in your requests.</li>
+</ol>
+<figure class="half"><img src="../images/43_leave_application_dialog.png" alt=""><figcaption><b>Figure 8.</b> Leave Application. The days count working days only; holidays in the holiday list are not counted.</figcaption></figure>
+
+<h2>2.5 Coming back from leave (Leave Return)</h2>
+<ol class="steps">
+	<li>When a leave has ended, My Leave shows "Your leave ended on …"; click <span class="ui">Send Leave Return</span> (or <span class="ui">Leave Return → New Request</span>).</li>
+	<li>The leave and the expected return day (the day after the leave) are filled in. Enter the day you actually came back.</li>
+	<li>After <b>sick leave</b>, attach your <b>fitness certificate</b>. It is not asked for after other leave.</li>
+	<li>Click <span class="ui">Send Request</span>. HR completes the return; after sick leave, occupational health clears you first.</li>
+</ol>
+<figure class="half"><img src="../images/45_leave_return_dialog.png" alt=""><figcaption><b>Figure 9.</b> Leave Return. Only your approved leave can be chosen, and each leave has one return.</figcaption></figure>
+
+<h2>2.6 Sick leave</h2>
+<div class="note"><b>Tell HR on your first sick day</b>Sick leave has its own year, which HR starts on your first sick day. It is used in order: <b>Sick Leave 1</b> (30 days, full pay), then <b>Sick Leave 2</b> (60 days, 75% pay), then <b>Sick Leave 3</b> (30 days, unpaid). A request that crosses from one stage to the next must be split in two.</div>
+
+<h2>2.7 Other requests</h2>
+<table>
+	<thead><tr><th style="width:24%">Card</th><th>Use it to</th><th style="width:38%">Steps after you send it</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Permission Request</td><td>Short permission or time away on one day (from / to time; the hours are counted for you).</td><td>Pending → Approved</td></tr>
+		<tr><td class="k">Remote Work</td><td>Work from home on given dates, with a work plan (the working days are counted for you).</td><td>Manager → Department Head → Approved</td></tr>
+		<tr><td class="k">Salary Certificate</td><td>An official salary certificate (purpose, addressee, language).</td><td>Manager → HR → Issued</td></tr>
+		<tr><td class="k">Overtime</td><td>Pre-approval of overtime hours.</td><td>Manager → Department Head → Approved</td></tr>
+		<tr><td class="k">Training</td><td>Professional training (course, provider, cost).</td><td>Manager → Department Head → HR → Finance → Approved</td></tr>
+		<tr><td class="k">Medical Allowance</td><td>A child medical allowance claim, with the invoice.</td><td>HR Review → HR Director → Finance → Approved</td></tr>
+		<tr><td class="k">Company Car</td><td>A company vehicle.</td><td>Manager → Department Head → HR → Finance → Approved</td></tr>
+		<tr><td class="k">Update My Data</td><td>A correction to your personal record (for example address, phone).</td><td>Manager acknowledgement → HR verification → IT updated → Completed</td></tr>
+	</tbody>
+</table>
+<p>For <b>Permission Request</b> choose the hour, the minutes and AM / PM for both times; a time without minutes or AM / PM is refused.</p>
+<figure class="half"><img src="../images/46_permission_dialog.png" alt=""><figcaption><b>Figure 10.</b> Permission Request with the time pickers.</figcaption></figure>
+<div class="tip"><b>Save Draft or Send</b><span class="ui">Save Draft</span> keeps the request for later and nobody sees it yet; <span class="ui">Send Request</span> sends it for review. A sent request can no longer be changed by you; ask HR if something is wrong.</div>
+
+<h2>2.8 Your requests and their status</h2>
+<p>Click <b>N request(s)</b> on a card to see the requests of that type, then <span class="ui">View</span> to see what you entered and the current status. <span class="ui">Recent Requests</span> in the menu lists your latest requests of every type.</p>
+<figure class="half"><img src="../images/47_my_requests.png" alt=""><figcaption><b>Figure 11.</b> My Requests.</figcaption></figure>
+<div class="note"><b>Your data is private</b>You only ever see your own requests, records and files. You cannot approve your own requests or leave, and Contract Renewal is filed by HR.</div>
+
+<!-- ============================================================ 3 -->
+<h1><span class="num">3</span>HR: the HR Portal</h1>
+<h2>3.1 Dashboard</h2>
+<p>The HR Portal opens with how many requests wait for review, <b>Today at a Glance</b> (employees, pending training, pending allowance, active licences) and one card per request type. The amber figure on a card is how many wait for a decision; <span class="ui">Open</span> opens the list.</p>
+<figure><img src="../images/11_hr_requests.png" alt=""><figcaption><b>Figure 12.</b> Employee Requests on the HR Portal.</figcaption></figure>
+<p>The menu groups everything HR uses: <b>People</b> (Employees, Employee Requests, Leave, HR Transactions), <b>Hiring &amp; Records</b> (Recruitment, Medical Licenses), <b>Academic &amp; Ministry</b> (Academic Presence, Ministry (Jameah)) and <b>Settings</b>.</p>
+
+<h2>3.2 Processing a request</h2>
+<ol class="steps">
+	<li>On the HR Portal click <span class="ui">Open</span> on the request card (or use the menu). Filter the list on <i>Status</i> to see what waits.</li>
+	<li>Open the request and check the details and any attachment.</li>
+	<li>Change <b>Status</b> to the next step once that person has agreed (for example <i>Pending Manager → Pending Dept Head</i>), or to <i>Approved / Issued</i>, or <i>Rejected</i>. Click <span class="ui">Save</span>.</li>
+	<li>The employee sees the new status on their portal straight away.</li>
+</ol>
+<figure><img src="../images/14_request_list.png" alt=""><figcaption><b>Figure 13.</b> A request list (Salary Certificate Request).</figcaption></figure>
+<figure><img src="../images/15_request_form.png" alt=""><figcaption><b>Figure 14.</b> A request form (a Remote Work Request at <i>Pending Manager</i>). HR moves the Status from step to step. Duration is counted by the system.</figcaption></figure>
+<div class="note"><b>Approval steps today</b>HR records each step in the Status after the manager, department head or Finance has agreed. Amount limits are checked when a request is approved (training above 10,000 needs a Department Head, above 30,000 the HR Manager, above 50,000 Finance; expense claims above 5,000 a Department Head, above 20,000 Finance; travel above 15,000 a Department Head, above 50,000 Finance; company cars always Finance).</div>
+
+<h2>3.3 Request steps</h2>
+<table>
+	<thead><tr><th style="width:30%">Request</th><th>Status steps</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Permission Request</td><td>Draft → Pending → Approved / Rejected</td></tr>
+		<tr><td class="k">Remote Work, Overtime</td><td>Draft → Pending Manager → Pending Dept Head → Approved / Rejected</td></tr>
+		<tr><td class="k">Leave Plan</td><td>Draft → Pending Manager → Pending Dept Head → Approved / Rejected</td></tr>
+		<tr><td class="k">Salary Certificate</td><td>Draft → Pending Manager → Pending HR → Issued / Rejected</td></tr>
+		<tr><td class="k">Training, Company Car</td><td>Draft → Pending Manager → Pending Dept Head → Pending HR → Pending Finance → Approved / Rejected</td></tr>
+		<tr><td class="k">Children Medical Allowance</td><td>Draft → Pending HR Review → Pending HR Director → Pending Finance → Approved / Rejected</td></tr>
+		<tr><td class="k">Contract Renewal (HR files it)</td><td>Draft → Pending Manager → Pending Dept Head → Pending HR → Pending VP → Approved / Rejected</td></tr>
+		<tr><td class="k">Employee Data Update</td><td>Draft → Pending Manager Acknowledgment → Pending HR Verification → IT Updated → Completed</td></tr>
+		<tr><td class="k">Leave Return</td><td>Draft → Pending HR Review → Pending Manager Readiness → (after sick leave only) Pending Occupational Health → Completed</td></tr>
+		<tr><td class="k">Medical Licence</td><td>Active / Expired / Suspended / Revoked</td></tr>
+	</tbody>
+</table>
+
+<!-- ============================================================ 4 -->
+<h1><span class="num">4</span>HR: leave</h1>
+<h2>4.1 Leave applications</h2>
+<p>The employee's <b>leave approver</b> (or HR) decides each application:</p>
+<ol class="steps">
+	<li>Open the Leave Application (HR Portal → Leave → <span class="ui">Leave applications waiting</span>).</li>
+	<li>Set <b>Status</b> to <i>Approved</i> or <i>Rejected</i> and click <span class="ui">Save</span>.</li>
+	<li>Click <span class="ui">Submit</span> and confirm. Only a submitted, approved leave is taken from the balance.</li>
+</ol>
+<figure><img src="../images/16_leave_application_form.png" alt=""><figcaption><b>Figure 15.</b> A Leave Application waiting for the approver.</figcaption></figure>
+
+<h2>4.2 Leave plans</h2>
+<p>Move the <b>Status</b> from <i>Pending Manager</i> to <i>Pending Dept Head</i> to <i>Approved</i> (or <i>Rejected</i>) and save. An approved plan says that the employee applies from the Employee Portal (<span class="ui">Apply now</span>); once they do, <span class="ui">Applied As</span> links the leave application, and <span class="ui">Open Leave Application</span> opens it.</p>
+<figure><img src="../images/17_leave_plan_form.png" alt=""><figcaption><b>Figure 16.</b> A Leave Plan Request. Leave Days counts working days.</figcaption></figure>
+
+<h2>4.3 Leave returns</h2>
+<ol class="steps">
+	<li><i>Pending HR Review</i>: check the return date. <b>Days Late</b> is counted from <b>Expected Back On</b> (the day after the leave).</li>
+	<li><i>Pending Manager Readiness</i>: the manager confirms the employee is back at work.</li>
+	<li>After <b>sick leave only</b>: <i>Pending Occupational Health</i>. Check the fitness certificate and record the <b>Occupational Health Clearance</b> (Cleared for Full Duty, Cleared for Modified Duty or Not Cleared).</li>
+	<li><i>Completed</i>. After sick leave this needs a clearance "Cleared for Full Duty" or "Cleared for Modified Duty".</li>
+</ol>
+<figure><img src="../images/18_leave_return_form.png" alt=""><figcaption><b>Figure 17.</b> A Leave Return Request (after annual leave: no fitness clearance section).</figcaption></figure>
+
+<h2>4.4 Leave section and yearly setup</h2>
+<p>HR Portal → <span class="ui">Leave</span> has three parts:</p>
+<ul>
+	<li><b>Leave setup check</b> per company: active leave period, holiday list, leave approvers and annual leave for every employee. Orange lines have a <span class="ui">Fix</span> link.</li>
+	<li><b>Daily leave work</b>: applications waiting, plans waiting, returns to complete and who is on leave today. Each count opens its list.</li>
+	<li><b>Yearly setup, in this order</b>: Leave Period, Holiday List, Leave Policy, Leave Control Panel, Leave Approvers, Monthly Limits. Do this at the start of every leave year (details in the Installation and Setup Guide, section 6.3).</li>
+</ul>
+<figure><img src="../images/12_hr_leave.png" alt=""><figcaption><b>Figure 18.</b> HR Portal → Leave.</figcaption></figure>
+<figure><img src="../images/35_leave_control_panel.png" alt=""><figcaption><b>Figure 19.</b> Leave Control Panel: assign the annual leave policy to many employees at once.</figcaption></figure>
+
+<h2>4.5 Starting a sick leave year</h2>
+<p>HR Manager only. When an employee reports their first sick day: HR Portal → Leave → <span class="ui">Start Sick Leave Year</span>, choose the employee and the <b>First Sick Day</b>, confirm. The employee then has Sick Leave 1 and 2 for one year from that day; annual leave is not touched.</p>
+<figure class="small"><img src="../images/13_sick_leave_year.png" alt=""><figcaption><b>Figure 20.</b> Start Sick Leave Year.</figcaption></figure>
+
+<!-- ============================================================ 5 -->
+<h1><span class="num">5</span>HR: recruitment</h1>
+<div class="flow avoid" style="margin:0 0 4mm">
+	<span class="chip c-step">Application link</span><span class="arrow">→</span>
+	<span class="chip c-step">applicant fills the form</span><span class="arrow">→</span>
+	<span class="chip c-pending">HR reviews</span><span class="arrow">→</span>
+	<span class="chip c-ok">Accept</span><span class="arrow">→</span>
+	<span class="chip c-ok">Create Employee</span>
+</div>
+<h2>5.1 Create an application link</h2>
+<ol class="steps">
+	<li>HR Portal → Recruitment → <b>Job Application Link</b> → <span class="ui">+ Add</span>.</li>
+	<li>Choose the <b>Application Category</b> (Academic Staff, or Non-Academic / Other Staff), the <b>Role</b> to hire for (only hireable roles are offered) and the dates it is valid. Save.</li>
+	<li>Click <span class="ui">Generate Link</span> and send the link to the applicant. Each link only works within its dates.</li>
+</ol>
+<figure><img src="../images/20_application_link.png" alt=""><figcaption><b>Figure 21.</b> The generated application link (here from the test site; on the live server it starts with the college system's own address).</figcaption></figure>
+
+<h2>5.2 What the applicant does</h2>
+<p>The applicant opens the link (no login needed) and fills the form step by step, with <span class="ui">Next</span> and <span class="ui">Back</span>. The progress is saved on their device.</p>
+<ul>
+	<li>Names in English use English letters only; names in Arabic use Arabic letters only.</li>
+	<li><b>Identity Type</b> and <b>Identity Number</b> are required, following the Ministry rules (national ID 10 digits starting with 1 for Saudis, Iqama 10 digits starting with 2).</li>
+	<li>Phone numbers have a country code picker (Saudi Arabia first).</li>
+	<li>Academic applicants add their qualifications and academic experience.</li>
+	<li>On the last step they review everything, tick the confirmation and click <span class="ui">Submit Application</span>. They get a reference number and can download a PDF receipt.</li>
+</ul>
+<div class="two">
+	<figure><img src="../images/21_application_form.png" alt=""><figcaption><b>Figure 22.</b> The application form, first step.</figcaption></figure>
+	<figure><img src="../images/22_application_review.png" alt=""><figcaption><b>Figure 23.</b> The review step before sending.</figcaption></figure>
+</div>
+<figure class="half"><img src="../images/23_application_sent.png" alt=""><figcaption><b>Figure 24.</b> Application sent: reference number and receipt.</figcaption></figure>
+
+<h2>5.3 Review and hire</h2>
+<ol class="steps">
+	<li>HR Portal → Recruitment → <b>Employee Job Applicant</b>. Open an application (<i>Pending</i>) and review it.</li>
+	<li>Click <span class="ui">Accept</span> (or <span class="ui">Reject</span>).</li>
+	<li>Click <span class="ui">Create Employee</span>. The dialog asks for what the Employee record needs and the form did not ask: Academic Department, City, Geographical Work Location, Job Rank (and Gender / Date of Birth if missing), the Education Department for academic records, and the e-mail to use.</li>
+	<li>For academic hires use the official college e-mail (<code>@alriyada.edu.sa</code>) as Company Email; a personal e-mail is refused before anything is created.</li>
+	<li>Click <span class="ui">Create Employee</span>. The system creates the Employee, the login, and for academic roles the Instructor, Academic Advisor or Head of Department record. The applicant's answers and qualifications are copied over.</li>
+</ol>
+<figure><img src="../images/24_applicant_form.png" alt=""><figcaption><b>Figure 25.</b> Employee Job Applicant with Accept / Reject.</figcaption></figure>
+<figure class="half"><img src="../images/25_create_employee.png" alt=""><figcaption><b>Figure 26.</b> Create Employee.</figcaption></figure>
+
+<!-- ============================================================ 6 -->
+<h1><span class="num">6</span>HR: employee records and Ministry data</h1>
+<p>The <b>Employee</b> form has the Ministry (Jameah) fields: names in Arabic and English, identity, nationality, work city, job rank, qualifications, experience, certificates and awards. Most are Ministry lists; pick a value from the list.</p>
+<ul>
+	<li>The Ministry identity rules are checked on save (national ID / Iqama format, no duplicate identity number).</li>
+	<li><span class="ui">View → Ministry (Jameah) Data</span> on the Employee form shows exactly what is sent to the Ministry for that employee.</li>
+	<li>Teaching staff (with an Instructor record) are sent as Faculty, not as Employees.</li>
+</ul>
+<h3>Employees Missing Ministry Data (HR Manager)</h3>
+<p>HR Portal → Ministry (Jameah) → <b>Employees Missing Ministry Data</b> lists each employee with the Ministry-mandatory values still empty, named as on the Employee form. To complete many at once:</p>
+<ol class="steps">
+	<li><span class="ui">Download Data Sheet</span>: Excel with the current values; red cells are mandatory and empty; Ministry lists are dropdowns.</li>
+	<li>Fill in the sheet. Do not change the grey columns.</li>
+	<li><span class="ui">Check / Import Data Sheet</span> → <span class="ui">Check (nothing is saved)</span>: read the result sheet.</li>
+	<li>When it is clean: <span class="ui">Import</span>.</li>
+</ol>
+<figure><img src="../images/30_missing_ministry_report.png" alt=""><figcaption><b>Figure 27.</b> Employees Missing Ministry Data.</figcaption></figure>
+
+<!-- ============================================================ 7 -->
+<h1><span class="num">7</span>HR: academic presence</h1>
+<p>HR Portal → <b>Academic Presence</b> answers four questions from the published class timetables, exam committees and recorded attendance:</p>
+<table>
+	<thead><tr><th style="width:30%">Tab</th><th>Shows</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Faculty Schedules</td><td>Every teaching session by faculty member, room and mode, for the dates chosen.</td></tr>
+		<tr><td class="k">Proctor Schedules</td><td>Exam proctoring duties.</td></tr>
+		<tr><td class="k">Students on Campus</td><td>How many students are on campus per hour of a day.</td></tr>
+		<tr><td class="k">Faculty After 4 PM</td><td>Faculty on campus after the cut-off time (HR Settings).</td></tr>
+	</tbody>
+</table>
+<p><span class="ui">Refresh</span> reloads the figures; <span class="ui">Export (Excel CSV)</span> downloads the current tab. When HR has set an Academic Holiday List (HR Settings), its days are left out.</p>
+<figure><img src="../images/34_academic_presence.png" alt=""><figcaption><b>Figure 28.</b> Academic Schedules &amp; Presence.</figcaption></figure>
+
+<!-- ============================================================ 8 -->
+<h1><span class="num">8</span>Ministry (Jameah) pages</h1>
+<p>For HR and Academic Affairs (Education Manager role). The Ministry's Jameah agent reads the college data from 23 views; these pages show what is sent and what is missing.</p>
+<ul>
+	<li><b>Jameah Data Check</b>: invalid codes (must be 0), values waiting for a Ministry code, settings not filled, mandatory columns with gaps, and problems in the source records. <span class="ui">Refresh Academic Figures</span> updates GPA and credit hours now (they also refresh every hour).</li>
+	<li><b>Code Map</b>: links college values to official Ministry codes. Open a row <i>Needs Review</i>, pick the code, set <i>Verified</i>.</li>
+	<li><b>Jameah Settings</b>: institution values (college code, study location city, study types, programme duration). Empty settings are sent empty.</li>
+</ul>
+<figure><img src="../images/31_jameah_data_check.png" alt=""><figcaption><b>Figure 29.</b> Jameah Data Check.</figcaption></figure>
+<figure><img src="../images/33_jameah_code_map.png" alt=""><figcaption><b>Figure 30.</b> Jameah Code Map.</figcaption></figure>
+
+<!-- ============================================================ 9 -->
+<h1><span class="num">9</span>Managers and approvers</h1>
+<ul>
+	<li><b>Leave approvers</b> open the employee's Leave Application, set <i>Approved</i> or <i>Rejected</i>, save and submit (section 4.1). Who approves whom is set on the Department or the Employee record.</li>
+	<li><b>Managers and department heads</b> agree requests and leave plans; HR records each step in the request's Status (sections 3.2 and 4.2).</li>
+	<li><b>Department Heads</b> and <b>Finance</b> approve amounts above their limits (section 3.2).</li>
+	<li>After an employee's return, the manager confirms readiness (<i>Pending Manager Readiness</i>, section 4.3).</li>
+</ul>
+<div class="note"><b>You only see what your role allows</b>Approvers see the requests they act on; employees never see each other's requests or files.</div>
+
+<!-- ============================================================ 10 -->
+<h1><span class="num">10</span>Testing the system</h1>
+<p class="lead">For the testing team and HR during user acceptance testing (UAT). Always test on the test site, never on the live server.</p>
+<h2>10.1 What you need</h2>
+<ul>
+	<li>The <b>Test Cases</b> workbook (<code>project_tracking/Medical_HRMS_Jameah_Test_Cases.xlsx</code>): every case with its steps and expected result.</li>
+	<li>Test logins for each role. The <b>Test Accounts</b> sheet in the workbook lists which roles you need; ask the developer for the logins.</li>
+	<li>A browser (Chrome, Edge or Firefox) and, for phone checks, a phone or a narrow browser window.</li>
+</ul>
+<h2>10.2 How to run a test case</h2>
+<ol class="steps">
+	<li>Pick a case (filter on Module or Priority; do <b>Critical</b> and <b>High</b> first).</li>
+	<li>Log in with the role in <i>Login / role</i>, check the <i>Preconditions</i>, follow the <i>Steps</i> with the <i>Test data</i>.</li>
+	<li>Compare with the <i>Expected result</i>. Set <b>Result</b> to Pass, Fail, Blocked or N/A, and fill <i>Tested by</i>, <i>Test date</i> and <i>Actual result / notes</i>.</li>
+	<li>For a Fail, add a row in the <b>Bug Report</b> sheet and put its Bug ID in the test case.</li>
+</ol>
+<p>The column <b>Last automated run</b> shows the developer's own result for the same check. Test the case anyway: something can pass there and still fail for you.</p>
+<h2>10.3 Reporting a bug</h2>
+<p>In the Bug Report sheet, one row per bug:</p>
+<table>
+	<thead><tr><th style="width:34%">Column</th><th>What to write</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Date &amp; time seen</td><td>When it happened (the developer finds it in the Error Log by this time).</td></tr>
+		<tr><td class="k">Login (user), Role</td><td>Who was logged in.</td></tr>
+		<tr><td class="k">Page address (URL)</td><td>Copy it from the browser's address bar.</td></tr>
+		<tr><td class="k">What you were doing (steps)</td><td>The steps to make it happen again.</td></tr>
+		<tr><td class="k">Exact error message</td><td>Copy the text of the red message or pop-up.</td></tr>
+		<tr><td class="k">Screenshot file name</td><td>Take a screenshot and name it after the Bug ID.</td></tr>
+		<tr><td class="k">Severity, TC ID</td><td>How bad it is (Critical, High, Medium, Low) and the test case.</td></tr>
+	</tbody>
+</table>
+<h2>10.4 A quick check per role</h2>
+<table>
+	<thead><tr><th style="width:22%">Role</th><th>Check at least</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Employee</td><td>Lands on the Employee Portal; sends a Permission Request and a Leave Application; sees only their own requests; sends a Leave Return after a leave.</td></tr>
+		<tr><td class="k">Leave approver</td><td>Approves and submits a leave; the employee's balance goes down.</td></tr>
+		<tr><td class="k">HR officer</td><td>Lands on the HR Portal; every link opens; processes one request of each type; completes a leave return.</td></tr>
+		<tr><td class="k">HR Manager</td><td>Starts a sick leave year; creates an application link, hires a test applicant; downloads and checks the staff data sheet.</td></tr>
+		<tr><td class="k">Academic Affairs</td><td>Opens Jameah Data Check, Code Map and Jameah Settings.</td></tr>
+		<tr><td class="k">Everyone</td><td>Switches to Arabic; uses the system on a phone; no red error anywhere.</td></tr>
+	</tbody>
+</table>
+
+<!-- ============================================================ 11 -->
+<h1><span class="num">11</span>Questions and answers</h1>
+<table>
+	<thead><tr><th style="width:38%">Question</th><th>Answer</th></tr></thead>
+	<tbody>
+		<tr><td class="k">"No leave to apply for yet" when I open Leave Application.</td><td>HR has not assigned your annual leave for this year yet. Ask HR; they check the Leave setup check.</td></tr>
+		<tr><td class="k">My leave type is not in the list.</td><td>Only leave you hold is listed. Sick leave appears once HR starts your sick leave year.</td></tr>
+		<tr><td class="k">I sent a request with a mistake.</td><td>A sent request cannot be changed by you. Ask HR to reject it, then send a new one.</td></tr>
+		<tr><td class="k">The number of leave days is lower than the calendar days.</td><td>Weekends and holidays in the holiday list are not counted.</td></tr>
+		<tr><td class="k">The application link says it is not valid.</td><td>The link has expired or was switched off. Ask HR for a new link.</td></tr>
+		<tr><td class="k">"College E-mail Needed" when creating an employee.</td><td>Academic hires need their <code>@alriyada.edu.sa</code> e-mail as Company Email.</td></tr>
+		<tr><td class="k">A Ministry column is empty for an employee.</td><td>Use <span class="ui">View → Ministry (Jameah) Data</span> on the Employee, the Employees Missing Ministry Data report, or Jameah Data Check.</td></tr>
+		<tr><td class="k">Pages are slow for a few minutes.</td><td>The Ministry academic figures refresh every hour; wait a few minutes.</td></tr>
+		<tr><td class="k">I see a red error.</td><td>Take a screenshot, note the time and the page address, and report it (section 10.3).</td></tr>
+	</tbody>
+</table>
+
+</body></html>

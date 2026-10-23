@@ -81,6 +81,8 @@ Mapping: sheet tab → `code_category`; column A → `ministry_code`; B → `nam
 
 Current:
 
+- `docs/guides/`: **Installation and Setup Guide** and **User Guide** (PDF) for the server admin, HR, managers,
+  employees and testers; HTML sources and `build.py` in `docs/guides/src`.
 - `project_tracking/`: Task Tracker, Test Cases, Checklist (with Change Log). The task register.
 - `DEVELOPER_SETUP.md`: architecture, approval limits, leave starter records.
 - `medical_hrms/jameah/README.md`, `medical_hrms/jameah/VIEWS.md`: Ministry views and their columns.

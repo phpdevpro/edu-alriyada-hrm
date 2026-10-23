@@ -6,6 +6,8 @@ in tracker_data.py, testcases_data.py and checklist_data.py. Then run build_all.
 
 # (date, area, items, what changed, by)
 CHANGELOG = [
+	("23 Oct 2026", "Documentation", "HR-74, B-54, B-55, TC-ESS-02, TC-ESS-04, TC-ESS-16, CL-37",
+		"Installation and Setup Guide (21 pages) and User Guide (30 pages) in PDF, with screenshots from the test site (QA data only); sources in docs/guides/src. Fixed while writing them: Remote Work Request duration and Permission Request hours were always 0 (now counted; reversed times refused; a patch fills in saved requests). Re-tested: 95/95 browser checks, 42 unit tests (0 failures), 0 file and 0 site problems, 29 server methods x 3 roles, no Error Log entries.", "Abdul Hakeem"),
 	("23 Oct 2026", "Project tracking", "All tasks; HR-04 - HR-06, HR-11, HR-12, HR-28 - HR-30, HR-48, HR-66, HR-70, HR-71, HR-73, JM-03, JM-06, JM-12, JM-13, JM-16, JM-17, B-26, B-34, CL-35",
 		"Owners corrected: Abdul Hakeem designed and built Medical HRMS and Jameah and leads every development task. New column 'Assigned to' (with a dropdown) shows who a task was given to: Dinesh (HR-06, and HR-04 at first), Fathir (HR-04, HR-05, HR-70), otherwise Abdul Hakeem; client-side tasks stay with HR, Academic Affairs, the Registrar or the server admin. Wording that credited others for this work removed. Status and Priority shown in clear colours in all three workbooks (Status, Priority, Result and Severity cells only), with a priority legend in the Read Me.", "Abdul Hakeem"),
 	("23 Oct 2026", "Project tracking", "HR-72, B-52, B-53",

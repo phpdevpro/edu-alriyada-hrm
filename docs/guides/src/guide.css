@@ -1,0 +1,89 @@
+/* Shared print design for the Medical HRMS & Jameah guides (A4, rendered to PDF by build.py). */
+@page { size: A4; margin: 16mm 15mm 18mm 15mm; }
+:root {
+	--ink: #1f2a27; --muted: #5d6b66; --green: #0d6b4f; --green-dark: #094a37; --green-soft: #e3f1ec;
+	--line: #d5ddda; --code: #f3f6f5; --amber: #8a5a00; --amber-soft: #fff4dc; --red: #9b1c1c; --red-soft: #fde8e8;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; color: var(--ink); }
+body { font-family: "Ubuntu Sans", "Ubuntu", "DejaVu Sans", Arial, sans-serif; font-size: 10pt; line-height: 1.5; }
+
+/* cover */
+.cover { height: 257mm; display: flex; flex-direction: column; break-after: page; }
+.cover .band { background: var(--green); color: #fff; border-radius: 6mm; padding: 16mm 14mm 14mm; margin-top: 18mm; }
+.cover .logo { width: 26mm; height: 26mm; background: #fff; border-radius: 4mm; padding: 2mm; display: flex; align-items: center; justify-content: center; }
+.cover .logo img { width: 100%; height: auto; }
+.cover .kicker { margin-top: 10mm; text-transform: uppercase; letter-spacing: .12em; font-size: 9pt; opacity: .85; }
+.cover h1 { color: #fff; font-size: 27pt; line-height: 1.15; margin: 3mm 0 4mm; font-weight: 700; text-wrap: balance; border: 0; padding: 0; break-before: auto; }
+.cover .sub { font-size: 12pt; opacity: .92; max-width: 150mm; }
+.cover .meta { margin-top: auto; display: grid; grid-template-columns: 38mm 1fr; gap: 2mm 6mm; font-size: 9.5pt; border-top: 1px solid var(--line); padding-top: 6mm; }
+.cover .meta b { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: 8pt; padding-top: 1mm; }
+
+/* contents */
+.toc { break-after: page; }
+.toc h2 { margin-top: 0; }
+.toc ol { padding-left: 6mm; margin: 0; }
+.toc > ol > li { font-weight: 600; margin: 2.2mm 0 0; }
+.toc ol ol { font-weight: 400; color: var(--muted); padding-left: 6mm; margin: .6mm 0 0; }
+.toc ol ol li { margin: .3mm 0; }
+
+/* headings */
+h1 { font-size: 18pt; color: var(--green-dark); margin: 0 0 3.5mm; padding-bottom: 2.5mm; border-bottom: 2.5px solid var(--green); break-before: page; break-after: avoid; text-wrap: balance; }
+h1 .num { color: var(--green); margin-right: 3mm; }
+h2 { font-size: 12.5pt; color: var(--green-dark); margin: 6mm 0 2mm; break-after: avoid; }
+h3 { font-size: 10.5pt; margin: 4.5mm 0 1.5mm; break-after: avoid; }
+p { margin: 0 0 2.5mm; max-width: 172mm; }
+.lead { font-size: 10.5pt; color: var(--muted); }
+a { color: var(--green); text-decoration: none; }
+ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+li { margin: .8mm 0; }
+b, strong { font-weight: 650; }
+.ui { font-weight: 650; color: var(--green-dark); }  /* a button, menu or field name on screen */
+.path { font-weight: 600; }
+
+/* numbered steps */
+ol.steps { list-style: none; counter-reset: s; padding-left: 0; }
+ol.steps > li { counter-increment: s; position: relative; padding-left: 9mm; margin: 2mm 0; break-inside: avoid; }
+ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: .2mm; width: 6mm; height: 6mm; border-radius: 50%; background: var(--green); color: #fff; font-weight: 700; font-size: 8.5pt; display: flex; align-items: center; justify-content: center; }
+
+/* callouts */
+.note, .warn, .tip { border-radius: 2.5mm; padding: 3mm 4mm; margin: 3mm 0 4mm; break-inside: avoid; border-left: 4px solid; }
+.note { background: var(--green-soft); border-color: var(--green); }
+.tip { background: #eef3fb; border-color: #1565c0; }
+.warn { background: var(--amber-soft); border-color: #e0a000; }
+.note b:first-child, .warn b:first-child, .tip b:first-child { display: block; margin-bottom: .8mm; }
+
+/* code */
+code { font-family: "DejaVu Sans Mono", "Ubuntu Mono", monospace; font-size: 8.6pt; background: var(--code); padding: .2mm 1.2mm; border-radius: 1mm; }
+pre { font-family: "DejaVu Sans Mono", "Ubuntu Mono", monospace; font-size: 8.4pt; line-height: 1.45; background: var(--code); border: 1px solid var(--line); border-radius: 2mm; padding: 3mm 4mm; margin: 2mm 0 4mm; white-space: pre-wrap; word-break: break-word; break-inside: avoid; }
+pre .c { color: var(--muted); }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 4.5mm; font-size: 9pt; break-inside: auto; }
+thead { display: table-header-group; }
+tr { break-inside: avoid; }
+th { background: var(--green); color: #fff; text-align: left; font-weight: 600; padding: 2mm 2.5mm; }
+td { border-bottom: 1px solid var(--line); padding: 1.5mm 2.5mm; vertical-align: top; }
+tbody tr:nth-child(even) td { background: #f7faf9; }
+td.k { font-weight: 600; }
+th code { background: rgba(255, 255, 255, .18); color: #fff; }
+
+/* figures */
+figure { margin: 3mm 0 5mm; break-inside: avoid; }
+figure img { display: block; max-width: 100%; border: 1px solid var(--line); border-radius: 2mm; }
+figure.half img { max-width: 62%; }
+figure.small img { max-width: 48%; }
+figcaption { font-size: 8.5pt; color: var(--muted); margin-top: 1.5mm; }
+figcaption b { color: var(--ink); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; align-items: start; }
+.two figure { margin-top: 0; }
+
+/* status chips (same colours as the Task Tracker) */
+.chip { display: inline-block; padding: .2mm 2mm; border-radius: 1.5mm; font-size: 8.3pt; font-weight: 700; color: #fff; white-space: nowrap; }
+.c-draft { background: #b0bec5; color: var(--ink); } .c-pending { background: #ef6c00; } .c-ok { background: #2e7d32; } .c-no { background: #c62828; } .c-step { background: #1565c0; }
+.flow { display: flex; flex-wrap: wrap; gap: 1.2mm; align-items: center; }
+.flow .arrow { color: var(--muted); font-size: 8pt; }
+
+.avoid { break-inside: avoid; }
+.pagebreak { break-before: page; }
+.small { font-size: 8.8pt; color: var(--muted); }
