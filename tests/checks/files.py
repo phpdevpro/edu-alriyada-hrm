@@ -76,4 +76,16 @@ problems += [f"stray file: {f}" for f in odd]
 print(f"python {len(py)}, js {len(js)}, json {len([f for f in files if f.endswith('.json')])}, translations {len(seen)}")
 print("PROBLEMS:", len(problems))
 print("\n".join(problems))
+
+
+def _record(ok):
+	"""Result for the Test Cases workbook (tests/checks/record.py)."""
+	import importlib.util
+	spec = importlib.util.spec_from_file_location("checks_record", os.path.join(os.path.dirname(os.path.abspath(__file__)), "record.py"))
+	module = importlib.util.module_from_spec(spec)
+	spec.loader.exec_module(module)
+	module.record_from(__file__, ok)
+
+
+_record(not problems)
 sys.exit(1 if problems else 0)

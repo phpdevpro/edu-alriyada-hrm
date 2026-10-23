@@ -33,7 +33,10 @@ auto = AUTOMATED["results"]
 
 def automated_result(ref):
 	if ref.startswith("verify.run"):
-		return "Pass"  # medical_hrms.jameah.verify.run: 15/15 views OK on the run date
+		return "Pass"  # medical_hrms.jameah.verify.run: every view OK on the run date (23/23 on 23 Oct)
+	if ref.startswith("tests/checks/"):  # file / site / server-method checks record their own result
+		check = AUTOMATED.get("checks", {}).get(ref)
+		return check["result"] if check else "—"
 	ids = re.findall(r"[A-Z]{2,3}-\d{2}", ref)
 	# ranges such as LGN-01..04 or REC-03..05
 	m = re.match(r"([A-Z]{2,3})-(\d{2})\.\.(\d{2})", ref)
@@ -92,7 +95,7 @@ rows = [
 	("p", "Every change to a case updates its 'Last updated' date and gets a line in 'Change Log' (developers: project_tracking/source, then build_all.py)."),
 	("", ""),
 	("h", "Columns"),
-	("kv", ("Last automated run", "Result of the same check in the developer's automated browser run. A case can pass there and still fail for you — please test it anyway.")),
+	("kv", ("Last automated run", "Result of the same check in the developer's automated run (browser suite, or a tests/checks script for file / site / server-method checks). A case can pass there and still fail for you — please test it anyway.")),
 	("kv", ("Priority", "Critical: blocks go-live. High: must work for UAT. Medium / Low: fix before or soon after go-live.")),
 	("kv", ("Type", "Functional, Negative (wrong input must be refused), Security, Regression (a bug that was fixed), Usability, Monitoring, Data.")),
 	("", ""),

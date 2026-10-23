@@ -5,7 +5,7 @@ pages' roles and the workspaces' links. Read-only (everything is rolled back).
 
     ../../env/bin/python tests/e2e/fx.py tests/checks/site.py
 """
-import importlib, json, os
+import importlib, json, os, traceback
 import frappe
 from medical_hrms import hooks
 bad, ok = [], 0
@@ -135,5 +135,17 @@ problems = hook_problems + problems
 print("hooks, assets, patches resolved:", hook_ok)
 print("\nPROBLEMS (code / schema):", len(problems)); print("\n".join(problems))
 print("\nDATA ISSUES (validation refused on existing records):", len(data_issues)); print("\n".join(sorted(set(data_issues))[:60]))
+
+
+def _record(ok):
+	"""Result for the Test Cases workbook (tests/checks/record.py)."""
+	import importlib.util
+	spec = importlib.util.spec_from_file_location("checks_record", os.path.join(os.path.dirname(os.path.abspath(__file__)), "record.py"))
+	module = importlib.util.module_from_spec(spec)
+	spec.loader.exec_module(module)
+	module.record_from(__file__, ok)
+
+
+_record(not problems)
 if problems:
 	raise SystemExit(1)

@@ -97,5 +97,19 @@
   "SWP-02": "Pass",
   "SWP-03": "Pass",
   "SWP-04": "Pass"
+ },
+ "checks": {
+  "tests/checks/files.py": {
+   "result": "Pass",
+   "run_on": "23 Oct 2026 09:50 AST"
+  },
+  "tests/checks/site.py": {
+   "result": "Pass",
+   "run_on": "23 Oct 2026 09:50 AST"
+  },
+  "tests/checks/api_methods.py": {
+   "result": "Pass",
+   "run_on": "23 Oct 2026 09:49 AST"
+  }
  }
 }

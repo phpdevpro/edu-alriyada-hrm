@@ -6,6 +6,8 @@ in tracker_data.py, testcases_data.py and checklist_data.py. Then run build_all.
 
 # (date, area, items, what changed, by)
 CHANGELOG = [
+	("23 Oct 2026", "Project tracking", "HR-72, B-52, B-53",
+		"The three check scripts (files, site, server methods) now record their result in the Test Cases workbook (Last automated run: Pass, 23 Oct). The file check found a missing import in the site check; fixed.", "Abdul Hakeem"),
 	("23 Oct 2026", "Medical HRMS", "HR-58, HR-69, HR-71 - HR-73, B-45 - B-51, CL-01, CL-30, CL-34 - CL-36, TC-ERR-06 - TC-ERR-09, TC-SEC-10",
 		"Every branch merged into develop (ministry-lookup last; employee-applicant recorded as merged without its July files, as decided); develop is now the branch to test and deploy. Full check of every file and page (files, site, server methods by role, unit tests, browser suite with a sweep of every Medical HRMS doctype); checks kept in tests/checks. Fixed: stray files, outdated README and developer guide, QA setup race, refresh-lock test, Ministry code search. HR-69 corrected (employee counts were test hires). Result: 95/95 browser checks (error sweep: 116 pages for HR, 20 for employees), 37/37 unit tests, 23/23 Ministry views, 29 server methods x 3 roles, 0 file and 0 site problems, no Error Log entries.", "Abdul Hakeem"),
 	("22 Oct 2026", "Medical HRMS", "HR-58, HR-70, JM-05, JM-19, B-42 – B-44, TC-REC-13, TC-REC-14",

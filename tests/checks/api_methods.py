@@ -84,4 +84,16 @@ for who, user in (("guest", None), ("employee", "qa.emp1@rchs-qa.test"), ("hr.us
 			print(f"{verdict:16} {st} {exc:22} {m.split('.')[-1]:32} {text}")
 bugs += [f"not covered by this check (add it to HR_ONLY, EMPLOYEE or GUEST): {m}" for m in unlisted]
 print(f"\n{len(found)} whitelisted methods in the code; TO REVIEW:", len(bugs)); print("\n".join(bugs))
+
+
+def _record(ok):
+	"""Result for the Test Cases workbook (tests/checks/record.py)."""
+	import importlib.util
+	spec = importlib.util.spec_from_file_location("checks_record", os.path.join(os.path.dirname(os.path.abspath(__file__)), "record.py"))
+	module = importlib.util.module_from_spec(spec)
+	spec.loader.exec_module(module)
+	module.record_from(__file__, ok)
+
+
+_record(not bugs)
 sys.exit(1 if bugs else 0)

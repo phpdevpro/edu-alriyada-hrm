@@ -27,7 +27,7 @@ The workbooks are generated from the files in `source/` — edit those, never th
 | `source/checklist_data.py` | checklist items (with their dates) |
 | `source/row_dates.py` | last-updated date of every task, bug, decision and test case |
 | `source/changelog.py` | the dated change log (newest first) |
-| `source/automated_results.json` | result of the last automated browser run, per test ID |
+| `source/automated_results.json` | result of the last automated browser run, per test ID (`tests/e2e/write_automated_results.py`), and of each `tests/checks` script (they record themselves) |
 
 Then rebuild all three:
 

@@ -25,5 +25,8 @@ for f in files:
 when = datetime.strptime(started, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=OFFSET)
 passed = sum(v == "Pass" for v in results.values())
 out = {"run_on": f"{when:%-d %b %Y %H:%M} AST", "summary": f"{passed}/{len(results)} browser checks passed", "results": dict(sorted(results.items()))}
+# keep the results of tests/checks (written by tests/checks/record.py)
+if os.path.exists(OUT):
+	out["checks"] = json.load(open(OUT)).get("checks", {})
 json.dump(out, open(OUT, "w"), indent=1)
 print(out["run_on"], out["summary"])
