@@ -118,9 +118,9 @@ TASKS = [
 	("HR-36", "Academic presence", "Faculty schedules (HR requirement 1)", D20, DONE_UAT, "Abdul Hakeem", "High",
 		"Every teaching session per faculty member, room and mode; faculty filter; CSV export. Tested: 390 sessions, 58 faculty for 6–12 Sep 2026.", "HR UAT.", "0578d3d; page/hr_academic_presence"),
 	("HR-37", "Academic presence", "Proctor schedules (HR requirement 2)", D20, DONE_UAT, "Abdul Hakeem", "High",
-		"Exam Committee proctor assignments by date, time and room.", "Needs real exam committees in the system to show data.", "0578d3d"),
+		"Exam Committee proctor assignments by date, time and room. 23 Oct: the system has no exam committees yet, so the tab is empty (shown in the User Guide).", "Enter the exam committees with their proctors (Checklist CL-38).", "0578d3d"),
 	("HR-38", "Academic presence", "Students on campus per hour (HR requirement 3)", D20, DONE_UAT, "Abdul Hakeem", "High",
-		"Hourly expected / present / absent. Tested: 8 Sep 2026 = 858 expected, 397 present (matches attendance).", "HR UAT.", "0578d3d"),
+		"Hourly expected / present / absent (one-hour slots, 7:00-22:00). Tested: 8 Sep 2026 = 858 expected, 397 present (matches attendance).", "HR UAT; the client asked for each period: one-hour slots or the college's own periods (DEC-15).", "0578d3d"),
 	("HR-39", "Academic presence", "Faculty on campus after 4 PM (HR requirement 4)", D20, DONE_UAT, "Abdul Hakeem", "High",
 		"Daily list with evidence (device / class attendance / timetable); cut-off configurable in HR Settings. Tested: 27 people, 47 person-days in the test week.", "Connect attendance devices for exact times (HR-56).", "bfac883"),
 	("HR-40", "Testing", "Browser end-to-end test round 1 and fixes", D20, DONE, "Abdul Hakeem", "High",
@@ -325,5 +325,6 @@ DECISIONS = [
 	("DEC-12", "Faculty sent to the Ministry: active Instructors only (as built), or also those marked Left?", "Academic Affairs", "Recommended: active only; former faculty would need end dates.", "JM-14"),
 	("DEC-13", "Ministry codes for Faculty Status 'Active' (11 on the job, or 12 on the job + external consultant) and Contract Type 'Full Time' (1 official position, or 2 contractor)", "Academic Affairs / HR", "Pick in Jameah Code Map; until then these are sent empty.", "JM-14"),
 	("DEC-14", "Sick leave stages as built: 30 days full pay, 60 days 75% pay, 30 days unpaid, within one sick year from the first sick day", "HR + Finance", "Matches Saudi Labour Law Article 117; Finance to confirm the 75% pay on salary slips.", "HR-20, HR-30"),
+	("DEC-15", "Students on Campus: keep one-hour slots (as built, 7:00-22:00) or count by the college's own teaching periods? The client's request says 'during each period'.", "HR (client)", "Review at the progress meeting; periods would need their start and end times.", "HR-38"),
 	("DEC-11", "Ministry credit hours: Registered = hours registered this term; Passed = earned + bridged plan hours (so Passed + Remaining = Required, as on the student dashboard). The transcript also shows a lifetime 'registered' total and bridging calc-hours.", "Academic Affairs", "Recommended as built; confirm with the Ministry definitions.", "JM-18"),
 ]

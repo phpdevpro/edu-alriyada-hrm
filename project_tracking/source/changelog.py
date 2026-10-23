@@ -6,6 +6,8 @@ in tracker_data.py, testcases_data.py and checklist_data.py. Then run build_all.
 
 # (date, area, items, what changed, by)
 CHANGELOG = [
+	("23 Oct 2026", "Documentation", "HR-37, HR-38, DEC-15, CL-38",
+		"Academic Presence (HR requirements 1-4) checked against the client's request: all four are on the HR Dashboard and tested. The guides now say where each tab's data comes from, that Proctor Schedules stays empty until exam committees are entered (new Checklist CL-38), that Students on Campus counts by hour, and that after-4 PM times come from the timetable and class attendance until devices are connected. New decision DEC-15: hour slots or the college's own periods.", "Abdul Hakeem"),
 	("23 Oct 2026", "Documentation", "HR-74, B-54, B-55, TC-ESS-02, TC-ESS-04, TC-ESS-16, CL-37",
 		"Installation and Setup Guide (21 pages) and User Guide (30 pages) in PDF, with screenshots from the test site (QA data only); sources in docs/guides/src. Fixed while writing them: Remote Work Request duration and Permission Request hours were always 0 (now counted; reversed times refused; a patch fills in saved requests). Re-tested: 95/95 browser checks, 42 unit tests (0 failures), 0 file and 0 site problems, 29 server methods x 3 roles, no Error Log entries.", "Abdul Hakeem"),
 	("23 Oct 2026", "Project tracking", "All tasks; HR-04 - HR-06, HR-11, HR-12, HR-28 - HR-30, HR-48, HR-66, HR-70, HR-71, HR-73, JM-03, JM-06, JM-12, JM-13, JM-16, JM-17, B-26, B-34, CL-35",
