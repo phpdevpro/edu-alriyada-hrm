@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from changelog import CHANGELOG
 from row_dates import TRACKER as UPDATED
-from tracker_data import AS_OF, BUGS, DECISIONS, STATUSES, TASKS
+from tracker_data import ASSIGNED_TO, AS_OF, BUGS, DECISIONS, STATUSES, TASKS, TEAM
 from colours import BUG_STATUS, PRIORITY, TASK_STATUS, badge, colour_column
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "Medical_HRMS_Jameah_Task_Tracker.xlsx")
@@ -69,12 +69,12 @@ lines = [
 	("sub", f"Al-Riyada College for Health Sciences · last updated {AS_OF}"),
 	("", ""),
 	("h", "What this workbook is"),
-	("p", "One place to see what has been done on Medical HRMS (HR system) and Jameah (Ministry of Education data), what is being done now, and what is still pending."),
+	("p", "One place to see what has been done on Medical HRMS (HR system) and Jameah (the Ministry data system), what is being done now, and what is still pending."),
 	("p", "It continues the 1 Oct 2026 tracker (HRM_TASK_TRACKER.md / .csv): tasks HR-01 to HR-32 keep their IDs and are updated; HR-33 onwards and JM-01 onwards are new."),
 	("", ""),
 	("h", "Sheets"),
 	("kv", ("Summary", "Counts by status, workstream and date. Updates by itself when you change a status in Tasks.")),
-	("kv", ("Tasks", "Every task: when it was done, status, owner, evidence and the next step. Filter on any column.")),
+	("kv", ("Tasks", "Every task: when it was done, status, owner (who leads it: Abdul Hakeem for all development), assigned to (who the task is given to), evidence and the next step. Filter on any column.")),
 	("kv", ("Bugs", "Every bug found during testing, its cause, the fix and how it was verified.")),
 	("kv", ("Decisions", "Questions only the college, the Ministry or another team can answer. Yellow columns are for the answer.")),
 	("kv", ("Change Log", "Every change, newest first, with its date and the items it touched.")),
@@ -132,8 +132,9 @@ for kind, value in lines:
 
 # ------------------------------------------------------------------ Tasks
 wt = wb.create_sheet("Tasks")
-headers = ["ID", "Workstream", "Task", "When done", "Status", "Owner", "Priority", "Done so far / evidence", "Next step / pending", "Reference (commit / file)", "Last updated"]
-last = table(wt, headers, [t + (UPDATED[t[0]],) for t in TASKS], [8, 16, 42, 16, 22, 20, 9, 60, 50, 28, 13], wrap_cols=(3, 8, 9, 10))
+headers = ["ID", "Workstream", "Task", "When done", "Status", "Owner", "Assigned to", "Priority", "Done so far / evidence", "Next step / pending", "Reference (commit / file)", "Last updated"]
+assigned = lambda t: ASSIGNED_TO.get(t[0]) or ("Abdul Hakeem" if "Abdul Hakeem" in t[5] else t[5])
+last = table(wt, headers, [t[:6] + (assigned(t),) + t[6:] + (UPDATED[t[0]],) for t in TASKS], [8, 16, 42, 16, 22, 20, 16, 9, 60, 50, 28, 13], wrap_cols=(3, 9, 10, 11))
 n_tasks = len(TASKS)
 dv = DataValidation(type="list", formula1='"' + ",".join(STATUSES) + '"', allow_blank=False)
 dv.error, dv.errorTitle = "Pick a status from the list.", "Status"
@@ -141,9 +142,13 @@ wt.add_data_validation(dv)
 dv.add(f"E2:E{last + 200}")
 pv = DataValidation(type="list", formula1='"Critical,High,Medium,Low"', allow_blank=True)
 wt.add_data_validation(pv)
-pv.add(f"G2:G{last + 200}")
+pv.add(f"H2:H{last + 200}")
+# the lead picks who a task is given to; other names can still be typed (no error message)
+av = DataValidation(type="list", formula1='"' + ",".join(TEAM) + '"', allow_blank=True, showErrorMessage=False)
+wt.add_data_validation(av)
+av.add(f"G2:G{last + 200}")
 colour_column(wt, "E", 2, last + 200, TASK_STATUS)
-colour_column(wt, "G", 2, last + 200, PRIORITY)
+colour_column(wt, "H", 2, last + 200, PRIORITY)
 for row in range(2, last + 1):
 	wt.cell(row=row, column=1).font = Font(name=F, bold=True, size=10, color=INK)
 

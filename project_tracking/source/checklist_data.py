@@ -47,9 +47,9 @@ CHECKLIST = [
 	("CL-25", "5. Reviews and testing", "Portal design approval", "Client confirms the new HR Portal / Employee Portal look.", OWNER, "UAT", "HR-66", "Open", "", D21, D21),
 	("CL-33", "5. Reviews and testing", "Leave flow UAT", "An employee and their manager go through TC-LV-09 - TC-LV-17: plan, apply now, approve, return (also after sick leave).", TEST, "UAT", "HR-68", "Open", "", D22, D22),
 	("CL-26", "5. Reviews and testing", "Arabic interface", "Switch to AR and repeat a few test cases (HR Portal, Employee Portal, application form).", TEST, "UAT", "—", "Open", "", D21, D21),
-	("CL-27", "5. Reviews and testing", "Developer copy of Education up to date", "On the development machine the Education checkout is behind its master branch; update it before testing there (git pull --ff-only).", OWNER, "Now", "—", "Open", "", D21, D21),
+	("CL-27", "5. Reviews and testing", "Developer copy of the education app up to date", "On the development machine the education app checkout is behind its master branch; update it before testing there (git pull --ff-only).", OWNER, "Now", "—", "Open", "", D21, D23),
 	# ------------------------------------------------------------ team and repository
 	("CL-34", "6. Team and repository", "Delete the merged branches on GitHub", "After UAT: feature/uat-2026-10-22, feature/hr-portal-design, feature/jameah-ministry-views, fix/hrm-e2e-approval-permission-bugs, ministry-lookup, employee-applicant (all merged into develop; their history stays in develop).", OWNER, "After UAT", "HR-71", "Open", "", D23, D23),
-	("CL-35", "6. Team and repository", "Assign the open tasks", "Task Tracker, Tasks sheet: put a team member in the Owner column of each open task (e.g. HR-73, HR-16, HR-17, HR-25, JM-15, JM-19).", OWNER, "Now", "HR-73", "Open", "", D23, D23),
+	("CL-35", "6. Team and repository", "Assign the open tasks", "Task Tracker, Tasks sheet: pick who each open task is given to in the Assigned to column (dropdown; e.g. HR-73, HR-16, HR-17, HR-25, JM-15, JM-19).", OWNER, "Now", "HR-73", "Open", "", D23, D23),
 	("CL-36", "6. Team and repository", "Checks before every release", "python3 tests/checks/files.py; fx.py tests/checks/site.py; python3 tests/checks/api_methods.py; then the browser suite (tests/e2e/README.md). All must pass.", DEV, "Every release", "HR-72", "Open", "", D23, D23),
 ]

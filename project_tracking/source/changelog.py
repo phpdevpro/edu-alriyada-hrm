@@ -6,8 +6,8 @@ in tracker_data.py, testcases_data.py and checklist_data.py. Then run build_all.
 
 # (date, area, items, what changed, by)
 CHANGELOG = [
-	("23 Oct 2026", "Project tracking", "HR-04 - HR-06, HR-11, HR-28 - HR-30, HR-48, HR-66, HR-70, JM-12, JM-13, JM-16, JM-17, B-26",
-		"Owners corrected: Medical HRMS and Jameah are built by the HRMS team only, so no task is owned by the Education team (HR-11, HR-28, HR-48, JM-16, JM-17 now Abdul Hakeem; JM-12 Academic Affairs + Abdul Hakeem; JM-13 Registrar). Employee application: Dinesh + Abdul Hakeem built it (HR-06); Fathir handles its UI (HR-70) and Dinesh\'s open items (HR-04, HR-05). Status and Priority shown in clear colours in all three workbooks (Status, Priority, Result and Severity cells only), with a priority legend in the Read Me.", "Abdul Hakeem"),
+	("23 Oct 2026", "Project tracking", "All tasks; HR-04 - HR-06, HR-11, HR-12, HR-28 - HR-30, HR-48, HR-66, HR-70, HR-71, HR-73, JM-03, JM-06, JM-12, JM-13, JM-16, JM-17, B-26, B-34, CL-35",
+		"Owners corrected: Abdul Hakeem designed and built Medical HRMS and Jameah and leads every development task. New column 'Assigned to' (with a dropdown) shows who a task was given to: Dinesh (HR-06, and HR-04 at first), Fathir (HR-04, HR-05, HR-70), otherwise Abdul Hakeem; client-side tasks stay with HR, Academic Affairs, the Registrar or the server admin. Wording that credited others for this work removed. Status and Priority shown in clear colours in all three workbooks (Status, Priority, Result and Severity cells only), with a priority legend in the Read Me.", "Abdul Hakeem"),
 	("23 Oct 2026", "Project tracking", "HR-72, B-52, B-53",
 		"The three check scripts (files, site, server methods) now record their result in the Test Cases workbook (Last automated run: Pass, 23 Oct). The file check found a missing import in the site check; fixed.", "Abdul Hakeem"),
 	("23 Oct 2026", "Medical HRMS", "HR-58, HR-69, HR-71 - HR-73, B-45 - B-51, CL-01, CL-30, CL-34 - CL-36, TC-ERR-06 - TC-ERR-09, TC-SEC-10",
@@ -27,7 +27,7 @@ CHANGELOG = [
 	("21 Oct 2026", "Medical HRMS + Jameah", "HR-12, HR-31, HR-32, HR-45, HR-46, HR-59 – HR-64, JM-17, JM-18, B-24 – B-34",
 		"End-to-end test round 3 with an error sweep of every page: fixes for the errors the client reported (non-Saudi employees, "
 		"breadcrumb 'Not permitted', Cost Center pop-up, academic hire e-mail, Holiday List); HR login lands on the HR Dashboard; Ministry GPA "
-		"and credit hours from Education's official calculation. Test Report, Test Cases and Task Tracker created.", "Abdul Hakeem"),
+		"and credit hours from the college's official calculation. Test Report, Test Cases and Task Tracker created.", "Abdul Hakeem"),
 	("20 Oct 2026", "Medical HRMS + Jameah", "HR-07 – HR-09, HR-13 – HR-15, HR-19, HR-22, HR-26, HR-36 – HR-44, JM-02 – JM-07, B-12 – B-23",
 		"Jameah Employee (5) and Student (10) views built and verified value by value; Academic Presence; browser test round 2 fixes.", "Abdul Hakeem"),
 	("19 Oct 2026", "Medical HRMS + Jameah", "HR-02, HR-05, HR-06, HR-24, HR-27, HR-33 – HR-35, JM-01, B-01 – B-11",

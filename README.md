@@ -26,7 +26,7 @@ What it contains:
 - Before a pull request: run the tests below, and update the project tracking documents
   (`project_tracking/`: Task Tracker, Test Cases, Checklist; every changed row dated, plus a
   Change Log line). Rebuild them with `python3 project_tracking/source/build_all.py`.
-- Owners of open tasks are in the Task Tracker (`Owner` column).
+- The Task Tracker shows the owner of each task (who leads it) and `Assigned to` (who it was given to; the lead picks it from a dropdown).
 
 ### Install / deploy
 
