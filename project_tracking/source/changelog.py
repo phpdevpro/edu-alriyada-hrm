@@ -6,6 +6,8 @@ in tracker_data.py, testcases_data.py and checklist_data.py. Then run build_all.
 
 # (date, area, items, what changed, by)
 CHANGELOG = [
+	("23 Oct 2026", "Project tracking", "HR-04 - HR-06, HR-11, HR-28 - HR-30, HR-48, HR-66, HR-70, JM-12, JM-13, JM-16, JM-17, B-26",
+		"Owners corrected: Medical HRMS and Jameah are built by the HRMS team only, so no task is owned by the Education team (HR-11, HR-28, HR-48, JM-16, JM-17 now Abdul Hakeem; JM-12 Academic Affairs + Abdul Hakeem; JM-13 Registrar). Employee application: Dinesh + Abdul Hakeem built it (HR-06); Fathir handles its UI (HR-70) and Dinesh\'s open items (HR-04, HR-05). Status and Priority shown in clear colours in all three workbooks (Status, Priority, Result and Severity cells only), with a priority legend in the Read Me.", "Abdul Hakeem"),
 	("23 Oct 2026", "Project tracking", "HR-72, B-52, B-53",
 		"The three check scripts (files, site, server methods) now record their result in the Test Cases workbook (Last automated run: Pass, 23 Oct). The file check found a missing import in the site check; fixed.", "Abdul Hakeem"),
 	("23 Oct 2026", "Medical HRMS", "HR-58, HR-69, HR-71 - HR-73, B-45 - B-51, CL-01, CL-30, CL-34 - CL-36, TC-ERR-06 - TC-ERR-09, TC-SEC-10",

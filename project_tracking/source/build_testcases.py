@@ -11,6 +11,7 @@ sys.path.insert(0, HERE)
 from changelog import CHANGELOG
 from row_dates import CASES as CASE_DATES
 from testcases_data import CASES
+from colours import PRIORITY, TESTER_BUG_STATUS, TEST_RESULT, badge, colour_column
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "Medical_HRMS_Jameah_Test_Cases.xlsx")
 AS_OF = CHANGELOG[0][0]
@@ -23,7 +24,6 @@ thin = Side(style="thin", color="D5DDDA")
 BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
 HEAD_FILL = PatternFill("solid", fgColor="0D6B4F")
 INPUT_FILL = PatternFill("solid", fgColor="FFF7D6")
-RESULT_FILL = {"Pass": "DDF0E6", "Fail": "FBE1DE", "Blocked": "FCF2C9", "Not run": "F0F2F1", "N/A": "ECE9E4"}
 RESULTS_VALUES = ["Not run", "Pass", "Fail", "Blocked", "N/A"]
 
 # Latest automated browser run (automated_results.json, written after each full E2E run): id -> Pass / Fail
@@ -124,8 +124,7 @@ for kind, v in rows:
 		x.alignment = Alignment(wrap_text=True)
 	elif kind == "r":
 		x = ws.cell(row=r, column=2, value=v)
-		x.font = Font(name=F, bold=True, size=10, color=INK)
-		x.fill = PatternFill("solid", fgColor=RESULT_FILL[v])
+		badge(x, TEST_RESULT, v, F)
 	r += 1
 
 # ---------------------------------------------------------------- Test Cases
@@ -145,9 +144,9 @@ wt.auto_filter.ref = f"A1:{get_column_letter(len(cols))}{last}"
 dv = DataValidation(type="list", formula1='"' + ",".join(RESULTS_VALUES) + '"', allow_blank=True)
 wt.add_data_validation(dv)
 dv.add(f"M2:M{last + 200}")
-for v in RESULTS_VALUES:
-	wt.conditional_formatting.add(f"M2:M{last + 200}", FormulaRule(formula=[f'$M2="{v}"'], fill=PatternFill("solid", fgColor=RESULT_FILL[v])))
-	wt.conditional_formatting.add(f"L2:L{last + 200}", FormulaRule(formula=[f'$L2="{v}"'], fill=PatternFill("solid", fgColor=RESULT_FILL[v])))
+colour_column(wt, "M", 2, last + 200, TEST_RESULT)  # Result (testers)
+colour_column(wt, "L", 2, last + 200, TEST_RESULT)  # Last automated run
+colour_column(wt, "I", 2, last + 200, PRIORITY)
 
 # ---------------------------------------------------------------- Bug Report (for testers)
 wbg = wb.create_sheet("Bug Report")
@@ -166,6 +165,8 @@ sv = DataValidation(type="list", formula1='"Critical,High,Medium,Low"', allow_bl
 st = DataValidation(type="list", formula1='"Open,Fixed,Retest,Closed,Not a bug"', allow_blank=True)
 wbg.add_data_validation(sv); wbg.add_data_validation(st)
 sv.add("J2:J300"); st.add("L2:L300")
+colour_column(wbg, "J", 2, 300, PRIORITY)  # Severity
+colour_column(wbg, "L", 2, 300, TESTER_BUG_STATUS)
 wbg.freeze_panes = "C2"
 
 # ---------------------------------------------------------------- Test Accounts

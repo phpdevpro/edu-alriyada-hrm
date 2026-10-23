@@ -12,6 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from changelog import CHANGELOG
 from checklist_data import CHECKLIST, STATUSES
+from colours import CHECKLIST_STATUS, colour_column
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "Medical_HRMS_Jameah_Checklist.xlsx")
 AS_OF = CHANGELOG[0][0]
@@ -21,7 +22,6 @@ thin = Side(style="thin", color="D5DDDA")
 BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
 HEAD_FILL = PatternFill("solid", fgColor=ACCENT)
 INPUT_FILL = PatternFill("solid", fgColor="FFF7D6")
-STATUS_FILL = {"Open": "FCF2C9", "Done": "DDF0E6", "Blocked": "FBE1DE", "Not needed": "ECE9E4"}
 
 
 def header(ws, names, widths):
@@ -86,8 +86,7 @@ wc.auto_filter.ref = f"A1:{get_column_letter(len(cols))}{last}"
 dv = DataValidation(type="list", formula1='"' + ",".join(STATUSES) + '"', allow_blank=False)
 wc.add_data_validation(dv)
 dv.add(f"H2:H{last + 100}")
-for v in STATUSES:
-	wc.conditional_formatting.add(f"H2:H{last + 100}", FormulaRule(formula=[f'$H2="{v}"'], fill=PatternFill("solid", fgColor=STATUS_FILL[v])))
+colour_column(wc, "H", 2, last + 100, CHECKLIST_STATUS)
 
 # ---------------------------------------------------------------- Summary
 wsum = wb.create_sheet("Summary", 1)

@@ -12,6 +12,7 @@ sys.path.insert(0, HERE)
 from changelog import CHANGELOG
 from row_dates import TRACKER as UPDATED
 from tracker_data import AS_OF, BUGS, DECISIONS, STATUSES, TASKS
+from colours import BUG_STATUS, PRIORITY, TASK_STATUS, badge, colour_column
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "Medical_HRMS_Jameah_Task_Tracker.xlsx")
 AS_OF = CHANGELOG[0][0] if CHANGELOG else AS_OF
@@ -25,11 +26,6 @@ thin = Side(style="thin", color="D5DDDA")
 BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
 HEAD_FILL = PatternFill("solid", fgColor="0D6B4F")
 INPUT_FILL = PatternFill("solid", fgColor="FFF7D6")
-STATUS_FILL = {
-	"Done": "DDF0E6", "Done – client UAT pending": "E6F2EC", "In progress": "DCE9F7", "Pending – decision needed": "FDEBD2",
-	"Pending – data / setup": "FCF2C9", "Pending – development": "F3E4F7", "Pending – other team": "ECE9E4", "Planned": "F0F2F1",
-	"Fixed": "DDF0E6", "Open": "FBE1DE", "Open – other team": "ECE9E4", "Open – check server": "FCF2C9",
-}
 
 
 def style_header(ws, row, ncols):
@@ -57,12 +53,6 @@ def table(ws, headers, rows, widths, start_row=1, wrap_cols=()):
 	ws.freeze_panes = ws.cell(row=start_row + 1, column=3)
 	ws.auto_filter.ref = f"A{start_row}:{get_column_letter(len(headers))}{start_row + len(rows)}"
 	return start_row + len(rows)
-
-
-def status_colours(ws, col, first, last, values):
-	for v in values:
-		ws.conditional_formatting.add(f"A{first}:{get_column_letter(ws.max_column)}{last}",
-			FormulaRule(formula=[f'${col}{first}="{v}"'], fill=PatternFill("solid", fgColor=STATUS_FILL[v])))
 
 
 wb = Workbook()
@@ -99,10 +89,14 @@ for s in STATUSES:
 		"Pending – decision needed": "Waiting for an answer (see Decisions).",
 		"Pending – data / setup": "Code is ready; needs data entry or server setup.",
 		"Pending – development": "Not built yet.",
-		"Pending – other team": "Needs the Education team, Finance or another party.",
+		"Pending – other team": "Needs Finance, the server admin or another party outside the HRMS team.",
 		"Planned": "Agreed for later; not started.",
 	}[s]
 	lines.append(("status", (s, meaning)))
+lines += [("", ""), ("h", "Priority")]
+for p, meaning in (("Critical", "Blocks go-live or the Ministry data: do first."), ("High", "Needed for UAT / go-live."),
+		("Medium", "Needed; can follow go-live."), ("Low", "Tidy-up or nice to have.")):
+	lines.append(("prio", (p, meaning)))
 lines += [("", ""), ("h", "How to update"),
 	("p", "Every change: update the row (status, evidence, next step) and its 'Last updated' date, and add a dated line to the Change Log. The same goes for the Checklist and the Test Cases workbook."),
 	("p", "Developers: edit project_tracking/source/*.py (data, dates in row_dates.py, changelog.py) and run python3 project_tracking/source/build_all.py - all three workbooks are rebuilt."),
@@ -123,12 +117,14 @@ for kind, value in lines:
 		c.alignment = Alignment(wrap_text=True, vertical="top")
 		ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=3)
 		ws.row_dimensions[r].height = 30
-	elif kind in ("kv", "status"):
+	elif kind in ("kv", "status", "prio"):
 		a, b = value
 		ca = ws.cell(row=r, column=2, value=a)
 		ca.font = Font(name=F, bold=True, size=10, color=INK)
 		if kind == "status":
-			ca.fill = PatternFill("solid", fgColor=STATUS_FILL[a])
+			badge(ca, TASK_STATUS, a, F)
+		elif kind == "prio":
+			badge(ca, PRIORITY, a, F)
 		cb = ws.cell(row=r, column=3, value=b)
 		cb.font = Font(name=F, size=10, color=INK)
 		cb.alignment = Alignment(wrap_text=True)
@@ -146,7 +142,8 @@ dv.add(f"E2:E{last + 200}")
 pv = DataValidation(type="list", formula1='"Critical,High,Medium,Low"', allow_blank=True)
 wt.add_data_validation(pv)
 pv.add(f"G2:G{last + 200}")
-status_colours(wt, "E", 2, last + 200, STATUSES)
+colour_column(wt, "E", 2, last + 200, TASK_STATUS)
+colour_column(wt, "G", 2, last + 200, PRIORITY)
 for row in range(2, last + 1):
 	wt.cell(row=row, column=1).font = Font(name=F, bold=True, size=10, color=INK)
 
@@ -154,7 +151,7 @@ for row in range(2, last + 1):
 wbg = wb.create_sheet("Bugs")
 blast = table(wbg, ["Bug ID", "Found on", "Area", "Problem", "Cause", "Fix", "Commit / task", "Status", "How verified", "Last updated"],
 	[b + (UPDATED[b[0]],) for b in BUGS], [8, 13, 20, 46, 42, 40, 13, 18, 20, 13], wrap_cols=(4, 5, 6, 9))
-status_colours(wbg, "H", 2, blast + 100, ["Fixed", "Open", "Open – other team", "Open – check server"])
+colour_column(wbg, "H", 2, blast + 100, BUG_STATUS)
 bv = DataValidation(type="list", formula1='"Fixed,Open,Open – other team,Open – check server"', allow_blank=True)
 wbg.add_data_validation(bv)
 bv.add(f"H2:H{blast + 100}")
@@ -190,7 +187,7 @@ style_header(wsum, row, 2)
 for s in STATUSES:
 	row += 1
 	a = wsum.cell(row=row, column=1, value=s)
-	a.fill = PatternFill("solid", fgColor=STATUS_FILL[s])
+	badge(a, TASK_STATUS, s, F)
 	wsum.cell(row=row, column=2, value=f'=COUNTIF({TR},A{row})')
 first_status_row, last_status_row = 5, row
 row += 1
@@ -243,7 +240,7 @@ wsum.cell(row=row, column=2, value="Count")
 style_header(wsum, row, 2)
 for s in ("Fixed", "Open", "Open – other team", "Open – check server"):
 	row += 1
-	wsum.cell(row=row, column=1, value=s).fill = PatternFill("solid", fgColor=STATUS_FILL[s])
+	badge(wsum.cell(row=row, column=1, value=s), BUG_STATUS, s, F)
 	wsum.cell(row=row, column=2, value=f'=COUNTIF(Bugs!$H$2:$H${blast + 100},A{row})')
 
 for rr in wsum.iter_rows(min_row=4, max_row=row):
