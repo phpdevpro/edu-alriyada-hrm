@@ -28,11 +28,14 @@ app_license = "mit"
 app_include_css = [
 	"/assets/medical_hrms/css/workspace_theme.css?v=2",
 	"/assets/medical_hrms/css/hr_portal.css?v=1",  # HR / Employee Portal shell (hr_portal.js)
+	"/assets/medical_hrms/css/staff_hr_card.css?v=1",  # My HR card on the staff dashboards
 ]
 app_include_js = [
 	"/assets/medical_hrms/js/workspace_theme.js?v=2",
 	"/assets/medical_hrms/js/employee_navigation.js?v=1",
 	"/assets/medical_hrms/js/hr_portal.js?v=1",  # MhPortal: rail + top bar around the HR and Employee pages
+	"/assets/medical_hrms/js/self_service.js?v=1",  # MhSelfService: request dialogs (Employee Portal + My HR card)
+	"/assets/medical_hrms/js/staff_hr_card.js?v=1",  # My HR card on the Instructor / HOD / other staff dashboards (HR-11)
 ]
 
 # include js, css files in header of web template

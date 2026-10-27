@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Medical HRMS - Round 3: What's New and How to Test</title>
+<link rel="stylesheet" href="guide.css">
+</head><body class="compact">
+
+<section class="cover">
+	<div class="band">
+		<div class="logo"><img src="../images/rchs-logo.png" alt="RCHS"></div>
+		<div class="kicker">Al-Riyada College for Health Sciences · Medical HRMS</div>
+		<h1>Round 3: What's New and How to Test</h1>
+		<div class="sub">Only what changed in this round: instructors, heads of department and the other staff keep their own dashboard, and a <b>My HR</b> card on it gives them their leave and HR requests. The full User Guide stays the reference for everything else.</div>
+	</div>
+	<div class="meta">
+		<b>For</b><span>The testing team (and HR, to see what is new).</span>
+		<b>Test cases</b><span>10 cases: in the Test Cases workbook, filter the <b>Round</b> column on <b>Round 3</b>. They are listed in section 5.</span>
+		<b>Version</b><span>27 October 2026 · branch <code>develop</code></span>
+		<b>Built by</b><span>Abdul Hakeem (Medical HRMS and Jameah lead)</span>
+		<b>See also</b><span>Round 2 document · User Guide (updated for Round 3) · Installation and Setup Guide</span>
+	</div>
+</section>
+
+
+<!-- ============================================================ 1 -->
+<h1><span class="num">1</span>What is new</h1>
+<table>
+	<thead><tr><th style="width:32%">Change</th><th>Who sees it</th><th style="width:12%">Tracker</th><th style="width:22%">Test cases</th></tr></thead>
+	<tbody>
+		<tr><td class="k">A My HR card on the staff dashboards</td><td>Instructors, heads of department, deans and the other staff whose login is linked to an Employee record</td><td>HR-11</td><td>TC-STF-01, 02, 07</td></tr>
+		<tr><td class="k">Requests and leave from the card</td><td>The same people: New Request, Apply for Leave, View, without leaving their dashboard</td><td>HR-11</td><td>TC-STF-03 to 06</td></tr>
+		<tr><td class="k">Nothing changes for staff without an Employee record</td><td>Their dashboard stays exactly as before</td><td>HR-11</td><td>TC-STF-08</td></tr>
+		<tr><td class="k">One set of request windows for both</td><td>Employees: nothing visible changes on the Employee Portal</td><td>HR-11</td><td>TC-STF-09, 10</td></tr>
+	</tbody>
+</table>
+<p>Before this round, an instructor or head of department had to know the Employee Portal's address to send a request: their login opens their own dashboard. Nothing else changed: Round 1 and Round 2 test cases keep their results.</p>
+
+<!-- ============================================================ 2 -->
+<h1><span class="num">2</span>Before you start</h1>
+<ol class="steps">
+	<li>Ask the developer to confirm that the test site has the Round 3 update (branch <code>develop</code> of 27 October, then <code>bench build</code> and <code>clear-cache</code>). The sign: the My HR card under the figures of an instructor who is linked to an Employee record.</li>
+	<li>Logins (sheet <i>Test Accounts</i>): an <b>instructor linked to an Employee record</b>, a <b>head of department</b> with an Employee record and annual leave, an <b>instructor without an Employee record</b> (TC-STF-08), and for TC-STF-07 any other staff login you have (dean, Finance, Admission ...) linked to an Employee record.</li>
+	<li>Open <code>Medical_HRMS_Jameah_Test_Cases.xlsx</code>, sheet <i>Test Cases</i>, filter <b>Round = Round 3</b>. Record each result there; bugs go in <i>Bug Report</i> with the date, time, page address and exact message.</li>
+</ol>
+<div class="warn"><b>Only staff linked to an Employee record see the card</b>On the current data most instructors have a login but no Employee record yet: HR links them with the Instructor data sheet (HR-55). Until a login is linked, its dashboard shows no card, which is correct (TC-STF-08). For testing, ask HR to link the test logins first.</div>
+
+<!-- ============================================================ 3 -->
+<h1><span class="num">3</span>How to test each change</h1>
+
+<h2>3.1 Where the card is</h2>
+<p>The card goes right after the dashboard's first row of figures, in the dashboard's own colours:</p>
+<table>
+	<thead><tr><th style="width:40%">Dashboard</th><th>Where the card is</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Instructor</td><td>After Active Class, Total Students, Pending Grading, Total Classes</td></tr>
+		<tr><td class="k">Department Head</td><td>After the coloured figures (My Departments, Total Students ...)</td></tr>
+		<tr><td class="k">Dean, Vice Deans, IT, Academic Operations</td><td>After the first row of the overview</td></tr>
+		<tr><td class="k">Student Affairs, Admission, Finance, Clinical Training</td><td>After the row of figures</td></tr>
+		<tr><td class="k">Academic Advisor</td><td>Under the heading (this dashboard has no figures)</td></tr>
+	</tbody>
+</table>
+<figure><img src="../images/56_r3_instructor_card.png" alt=""><figcaption><b>Figure 1.</b> The Instructor dashboard with the My HR card under its figures.</figcaption></figure>
+
+<h2>3.2 What the card shows</h2>
+<ul>
+	<li><b>My Leave</b>: up to three balances, annual leave first (days left, of how many), and the same <i>what's next</i> lines as the Employee Portal: a leave waiting for the manager, an approved plan to apply for (<span class="ui">Apply now</span>), a return to send (<span class="ui">Send Leave Return</span>) ...</li>
+	<li><b>My Requests</b>: the four latest requests with their status, <i>N waiting</i> when some wait for a decision, and <span class="ui">View</span> to open one.</li>
+	<li>The buttons <span class="ui">Apply for Leave</span>, <span class="ui">New Request</span> (the 11 services of the Employee Portal) and <span class="ui">Employee Portal</span> (the full list and history).</li>
+</ul>
+<figure><img src="../images/57_r3_hod_card.png" alt=""><figcaption><b>Figure 2.</b> The Department Head dashboard: a leave waiting for the manager, a request waiting for HR.</figcaption></figure>
+
+<h2>3.3 Sending from the card</h2>
+<ol class="steps">
+	<li><span class="ui">New Request</span> → pick a service. The same window opens as on the Employee Portal; <span class="ui">Send Request</span> or <span class="ui">Save Draft</span>.</li>
+	<li>The card updates by itself: the request is listed as <i>Pending</i> and HR is told, as for any request (bell, TC-APR-10).</li>
+	<li><span class="ui">View</span> opens the request with its status; after a rejection also the reason, the history and <span class="ui">Send Again</span> (Round 2).</li>
+	<li><span class="ui">Apply for Leave</span> lists only the leave the person holds, with the days left. After sending, <i>My Leave</i> shows it waiting for the manager.</li>
+</ol>
+<figure class="half"><img src="../images/58_r3_new_request_menu.png" alt=""><figcaption><b>Figure 3.</b> New Request on the card: the 11 services.</figcaption></figure>
+
+<h2>3.4 Phone, dark mode and Arabic</h2>
+<p>On a phone the card's two parts stack and the buttons wrap; nothing scrolls sideways. The dark-mode and language buttons of the dashboard's top bar apply to the card too: in Arabic it reads <i>شؤوني الوظيفية</i>, right to left (TC-STF-09).</p>
+<figure class="half"><img src="../images/59_r3_arabic.png" alt=""><figcaption><b>Figure 4.</b> The card in Arabic.</figcaption></figure>
+
+<!-- ============================================================ 4 -->
+<div style="break-inside: avoid">
+<h1><span class="num">4</span>Not in this round, and known limits</h1>
+<ul>
+	<li><b>Staff without an Employee record</b> see no card until HR links them (HR-55 for instructors, HR-05 for new staff).</li>
+	<li>The <b>Program Manager</b> and <b>Proctor</b> dashboards have no card yet; those staff use the Employee Portal (<code>/app/employee-dashboard</code>).</li>
+	<li>The card lists the four latest requests; the full list, the leave table and this month's limits are on the Employee Portal.</li>
+	<li>Heads of department approving their staff's requests is not part of the card: who approves each step waits for the approver list (DEC-09, HR-24).</li>
+	<li>E-mail on the test copy: as in Round 2, notifications appear in the bell only (B-25).</li>
+	<li>On the <b>Advisor</b> dashboard the browser console shows <i>frappe.get_open_dialog is not a function</i>. It comes from the education app's Advisor page, not from the card (B-58, reported to the education app owner): no need to report it again.</li>
+</ul>
+</div>
+
+<!-- ============================================================ 5 -->
+<h1><span class="num">5</span>Round 3 test cases</h1>
+<p>Full steps and expected results are in the Test Cases workbook (filter <b>Round = Round 3</b>).</p>
+<div class="note"><b>Already checked by the developer</b>The automated browser tests ran the same steps for the cases marked with an automated test in the workbook (column <i>Last automated run</i>). Please test them anyway: they can pass there and still fail for you.</div>
+<table>
+	<thead><tr><th style="width:15%">ID</th><th>Scenario</th><th style="width:22%">Login</th><th style="width:12%">Priority</th></tr></thead>
+	<tbody>
+		<tr><td class="k">TC-STF-01</td><td>My HR on the Instructor dashboard</td><td>Instructor</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-STF-02</td><td>My HR on the Department Head dashboard</td><td>Head of department</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-STF-03</td><td>Send a request from the card</td><td>Instructor</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-STF-04</td><td>Open a request from the card</td><td>Instructor</td><td>Medium</td></tr>
+		<tr><td class="k">TC-STF-05</td><td>Apply for leave from the card</td><td>Head of department</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-STF-06</td><td>Same requests on the Employee Portal</td><td>Instructor</td><td>Medium</td></tr>
+		<tr><td class="k">TC-STF-07</td><td>The other staff dashboards</td><td>Dean, Finance, Admission ...</td><td>Medium</td></tr>
+		<tr><td class="k">TC-STF-08</td><td>Staff without an Employee record</td><td>Instructor (not linked)</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-STF-09</td><td>Phone, dark mode and Arabic</td><td>Instructor</td><td>Medium</td></tr>
+		<tr><td class="k">TC-STF-10</td><td>Employee Portal unchanged</td><td>Employee</td><td><span class="chip c-pending">High</span></td></tr>
+	</tbody>
+</table>
+
+</body></html>
