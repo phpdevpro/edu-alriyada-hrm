@@ -13,7 +13,7 @@
 	</div>
 	<div class="meta">
 		<b>For</b><span>The testing team (and HR, to see what is new).</span>
-		<b>Test cases</b><span>16 cases: in the Test Cases workbook, filter the <b>Round</b> column on <b>Round 2</b>. They are listed in section 5.</span>
+		<b>Test cases</b><span>17 cases: in the Test Cases workbook, filter the <b>Round</b> column on <b>Round 2</b>. They are listed in section 5.</span>
 		<b>Version</b><span>27 October 2026 · branch <code>develop</code></span>
 		<b>Built by</b><span>Abdul Hakeem (Medical HRMS and Jameah lead)</span>
 		<b>See also</b><span>User Guide (updated for Round 2) · Installation and Setup Guide</span>
@@ -29,7 +29,7 @@
 		<tr><td class="k">Drafts can be changed, sent or deleted</td><td>Employees, on the Employee Portal</td><td>HR-16</td><td>TC-ESS-17, 18</td></tr>
 		<tr><td class="k">A reason is required to reject</td><td>HR and leave approvers give it; the employee reads it</td><td>HR-25</td><td>TC-APR-02, 09, 11, TC-ESS-19</td></tr>
 		<tr><td class="k">History of each request</td><td>Employees: every step with who and when</td><td>HR-25</td><td>TC-ESS-19</td></tr>
-		<tr><td class="k">Notifications (bell, and e-mail on the live server)</td><td>HR: new requests. Employees: every later step</td><td>HR-25</td><td>TC-APR-10, TC-ESS-22, 23</td></tr>
+		<tr><td class="k">Notifications (bell, and e-mail on the live server)</td><td>HR: new requests. Employees: every later step</td><td>HR-25</td><td>TC-APR-10, TC-ESS-22, 23, TC-LV-19</td></tr>
 		<tr><td class="k">Send a rejected request again</td><td>Employees send it; HR sees which request it replaces</td><td>HR-16</td><td>TC-ESS-20, 21, TC-APR-12, TC-LV-18</td></tr>
 		<tr><td class="k">Instructor and Academic Advisor forms save after picking an Employee</td><td>Academic Affairs, whoever links staff records</td><td>B-26, B-56 (HR-48)</td><td>TC-EMP-13, 14</td></tr>
 		<tr><td class="k">Amount limits say SAR (not AED)</td><td>HR, Finance</td><td>HR-24</td><td>TC-APR-13</td></tr>
@@ -44,7 +44,7 @@
 	<li>Logins (sheet <i>Test Accounts</i>): an HR Manager, an employee whose leave approver you can also log in as, and for TC-EMP-13 / 14 a login that can edit Instructors <b>and</b> see Employees (for example Education Manager + HR User, or System Manager).</li>
 	<li>Open <code>Medical_HRMS_Jameah_Test_Cases.xlsx</code>, sheet <i>Test Cases</i>, filter <b>Round = Round 2</b>. Record each result there as in Round 1; bugs go in <i>Bug Report</i> with the date, time, page address and exact message.</li>
 </ol>
-<div class="warn"><b>E-mail on the test copy</b>The test copy cannot send e-mail (bug B-25: the e-mail account password must be entered again on the server). Notifications still appear in the bell. Mark <b>TC-ESS-23</b> (notification e-mail) <i>Blocked</i> unless you test on a server where e-mail works.</div>
+<div class="warn"><b>E-mail on the test copy</b>The test copy cannot send e-mail (bug B-25: the e-mail account password must be entered again on the server). Notifications still appear in the bell. Mark <b>TC-ESS-23</b> and the e-mail part of <b>TC-LV-19</b> <i>Blocked</i> unless you test on a server where e-mail works.</div>
 
 <!-- ============================================================ 3 -->
 <h1><span class="num">3</span>How to test each change</h1>
@@ -93,13 +93,14 @@
 		<tr><td class="k">A draft is saved or changed</td><td>Nobody</td><td>—</td></tr>
 	</tbody>
 </table>
-<p>Notifications appear under the <b>bell</b> at the top of both portals (a red dot shows new ones). Clicking an employee's notification opens that request on the Employee Portal. On a server where e-mail works, the same text is also e-mailed. Leave applications keep their own e-mails to the leave approver and the employee (HR Settings, Checklist CL-40).</p>
+<p>Notifications appear under the <b>bell</b> at the top of both portals (a red dot shows new ones). Clicking an employee's notification opens that request on the Employee Portal. On a server where e-mail works, the same text is also e-mailed. Leave applications are not in the bell: they keep their own e-mails (sent by HRMS) to the leave approver when an employee applies and to the employee when the application is approved, rejected or cancelled, now with two new templates that the migrate chooses in HR Settings (TC-LV-19).</p>
 <figure class="half"><img src="../images/55_r2_bell.png" alt=""><figcaption><b>Figure 6.</b> The employee's bell after a rejection.</figcaption></figure>
 
 <h2>3.5 Leave: reason and Apply Again</h2>
 <ul>
 	<li>The leave approver who rejects a Leave Application must fill <b>Rejection Reason</b> before saving and submitting (TC-APR-09).</li>
 	<li>The employee sees the reason in the application's details and can click <span class="ui">Apply Again</span> to send a new application, filled in from the rejected one (TC-LV-18).</li>
+	<li>Where e-mail works, the employee's e-mail about the rejection includes the reason, and its <span class="ui">Open Now</span> button opens the application on the Employee Portal (TC-LV-19).</li>
 </ul>
 
 <h2>3.6 Instructor and Academic Advisor: linking an Employee</h2>
@@ -143,6 +144,7 @@
 		<tr><td class="k">TC-APR-10</td><td>HR is told about a new request (bell)</td><td>HR Manager</td><td><span class="chip c-pending">High</span></td></tr>
 		<tr><td class="k">TC-ESS-22</td><td>Notifications in the bell</td><td>Employee</td><td><span class="chip c-pending">High</span></td></tr>
 		<tr><td class="k">TC-ESS-23</td><td>Notification e-mail (live server only)</td><td>Employee</td><td>Medium</td></tr>
+		<tr><td class="k">TC-LV-19</td><td>Leave e-mail templates (the e-mails: live server only)</td><td>HR Manager, leave approver</td><td>Medium</td></tr>
 		<tr><td class="k">TC-EMP-13</td><td>Link an Employee on the Instructor form</td><td>Education Manager + HR User</td><td><span class="chip c-pending">High</span></td></tr>
 		<tr><td class="k">TC-EMP-14</td><td>Link an Employee on the Academic Advisor form</td><td>Education Manager + HR User</td><td>Medium</td></tr>
 		<tr><td class="k">TC-APR-13</td><td>Amount limits are in SAR</td><td>HR Manager</td><td>Low</td></tr>

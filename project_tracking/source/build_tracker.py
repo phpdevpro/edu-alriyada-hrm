@@ -164,7 +164,7 @@ bv.add(f"H2:H{blast + 100}")
 # ------------------------------------------------------------------ Decisions
 wd = wb.create_sheet("Decisions")
 dlast = table(wd, ["ID", "Decision needed", "Who decides", "Options / recommendation", "Blocks tasks", "Answer (fill in)", "Answered on", "Last updated"],
-	[d + ("", "", UPDATED[d[0]]) for d in DECISIONS], [9, 52, 22, 46, 18, 34, 13, 13], wrap_cols=(2, 4, 6))
+	[d[:5] + (d[5:] + ("", ""))[:2] + (UPDATED[d[0]],) for d in DECISIONS], [9, 52, 22, 46, 18, 34, 13, 13], wrap_cols=(2, 4, 6))
 for row in range(2, dlast + 1):
 	for col in (6, 7):
 		wd.cell(row=row, column=col).fill = INPUT_FILL

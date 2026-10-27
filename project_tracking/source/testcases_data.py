@@ -6,7 +6,7 @@ HR, HRU, EMP, EMP2, INS, ADM, GUEST, ACAD = ("HR Manager", "HR User", "Employee"
 # changed cases here, and the round's feature document (docs/guides) names the same cases.
 ROUNDS = {
 	"Round 2": ("TC-ESS-17", "TC-ESS-18", "TC-ESS-19", "TC-ESS-20", "TC-ESS-21", "TC-ESS-22", "TC-ESS-23", "TC-APR-02", "TC-APR-09", "TC-APR-10",
-		"TC-APR-11", "TC-APR-12", "TC-APR-13", "TC-EMP-13", "TC-EMP-14", "TC-LV-18"),
+		"TC-APR-11", "TC-APR-12", "TC-APR-13", "TC-EMP-13", "TC-EMP-14", "TC-LV-18", "TC-LV-19"),
 }
 
 
@@ -147,6 +147,9 @@ CASES = [
 	("TC-LV-18", "Leave", "Apply again after a rejected leave", EMP, "The leave approver rejected a Leave Application with a reason.",
 		"1. Open the rejected application (My Leave Applications, or the bell).\n2. Click Apply Again, change the dates, Send Request.", "—",
 		"The reason is shown. The leave form opens filled in; the new application says 'Sent again in place of <old number>'.", "Medium", "Functional", "—"),
+	("TC-LV-19", "Leave", "Leave e-mails use the Medical HRMS templates", HR, "Round 2 migrated. Steps 2-3 only where e-mail works (Checklist CL-41).",
+		"1. Open HR Settings (Leave Settings).\n2. An employee applies for leave.\n3. The leave approver rejects it with a reason and submits.", "—",
+		"1. Leave Approval Notification Template = Leave Approval Notification (Medical HRMS); Leave Status Notification Template = Leave Status Notification (Medical HRMS).\n2. The approver gets 'New Leave Application from <employee> (<number>)' with the dates and the employee's reason.\n3. The employee gets 'Your Leave Application <number> is now Rejected' with the rejection reason; Open Now opens it on the Employee Portal.", "Medium", "Functional", "—"),
 	# ------------------------------------------------------------ approvals
 	("TC-APR-01", "HR approvals", "Approve a Permission Request", HR, "A Pending request.", "Open it, Status = Approved, Save.", "—", "Saved; the employee sees Approved.", "High", "Functional", "APR-01"),
 	("TC-APR-02", "HR approvals", "Reject a Training Request with a reason", HR, "A Pending request.", "1. Status = Rejected.\n2. Click Save without a reason.\n3. Fill Rejection Reason and Save.", "Reason text",

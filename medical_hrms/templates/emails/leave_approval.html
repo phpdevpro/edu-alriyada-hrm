@@ -1,0 +1,18 @@
+{#- Email Template "Leave Approval Notification (Medical HRMS)": HRMS sends it to the leave approver when an employee
+    applies (HR Settings > Leave Approval Notification Template). Created once by request_flow.setup_leave_emails;
+    HR can edit the template afterwards. The context is the Leave Application. -#}
+<p>{{ _("{0} sent a {1}. Open it to review the next step.").format(employee_name, _("Leave Application")) }}</p>
+<table class="table table-bordered small" style="max-width: 500px;">
+	<tr><td>{{ _("Employee") }}</td><td>{{ employee_name }} ({{ employee }})</td></tr>
+	<tr><td>{{ _("Leave Type") }}</td><td>{{ leave_type }}</td></tr>
+	<tr><td>{{ _("From Date") }}</td><td>{{ frappe.utils.formatdate(from_date) }}</td></tr>
+	<tr><td>{{ _("To Date") }}</td><td>{{ frappe.utils.formatdate(to_date) }}</td></tr>
+	<tr><td>{{ _("Total Leave Days") }}</td><td>{{ "%g" | format(total_leave_days or 0) }}</td></tr>
+	{%- if description %}
+	<tr><td>{{ _("Reason") }}</td><td>{{ description | e }}</td></tr>
+	{%- endif %}
+	{%- if resubmitted_from %}
+	<tr><td>{{ _("Sent Again From") }}</td><td>{{ resubmitted_from }}</td></tr>
+	{%- endif %}
+</table>
+<p><a class="btn btn-primary" href="{{ frappe.utils.get_url_to_form('Leave Application', name) }}">{{ _("Open Now") }}</a></p>

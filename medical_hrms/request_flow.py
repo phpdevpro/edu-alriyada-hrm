@@ -4,7 +4,8 @@
 - Every status change is kept (track_changes) and shown to the employee as the request's history.
 - Notifications - the bell on the portals, and an e-mail when the outgoing mail account works: HR when an
   employee sends a request; the employee when HR moves it to another step, approves or rejects it.
-  Leave Application keeps HRMS's own e-mails (HR Settings > Leave Approval / Leave Status Notification Template).
+  Leave Application keeps HRMS's own e-mails, with our templates (setup_leave_emails): the leave approver when an
+  employee applies, the employee when it is approved, rejected (with the reason) or cancelled.
 - A rejected request can be sent again once, as a new request linked to it (resubmitted_from).
 """
 import frappe
@@ -24,6 +25,13 @@ REJECTABLE = (
 )
 # Contract Renewal is filed and followed by HR, so it sends nothing.
 NOTIFIED = tuple(dt for dt in EMPLOYEE_REQUEST_DOCTYPES if dt != "Contract Renewal Request")
+# HR Settings field -> (Email Template, file in templates/emails, subject)
+LEAVE_EMAILS = {
+	"leave_approval_notification_template": ("Leave Approval Notification (Medical HRMS)", "leave_approval.html",
+		'{{ _("New {0} from {1} ({2})").format(_("Leave Application"), employee_name, name) }}'),
+	"leave_status_notification_template": ("Leave Status Notification (Medical HRMS)", "leave_status.html",
+		'{{ _("Your {0} {1} is now {2}").format(_("Leave Application"), name, _(status)) }}'),
+}
 
 
 def setup():
@@ -41,6 +49,19 @@ def setup():
 	]}, update=True)
 	make_property_setter("Leave Application", None, "track_changes", 1, "Check", for_doctype=True, validate_fields_for_doctype=False)
 	frappe.clear_cache(doctype="Leave Application")
+	setup_leave_emails()
+
+
+def setup_leave_emails():
+	"""HRMS sends the leave e-mails with the templates chosen in HR Settings, and none while they are empty.
+	Ours add the rejection reason and open the Employee Portal. Each template is created once (HR may edit it later)
+	and only an empty HR Settings field is filled, so a template HR chose is kept."""
+	for field, (name, filename, subject) in LEAVE_EMAILS.items():
+		if not frappe.db.exists("Email Template", name):
+			frappe.get_doc({"doctype": "Email Template", "name": name, "subject": subject, "use_html": 1,
+				"response_html": frappe.read_file(frappe.get_app_path("medical_hrms", "templates", "emails", filename))}).insert(ignore_permissions=True)
+		if not frappe.db.get_single_value("HR Settings", field):
+			frappe.db.set_single_value("HR Settings", field, name)
 
 
 # --------------------------------------------------------------------------- validation
