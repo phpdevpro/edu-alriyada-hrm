@@ -21,8 +21,8 @@ def validate_training_request(doc, method):
 
     # Based on workflow rules
     if total_cost > 50000 and not has_any_role(*FINANCE_APPROVER_ROLES):
-        frappe.throw(_("Training programs exceeding AED 50,000 require Finance approval."))
+        frappe.throw(_("Training programs exceeding SAR 50,000 require Finance approval."))
     elif total_cost > 30000 and not has_any_role("HR Manager", *FINANCE_APPROVER_ROLES):
-        frappe.throw(_("Training programs exceeding AED 30,000 require HR Manager approval."))
+        frappe.throw(_("Training programs exceeding SAR 30,000 require HR Manager approval."))
     elif total_cost > 10000 and not has_any_role("Department Head", "HR Manager", *FINANCE_APPROVER_ROLES):
-        frappe.throw(_("Training programs exceeding AED 10,000 require Department Head approval."))
+        frappe.throw(_("Training programs exceeding SAR 10,000 require Department Head approval."))

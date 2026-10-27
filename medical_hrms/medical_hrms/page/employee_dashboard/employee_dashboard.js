@@ -19,6 +19,14 @@ frappe.pages["employee-dashboard"].on_page_load = function (wrapper) {
 	load_dashboard(true);
 };
 
+frappe.pages["employee-dashboard"].on_page_show = function () {
+	const options = frappe.route_options || {};
+	if (options.request && options.name) {
+		frappe.route_options = null;
+		emdShowRequestDetails(options.request, options.name);
+	}
+};
+
 const esc = (value) => frappe.utils.escape_html(String(value ?? ""));
 let currentEmployee = null;
 
@@ -101,7 +109,7 @@ function render_services(counts) {
 
 function emdMyRequests(doctype) {
 	frappe.call({method: "medical_hrms.self_service.my_requests", args: {doctype}, callback: (r) => {
-		const rows = (r.message || []).map(row => `<p><button type="button" class="btn btn-link emd-view-request" data-name="${esc(row.name)}">${esc(row.name)}</button> — ${esc(row.status)}</p>`).join("");
+		const rows = (r.message || []).map(row => `<p><button type="button" class="btn btn-link emd-view-request" data-name="${esc(row.name)}">${esc(row.name)}</button> ${emdStatusPill(row.status)}</p>`).join("");
 		const list = new frappe.ui.Dialog({title: __("My Requests"), fields: [{fieldtype: "HTML", fieldname: "requests", options: rows || __("No requests yet.")}]});
 		list.$wrapper.on("click", ".emd-view-request", function () { emdShowRequestDetails(doctype, $(this).attr("data-name")); });
 		list.show();
@@ -122,7 +130,9 @@ function emdLeaveTypeField(field) {
 	});
 }
 
-function emdNewRequest(doctype, prefill, plan) {
+// opts.name: change the employee's own draft; opts.resend_of: send a rejected request again as a new one.
+function emdNewRequest(doctype, prefill, plan, opts) {
+	opts = opts || {};
 	if (!currentEmployee) {
 		frappe.msgprint(__("Your user account is not linked to an Employee record. Please contact HR."));
 		return;
@@ -160,9 +170,12 @@ function emdNewRequest(doctype, prefill, plan) {
 				field.onchange = () => emdReturnContext(dialog);
 			}
 		});
+		const intro = opts.name ? __("You are changing your draft {0}. Save Draft keeps it for later; Send Request sends it for review.", [opts.name])
+			: opts.resend_of ? __("A new request in place of {0}, which was rejected. Change what is needed and send it; HR sees the rejected one with it.", [opts.resend_of])
+			: (LEAVE_INTRO[doctype] || __("This request is linked to your login automatically. Approval and clearance decisions are handled by HR."));
 		const dialog = new frappe.ui.Dialog({
-			title: __(doctype),
-			fields: [{fieldtype: "HTML", options: `<p>${LEAVE_INTRO[doctype] || __("This request is linked to your login automatically. Approval and clearance decisions are handled by HR.")}</p>`}, ...fields],
+			title: opts.name ? __("Edit Draft: {0}", [__(doctype)]) : opts.resend_of ? __("Send Again: {0}", [__(doctype)]) : __(doctype),
+			fields: [{fieldtype: "HTML", options: `<p>${esc(intro)}</p>`}, ...fields],
 			primary_action_label: __("Send Request"),
 			primary_action: () => save(true),
 			secondary_action_label: doctype === "Leave Application" ? undefined : __("Save Draft"),
@@ -189,14 +202,14 @@ function emdNewRequest(doctype, prefill, plan) {
 			saving = true;
 			frappe.call({
 				method: "medical_hrms.self_service.save_request",
-				args: {doctype, values: JSON.stringify(values), send: send ? 1 : 0, plan: plan || undefined},
+				args: {doctype, values: JSON.stringify(values), send: send ? 1 : 0, plan: plan || undefined, name: opts.name || undefined, resend_of: opts.resend_of || undefined},
 				freeze: true,
 				callback: () => { dialog.hide(); frappe.show_alert({message: send ? __("Request sent for review") : __("Draft saved"), indicator: "green"}); load_dashboard(); },
 				always: () => { saving = false; },
 			});
 		};
 		dialog.show();
-		if (prefill) dialog.set_values(prefill).then(() => doctype === "Leave Return Request" && emdReturnContext(dialog));
+		if (prefill) dialog.set_values(emdDialogValues(prefill, timeFields)).then(() => doctype === "Leave Return Request" && emdReturnContext(dialog));
 	}});
 }
 
@@ -211,6 +224,24 @@ function emdReturnContext(dialog) {
 		dialog.set_df_property("actual_return_date", "description", __("You were due back on {0}.", [frappe.datetime.str_to_user(c.expected_back_on)]));
 		if (!dialog.get_value("actual_return_date")) dialog.set_value("actual_return_date", c.expected_back_on);
 	});
+}
+
+// Saved values -> dialog values: a time "14:30:00" fills the hour / minute / AM-PM pickers.
+function emdDialogValues(values, timeFields) {
+	const out = {};
+	Object.entries(values || {}).forEach(([fieldname, value]) => {
+		if (value === null || value === undefined || value === "") return;
+		if (!timeFields.some((field) => field.fieldname === fieldname)) {
+			out[fieldname] = value;
+			return;
+		}
+		const [hour, minute] = String(value).split(":").map(Number);
+		const prefix = `emd_time_${fieldname}`;
+		out[`${prefix}_hour`] = String(hour % 12 || 12).padStart(2, "0");
+		out[`${prefix}_minute`] = String(minute || 0).padStart(2, "0");
+		out[`${prefix}_period`] = hour >= 12 ? "PM" : "AM";
+	});
+	return out;
 }
 
 function emdTimeTo24Hour(hour, minute, period) {
@@ -231,9 +262,39 @@ function emdShowRequestDetails(doctype, name) {
 			}
 			return `<div style="padding:12px 0;border-bottom:1px solid var(--border-color)"><div class="text-muted small">${esc(__(field.label))}</div><div style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:4px">${content}</div></div>`;
 		}).join("");
-		const dialog = new frappe.ui.Dialog({title: __(doctype), fields: [{fieldtype: "HTML", options: `<p><strong>${esc(data.name)}</strong> — ${esc(__(data.status))}</p>${details}`}], primary_action_label: __("Close"), primary_action: () => dialog.hide()});
+		const openLink = (other) => `<button type="button" class="btn btn-link btn-xs emd-open-request" data-name="${esc(other)}" style="padding:0;vertical-align:baseline">${esc(other)}</button>`;
+		const reason = data.rejection_reason ? `<div class="alert alert-danger emd-reason" style="margin:10px 0"><b>${esc(__("Rejection reason"))}</b><div style="white-space:pre-wrap;margin-top:4px">${esc(data.rejection_reason)}</div></div>` : "";
+		const links = [
+			data.resubmitted_from ? __("Sent again in place of {0}, which was rejected.", [openLink(data.resubmitted_from)]) : "",
+			data.resent_as ? __("Sent again as {0}.", [openLink(data.resent_as)]) : "",
+		].filter(Boolean).map((text) => `<p class="emd-resend-link">${text}</p>`).join("");
+		const steps = (data.history || []).map((step) => `<li style="padding:4px 0">${emdStatusPill(step.status)}
+			<small class="text-muted" style="margin-left:8px">${esc(step.by)} · ${esc(frappe.datetime.str_to_user(step.on))}</small></li>`).join("");
+		const history = steps ? `<h5 style="margin:18px 0 6px">${esc(__("History"))}</h5><ol class="emd-history" style="list-style:none;padding:0;margin:0">${steps}</ol>` : "";
+		const actions = [
+			data.can_edit ? `<button type="button" class="btn btn-primary btn-sm emd-edit-draft">${esc(__("Edit Draft"))}</button>` : "",
+			data.can_edit ? `<button type="button" class="btn btn-default btn-sm emd-delete-draft">${esc(__("Delete Draft"))}</button>` : "",
+			data.can_resend ? `<button type="button" class="btn btn-primary btn-sm emd-resend">${esc(doctype === "Leave Application" ? __("Apply Again") : __("Send Again"))}</button>` : "",
+		].filter(Boolean).join(" ");
+		const dialog = new frappe.ui.Dialog({title: __(doctype), fields: [{fieldtype: "HTML", options: `<p><strong>${esc(data.name)}</strong> ${emdStatusPill(data.status, "emd-detail-status")}</p>
+			${reason}${links}${actions ? `<div class="emd-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">${actions}</div>` : ""}${details}${history}`}],
+			primary_action_label: __("Close"), primary_action: () => dialog.hide()});
+		dialog.$wrapper.on("click", ".emd-open-request", function () { dialog.hide(); emdShowRequestDetails(doctype, $(this).attr("data-name")); });
+		// The My Requests list may be open behind: close it too, it would show the old status.
+		dialog.$wrapper.on("click", ".emd-edit-draft", () => { emdCloseDialogs(); emdNewRequest(doctype, data.values, null, {name: data.name}); });
+		dialog.$wrapper.on("click", ".emd-resend", () => { emdCloseDialogs(); emdNewRequest(doctype, data.values, null, {resend_of: data.name}); });
+		dialog.$wrapper.on("click", ".emd-delete-draft", () => frappe.confirm(__("Delete the draft {0}? This cannot be undone.", [data.name]), () =>
+			frappe.call({method: "medical_hrms.self_service.delete_draft", args: {doctype, name: data.name}, freeze: true, callback: () => {
+				emdCloseDialogs();
+				frappe.show_alert({message: __("Draft deleted"), indicator: "green"});
+				load_dashboard();
+			}})));
 		dialog.show();
 	}});
+}
+
+function emdCloseDialogs() {
+	[...(frappe.ui.open_dialogs || [])].forEach((d) => d.hide());
 }
 
 function emdShowProfile() {
@@ -244,6 +305,13 @@ function emdShowProfile() {
 	}
 	frappe.msgprint({title: __("My Profile"), message: `<p>${esc(employee.employee_name)}</p><p>${esc(employee.designation || "")} · ${esc(employee.department || "")}</p><p>${esc(employee.company || "")}</p><p>${esc(__("Use Update My Data to request a correction from HR."))}</p>`});
 }
+
+// Dialogs sit outside the portal, so they use Frappe's own indicator colours.
+const emdStatusPill = (status, extra) => {
+	const colour = /^(pending|open)/i.test(status || "") ? "orange" : /approved|completed|issued/i.test(status || "") ? "green"
+		: /rejected|cancel|declined/i.test(status || "") ? "red" : /draft/i.test(status || "") ? "gray" : "blue";
+	return `<span class="indicator-pill ${colour} ${extra || ""}">${esc(__(status))}</span>`;
+};
 
 const statusTone = (status) => /^pending/i.test(status || "") ? "amber" : (/approved|completed|issued/i.test(status || "") ? "teal" : (/rejected|cancel|declined/i.test(status || "") ? "rose" : ""));
 

@@ -3,6 +3,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, cint, flt, getdate, today
 from medical_hrms.employee_permissions import get_employee_for_user, is_reviewer
+from medical_hrms.request_flow import REASON, RESENT_FROM, check_resend, history, resent_as
 
 FIELDS = {
     "Permission Request": "date from_time to_time reason",
@@ -64,7 +65,7 @@ def validate_employee_request(doc, method=None):
         frappe.throw("Only HR can set approval status.", frappe.PermissionError)
     # Compare with a fresh document: Select fields default to their first option.
     blank = None if old else frappe.new_doc(doc.doctype)
-    for field in ("occupational_health_clearance", "approved_amount", "manager_recommendation", "proposed_salary_increase"):
+    for field in ("occupational_health_clearance", "approved_amount", "manager_recommendation", "proposed_salary_increase", REASON):
         if doc.meta.has_field(field):
             expected = old.get(field) if old else blank.get(field)
             if (doc.get(field) or "") != (expected or ""):
@@ -127,21 +128,37 @@ def _link_plan(plan, application, employee):
     frappe.db.set_value("Leave Plan Request", plan, "leave_application", application)
 
 
+def own_request(doctype, name, employee):
+    # Use one response for missing and other employees' records.
+    if not name or frappe.db.get_value(doctype, name, "employee") != employee:
+        frappe.throw(_("This request is not available to you."), frappe.PermissionError)
+    return frappe.get_doc(doctype, name)
+
+
 @frappe.whitelist()
-def save_request(doctype, values, send=False, plan=None):
+def save_request(doctype, values, send=False, plan=None, name=None, resend_of=None):
+    """New request (Save Draft / Send Request), a change to the employee's own draft (name), or a rejected
+    request sent again as a new one (resend_of, linked through resubmitted_from)."""
     employee = employee_identity()
     allowed = fields_for(doctype)
     values = frappe.parse_json(values)
     if not isinstance(values, dict) or set(values) - set(allowed):
         frappe.throw("Unsupported form fields.", frappe.PermissionError)
     meta = frappe.get_meta(doctype)
-    for name, value in values.items():
-        if meta.get_field(name).fieldtype == "Attach" and value:
+    for fieldname, value in values.items():
+        if meta.get_field(fieldname).fieldtype == "Attach" and value:
             attachment = frappe.db.get_value("File", {"file_url": value, "owner": frappe.session.user, "is_private": 1}, "name")
             if not attachment:
                 frappe.throw("Upload a private attachment from your own account.", frappe.PermissionError)
+    if resend_of:
+        if not frappe.get_meta(doctype).has_field(RESENT_FROM):
+            frappe.throw(_("This request cannot be sent again."), frappe.PermissionError)
+        check_resend(doctype, resend_of, employee)
+        values[RESENT_FROM] = resend_of
     if doctype == "Leave Application":
         from hrms.hr.doctype.leave_application.leave_application import get_leave_approver
+        if name:
+            frappe.throw(_("Leave applications have no drafts."), frappe.PermissionError)
         if not cint(send):
             frappe.throw("Use Send Request to send your leave application for review.")
         approver = get_leave_approver(employee)
@@ -158,9 +175,29 @@ def save_request(doctype, values, send=False, plan=None):
             _link_plan(plan, doc.name, employee)
         return {"name": doc.name, "status": doc.status}
     pending = next(status for status in meta.get_field("status").options.splitlines() if status.startswith("Pending"))
-    doc = frappe.get_doc({"doctype": doctype, **values, "employee": employee, "status": pending if cint(send) else "Draft"})
-    doc.insert()
+    status = pending if cint(send) else "Draft"
+    if name:
+        doc = own_request(doctype, name, employee)
+        if doc.status != "Draft":
+            frappe.throw(_("Only a draft can be changed. This request was already sent."), frappe.PermissionError)
+        for fieldname in allowed:  # the dialog sends every field; one left empty is cleared
+            doc.set(fieldname, values.get(fieldname))
+        doc.status = status
+        doc.save()
+    else:
+        doc = frappe.get_doc({"doctype": doctype, **values, "employee": employee, "status": status})
+        doc.insert()
     return {"name": doc.name, "status": doc.status}
+
+
+@frappe.whitelist(methods=["POST"])
+def delete_draft(doctype, name):
+    fields_for(doctype)
+    doc = own_request(doctype, name, employee_identity())
+    if doc.status != "Draft":
+        frappe.throw(_("Only a draft can be deleted. This request was already sent."), frappe.PermissionError)
+    frappe.delete_doc(doctype, doc.name, ignore_permissions=True)
+    return {"deleted": doc.name}
 
 
 @frappe.whitelist()
@@ -172,13 +209,9 @@ def my_requests(doctype):
 @frappe.whitelist()
 def request_details(doctype, name):
     allowed = fields_for(doctype)
-    employee = employee_identity()
-    # Use one response for missing and other employees' records.
-    if frappe.db.get_value(doctype, name, "employee") != employee:
-        frappe.throw("This request is not available to you.", frappe.PermissionError)
-    doc = frappe.get_doc(doctype, name)
+    doc = own_request(doctype, name, employee_identity())
     doc.check_permission("read")
-    fields = []
+    fields, values = [], {}
     for fieldname in allowed:
         df = doc.meta.get_field(fieldname)
         value = doc.get(fieldname)
@@ -187,7 +220,17 @@ def request_details(doctype, name):
             if not any(frappe.has_permission("File", "read", doc=frappe.get_doc("File", file)) for file in files):
                 value = None
         fields.append({"label": df.label, "fieldtype": df.fieldtype, "value": value})
-    return {"name": doc.name, "doctype": doc.doctype, "status": doc.status, "fields": fields}
+        values[fieldname] = value
+    again = resent_as(doc)
+    return {
+        "name": doc.name, "doctype": doc.doctype, "status": doc.status, "fields": fields,
+        "values": values,  # raw values, to fill the dialog for Edit Draft / Send Again
+        "history": history(doc),
+        "rejection_reason": doc.get(REASON) if doc.status == "Rejected" else None,
+        "resubmitted_from": doc.get(RESENT_FROM), "resent_as": again,
+        "can_edit": doc.status == "Draft" and doctype != "Leave Application",
+        "can_resend": doc.status == "Rejected" and doc.meta.has_field(RESENT_FROM) and not again,
+    }
 
 
 def validate_employee_leave(doc, method=None):

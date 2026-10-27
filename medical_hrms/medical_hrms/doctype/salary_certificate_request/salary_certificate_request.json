@@ -13,7 +13,9 @@
   "language_preference",
   "addressee",
   "include_salary_breakdown",
-  "status"
+  "status",
+  "rejection_reason",
+  "resubmitted_from"
  ],
  "fields": [
   {
@@ -67,12 +69,30 @@
    "in_list_view": 1,
    "label": "Status",
    "options": "Draft\nPending Manager\nPending HR\nIssued\nRejected"
+  },
+  {
+   "depends_on": "eval:doc.status=='Rejected'",
+   "description": "Required when you reject. The employee sees it on the Employee Portal.",
+   "fieldname": "rejection_reason",
+   "fieldtype": "Small Text",
+   "label": "Rejection Reason",
+   "mandatory_depends_on": "eval:doc.status=='Rejected'"
+  },
+  {
+   "depends_on": "eval:doc.resubmitted_from",
+   "description": "The rejected request this one replaces.",
+   "fieldname": "resubmitted_from",
+   "fieldtype": "Link",
+   "label": "Sent Again From",
+   "no_copy": 1,
+   "options": "Salary Certificate Request",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-05-15 13:35:46.350378",
+ "modified": "2026-10-27 10:59:16.081619",
  "modified_by": "Administrator",
  "module": "Medical HRMS",
  "name": "Salary Certificate Request",

@@ -17,7 +17,7 @@ PW = STATE["password"]
 EMP1, EMP2 = STATE["emp1"], STATE["emp2"]
 DOM = "rchs-qa.test"
 COLLEGE = "alriyada.edu.sa"  # education requires Instructor e-mails on this domain
-U = {k: f"qa.{k}@{DOM}" for k in ("hr.manager", "hr.user", "emp1", "emp2", "unlinked", "outsider")}
+U = {k: f"qa.{k}@{DOM}" for k in ("hr.manager", "hr.user", "emp1", "emp2", "unlinked", "outsider", "academic.admin")}
 INSTRUCTOR = ("qa.instructor@rchs-qa.test", "QaInstructor#2026")
 ONLY = set(sys.argv[1:])
 now = lambda: datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -312,6 +312,7 @@ def employee_self_service(b):
 		p.evaluate("cur_dialog.set_values({purpose: 'Visa Application', addressee: 'QA Embassy'})")
 		status, msg, _ = send(primary=False)
 		assert status == 200 and msg["status"] == "Draft", msg
+		CTX["draft"] = msg["name"]
 
 	@check("ESS-14", "Leave", "Leave Application: Annual Leave 2 days -> Open, approver set by HR", p)
 	def _():
@@ -347,6 +348,43 @@ def employee_self_service(b):
 		p.wait_for_selector(".modal.show")
 		assert "QA Employee One" in s.dialog_text()
 		s.close_dialogs()
+
+	# ---- Round 2: drafts (HR-16)
+	@check("ESS-18", "Round 2: drafts", "My Requests -> View -> Edit Draft: the draft opens filled in, is changed and sent", p)
+	def _():
+		draft = CTX["draft"]
+		s.close_dialogs()
+		p.click('.emd-count[data-doctype="Salary Certificate Request"]')
+		p.wait_for_selector(f'.modal.show .emd-view-request[data-name="{draft}"]')
+		p.click(f'.modal.show .emd-view-request[data-name="{draft}"]')
+		p.wait_for_selector(".modal.show .emd-edit-draft")
+		p.click(".modal.show .emd-edit-draft")
+		p.wait_for_function("() => window.cur_dialog && cur_dialog.title && cur_dialog.title.includes('Edit Draft') && cur_dialog.get_value('addressee') === 'QA Embassy'")
+		p.evaluate("cur_dialog.set_value('addressee', 'QA Embassy Riyadh')")
+		p.wait_for_timeout(300)
+		status, msg, txt = send()
+		assert status == 200 and msg["name"] == draft and msg["status"].startswith("Pending"), (status, msg, txt[:300])
+		doc = get_doc(s, "Salary Certificate Request", draft)["message"]
+		assert doc["addressee"] == "QA Embassy Riyadh" and doc["purpose"] == "Visa Application", (doc["addressee"], doc["purpose"])
+		s.close_dialogs()
+		return f"{draft}: changed and sent ({msg['status']})"
+
+	@check("ESS-19", "Round 2: drafts", "A request link opens its details; Delete Draft removes the draft", p)
+	def _():
+		r = s.rpc("medical_hrms.self_service.save_request", {"doctype": "Permission Request", "values": json.dumps({"date": "2026-11-09", "reason": "QA draft to delete"}), "send": 0})
+		name = r["message"]["name"]
+		s.goto(f"/app/employee-dashboard?request={quote('Permission Request')}&name={quote(name)}")
+		p.wait_for_selector(".modal.show .emd-delete-draft")
+		assert name in s.dialog_text()
+		p.click(".modal.show .emd-delete-draft")
+		p.wait_for_function("() => [...document.querySelectorAll('.modal.show')].some(m => /Delete the draft/.test(m.innerText))")
+		with p.expect_response(lambda r: "self_service.delete_draft" in r.url) as info:
+			p.locator(".modal.show .btn-modal-primary").last.click()
+		assert info.value.status == 200, s.dialog_text()[:300]
+		s.idle()
+		assert get_doc(s, "Permission Request", name)["status"] == 404
+		s.close_dialogs()
+		return f"{name} deleted"
 
 
 def employee_isolation(b):
@@ -499,9 +537,22 @@ def hr_approvals(b):
 		assert set_status("Permission Request", CTX["perm_req"], "Approved") == 200, h.dialog_text()[:300]
 		assert get_doc(h, "Permission Request", CTX["perm_req"])["message"]["status"] == "Approved"
 
-	@check("APR-02", "HR approval", "HR rejects the Training Request", p)
+	@check("APR-02", "HR approval", "HR rejects the Training Request: Rejection Reason is required, then saved", p)
 	def _():
-		assert set_status("Employee Training Request", CTX["Employee Training Request"], "Rejected") == 200, h.dialog_text()[:300]
+		name = CTX["Employee Training Request"]
+		h.goto(f"/app/employee-training-request/{name}")
+		p.wait_for_function("n => window.cur_frm && cur_frm.docname === n", arg=name)
+		p.locator('.form-layout select[data-fieldname="status"]').select_option("Rejected")
+		p.wait_for_timeout(500)
+		p.keyboard.press("Control+s")
+		p.wait_for_timeout(1500)
+		txt = h.dialog_text()
+		assert "Rejection Reason" in txt, txt[:300]  # Missing Fields: nothing is saved without a reason
+		h.close_dialogs()
+		p.locator('.form-layout [data-fieldname="rejection_reason"] textarea').fill("QA: the training budget for this term is closed")
+		assert h.save_form().status == 200, h.dialog_text()[:300]
+		d = get_doc(h, "Employee Training Request", name)["message"]
+		assert d["status"] == "Rejected" and d["rejection_reason"].startswith("QA: the training budget"), (d["status"], d["rejection_reason"])
 
 	@check("APR-03", "HR approval", "Salary Certificate moves Pending -> Issued", p)
 	def _():
@@ -568,6 +619,62 @@ def hr_approvals(b):
 		s2.close()
 		assert st in (403, 404), st
 	hu.close()
+
+	# ---- Round 2: notifications, rejection reason, history, send again (HR-25, HR-16)
+	def bell_entry(sess, user, name, timeout=60):
+		"""The Notification Log for `name`, created by a background job right after the save."""
+		t0 = time.time()
+		while time.time() - t0 < timeout:
+			r = sess.rpc("frappe.client.get_list", {"doctype": "Notification Log", "filters": {"for_user": user, "document_name": name},
+				"fields": ["name", "subject", "email_content", "link"], "order_by": "creation desc"})
+			if r["status"] == 200 and r["message"]:
+				return r["message"]
+			time.sleep(2)
+		raise AssertionError(f"no notification for {user} about {name} after {timeout}s")
+
+	@check("APR-09", "Round 2: notifications", "HR is notified in the bell when an employee sends a request", p)
+	def _():
+		entry = bell_entry(h, U["hr.manager"], CTX["perm_req"])[0]
+		assert "QA Employee One" in entry["subject"], entry
+		return entry["subject"]
+
+	@check("APR-10", "Round 2: notifications", "Employee: bell shows the rejection; its link opens the request with the reason", CTX["emp1"].page)
+	def _():
+		s = CTX["emp1"]; ep = s.page
+		name = CTX["Employee Training Request"]
+		entry = bell_entry(s, U["emp1"], name)[0]
+		assert "Rejected" in entry["subject"] and "training budget" in entry["email_content"] and "/app/employee-dashboard?request=" in entry["link"], entry
+		s.goto("/app/employee-dashboard")
+		ep.click(".mhp-bell")
+		ep.wait_for_selector(f'.mhp-notif:has-text("{name}")')
+		ep.click(f'.mhp-notif:has-text("{name}")')
+		ep.wait_for_function("() => [...document.querySelectorAll('.modal.show')].some(m => m.innerText.includes('training budget for this term is closed'))", timeout=30000)
+		return entry["subject"]
+
+	@check("APR-11", "Round 2: send again", "Rejected request: reason and history shown; Send Again makes a new request linked to it", CTX["emp1"].page)
+	def _():
+		s = CTX["emp1"]; ep = s.page
+		name = CTX["Employee Training Request"]
+		txt = s.dialog_text()
+		assert "History" in txt and "Pending Manager" in txt and "Rejected" in txt, txt[-400:]
+		ep.click(".modal.show .emd-resend")
+		ep.wait_for_function("() => window.cur_dialog && cur_dialog.title.includes('Send Again') && cur_dialog.get_value('course_details') === 'QA: Simulation in Nursing'")
+		ep.evaluate("cur_dialog.set_value('estimated_cost', 900)")
+		ep.wait_for_timeout(300)
+		with ep.expect_response(lambda r: "self_service.save_request" in r.url) as info:
+			ep.click(".modal.show .btn-modal-primary")
+		assert info.value.status == 200, s.dialog_text()[:300]
+		again = info.value.json()["message"]["name"]
+		s.idle()
+		doc = get_doc(s, "Employee Training Request", again)["message"]
+		assert doc["resubmitted_from"] == name and doc["status"].startswith("Pending"), (doc["resubmitted_from"], doc["status"])
+		r = s.rpc("medical_hrms.self_service.request_details", {"doctype": "Employee Training Request", "name": name})["message"]
+		assert r["resent_as"] == again and not r["can_resend"], r
+		again2 = s.rpc("medical_hrms.self_service.save_request", {"doctype": "Employee Training Request", "values": json.dumps({"course_details": "x"}), "send": 1, "resend_of": name})
+		assert again2["status"] != 200, again2  # only once
+		s.close_dialogs()
+		CTX["resent"] = again
+		return f"{name} -> {again}"
 
 
 def leave_flow(b):
@@ -984,6 +1091,29 @@ def recruitment(b):
 			assert not st["dirty"] and (st["sn"] or not st["sn_type"]) and not st["home"], (role, st)
 			out.append(res["employee"])
 		return f"{', '.join(out)}: clean (special-needs type and home-country ID dropped for 'No' / Saudi)"
+
+	a = Session(b, label="academic.admin")
+	@check("REC-11", "Round 2: Instructor link", "Instructor form: picking the Employee fills gender and department and saves (B-26)", a.page)
+	def _():
+		app, res, chosen = hires["Instructor"]
+		a.login(U["academic.admin"])
+		ap = a.page
+		a.goto(f"/app/instructor/{res['instructor']}")
+		ap.wait_for_function("n => window.cur_frm && cur_frm.docname === n", arg=res["instructor"])
+		ap.wait_for_timeout(800)
+		ap.evaluate("() => cur_frm.set_value({employee: '', gender: '', department: ''})")
+		ap.wait_for_timeout(800)
+		ap.evaluate("e => cur_frm.set_value('employee', e)", res["employee"])
+		a.idle(1500)
+		assert not a.red_dialogs(), a.red_dialogs()
+		r = a.save_form()
+		assert r.status == 200, a.dialog_text()[:300]
+		# Gender Edu is readable by System Managers only: the form leaves Gender to the server, which fills it on save
+		doc = a.rpc("frappe.client.get", {"doctype": "Instructor", "name": res["instructor"]})["message"]
+		got = {k: doc.get(k) for k in ("employee", "gender", "department")}
+		assert got["employee"] == res["employee"] and got["gender"] in ("Male", "Female"), got
+		return f"{res['instructor']}: {got}"
+	a.close()
 
 
 # --------------------------------------------------------------------------- 5. presence + Jameah pages

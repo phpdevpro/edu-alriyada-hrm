@@ -1,4 +1,4 @@
-"""Task, bug and decision data for the Medical HRMS + Jameah tracker (as of 27 Oct 2026)."""
+"""Task, bug and decision data for the Medical HRMS + Jameah tracker (as of 27 Oct 2026, Round 2)."""
 
 AS_OF = "27 Oct 2026"
 E = "Earlier (May – 5 Oct 2026)"
@@ -27,6 +27,7 @@ ASSIGNED_TO = {
 	"HR-70": "Fathir",
 	"HR-73": "To assign",
 	"HR-75": "Testing team",
+	"HR-77": "Fathir",
 }
 TEAM = ["Abdul Hakeem", "Fathir", "Dinesh", "Testing team", "To assign"]
 
@@ -71,8 +72,9 @@ TASKS = [
 		"Each form's required fields, private attachment upload and sending tested in the browser.", "HR UAT of the wording on each form.", "self_service.py"),
 	("HR-15", "Self-service", "Request details and easier time selection", D20, DONE, "Abdul Hakeem", "Medium",
 		"Hour/minute/AM-PM picker saves correct times (10:15–11:45 test); incomplete time refused; details dialog shows saved values.", "None.", "employee_dashboard.js"),
-	("HR-16", "Self-service", "Resume drafts and resubmit rejected requests", P, DEV, "Abdul Hakeem", "Medium",
-		"Drafts can be saved; employees cannot edit sent requests.", "Let employees open their draft and send it; allow resubmitting a rejected request as a new one with history.", "HRM_UAT_SCENARIOS.md #3"),
+	("HR-16", "Self-service", "Resume drafts and resubmit rejected requests", D27, DONE_UAT, "Abdul Hakeem", "Medium",
+		"Round 2 (27 Oct): employees open a draft to change, send or delete it (Edit Draft / Delete Draft); a rejected request can be sent again once, as a new request filled in from it and linked to it (Sent Again From; Apply Again for leave). Sent requests still cannot be changed by the employee. Tested: unit tests (test_request_flow) and browser ESS-18, ESS-19, APR-11.",
+		"Testing team: Round 2 cases TC-ESS-17, 18, 20, 21, TC-APR-12, TC-LV-18.", "self_service.py; request_flow.py; employee_dashboard.js"),
 	("HR-17", "Self-service", "Employee data correction: approval and apply to Employee", P, DEV, "Abdul Hakeem + HR", "Medium",
 		"Request form and HR status steps exist.", "HR to confirm the steps; apply the approved change to the Employee record with an audit trail.", "Employee Data Update Request"),
 	("HR-18", "Leave", "Editable leave types and policies on migrate", E, DONE, "Abdul Hakeem", "Medium",
@@ -94,9 +96,10 @@ TASKS = [
 	("HR-23", "Leave", "Carry-forward, service eligibility and holiday calendar", P, DECISION, "HR", "Medium",
 		"Demo weekend calendar only.", "HR to give official holidays and carry-forward rules; set the Academic Holiday List in HR Settings.", "HR Settings"),
 	("HR-24", "Approvals", "Manager, HR and Finance approval routing", D19, PROGRESS, "Abdul Hakeem + HR/Finance", "High",
-		"Finance roles fixed on 19 Oct (Finance Manager or Accounts Manager accepted). HR approve/reject/issue tested.", "Agree the approver per step with HR and Finance; build the workflow; label amounts in SAR (some messages say AED).", "overrides/; HRM_APPROVAL_MATRIX.md"),
-	("HR-25", "Approvals", "Notifications, rejection reasons and audit trail", P, DEV, "Abdul Hakeem + HR", "Medium",
-		"Changes are tracked (track_changes). E-mail sending fails on this copy (HR-47).", "Add rejection reason; send submit/approve/reject e-mails once the mail account works.", "HRM_UAT_SCENARIOS.md"),
+		"Finance roles fixed on 19 Oct (Finance Manager or Accounts Manager accepted). HR approve/reject/issue tested.", "Agree the approver per step with HR and Finance (DEC-09); build the workflow. Amounts now say SAR (Round 2, 27 Oct, TC-APR-13).", "overrides/; HRM_APPROVAL_MATRIX.md"),
+	("HR-25", "Approvals", "Notifications, rejection reasons and audit trail", D27, DONE_UAT, "Abdul Hakeem + HR", "Medium",
+		"Round 2 (27 Oct): Rejection Reason is required to reject (10 request types, including Leave Application) and the employee reads it; each request shows its history (every status change, who and when) on the Employee Portal; notifications in the bell, and by e-mail where the mail account works: HR when an employee sends a request, the employee at every later step, with a link that opens the request. Notifications are queued only after the save is committed. Tested: unit tests and browser APR-02, APR-09, APR-10, APR-11.",
+		"Testing team: Round 2 cases. E-mails: check on the live server once HR-47 is fixed (Checklist CL-41). Who gets new-request notifications: DEC-16.", "request_flow.py; self_service.py"),
 	("HR-26", "Compliance", "Medical licences, contract renewal and separation", D20, DONE_UAT, "Abdul Hakeem", "Medium",
 		"Licence creation and own-licence visibility tested (LIC-01/02). Contract renewal is HR-only.", "UAT of expiry reminders and separation.", "Employee Medical License"),
 	("HR-27", "Integration", "Employee <-> Instructor link", D19, DATA, "HR", "High",
@@ -159,7 +162,7 @@ TASKS = [
 		"Run before every release; results go into the Test Cases workbook.", "tests/e2e/README.md"),
 	("HR-70", "Recruitment", "Job application page update (assigned to Fathir) merged into the test branch", D22, DONE_UAT, "Abdul Hakeem", "Medium",
 		"The update assigned to Fathir (22 Oct, PR #2 to develop): grouped form sections, country codes on phone numbers, a PDF receipt after sending, English/Arabic name checks, 194 Arabic texts. Merged into feature/uat-2026-10-22 the same day; conflicts resolved keeping both sides (phone check and Ministry identity check both run; Identity Type and Number stay required; 'Job Rank' in Arabic stays المرتبة الوظيفية). Two clashes Git could not see were fixed (B-42, B-44). Our browser tests now go through the steps of the form. Browser tests re-run: 95/95 browser checks, 37/37 unit tests, 23/23 Ministry views OK, no Error Log entries.",
-		"Client UAT of the application form and the receipt (TC-REC-13, TC-REC-14). Fathir: the phone error message gives a Sri Lankan example (+94 77 123 4567); use a Saudi one (+966 5x xxx xxxx).", "www/job-application.html; www/job_application.py; recruitment/receipt.py"),
+		"Client UAT of the application form and the receipt (TC-REC-13, TC-REC-14). Saudi phone example: HR-77 (Fathir).", "www/job-application.html; www/job_application.py; recruitment/receipt.py"),
 	("HR-71", "Repository", "Every branch merged into develop (the team's main branch)", D23, DONE, "Abdul Hakeem", "High",
 		"In this order: our work (feature/uat-2026-10-22, which already held fix/hrm-e2e-approval-permission-bugs, feature/jameah-ministry-views and the portal design), then feature/hr-portal-design, then employee-applicant, then ministry-lookup last (the 22 Oct job-application update was already in). Conflicts: feature/hr-portal-design's own 22 Oct merge had dropped the Ministry identity check from the application form and kept an old Create Employee signature; develop's tested versions kept. employee-applicant (May-Jul prototype of recruitment, assigned to Dinesh, replaced by the September rebuild) recorded as merged without taking its files (decision of the HR lead, 23 Oct): its 17 old patches, second /job-application controller and old Return from Leave doctype would have broken recruitment, leave returns and migrate. The merged code is identical to the code tested on 22 Oct. Re-tested: 95/95 browser checks (error sweep: 116 pages for HR, 20 for employees), 37/37 unit tests, 23/23 Ministry views, 29 server methods x 3 roles, 0 file and 0 site problems, no Error Log entries.",
 		"Delete the merged branches on GitHub after UAT (Checklist CL-34). New work: a branch from develop and a pull request (README).", "develop; README.md"),
@@ -172,6 +175,12 @@ TASKS = [
 	("HR-75", "Testing", "Testing team UAT round: test cases and guides", D27, PROGRESS, "Abdul Hakeem", "High",
 		"27 Oct: Abdul Hakeem gave the testing team the Test Cases workbook (130 cases, 12 modules) and both PDF guides (User Guide, Installation and Setup Guide); testing started. They record each result and any bug in the Test Cases workbook.",
 		"Collect their results and bug reports; fix the bugs, retest and mark them in the Bugs sheet (Checklist CL-23).", "Test Cases workbook; docs/guides"),
+	("HR-76", "Testing", "Round 2 feature document and test cases", D27, DONE, "Abdul Hakeem", "High",
+		"docs/guides/Medical_HRMS_Round_2_Whats_New.pdf (8 pages, for the testing team): what changed, how to test each change, known limits, the 16 Round 2 test cases. The Test Cases workbook has a Round column (filter Round 2) and counts per round. User Guide and Installation and Setup Guide updated for Round 2 (new screenshots, QA data only). Re-tested: 101/101 browser checks, 52 unit tests (0 failures), 0 file and 0 site problems, 31 server methods x 3 roles; Error Log: only the known e-mail password error B-25 (notification e-mails this copy cannot send).",
+		"Give the document and the workbook to the testing team after Round 2 is on their test server (Checklist CL-39).", "docs/guides; Test Cases workbook"),
+	("HR-77", "Recruitment", "Saudi phone example on the job application form", P, DEV, "Abdul Hakeem", "Low",
+		"The phone error message on the public application form gives a Sri Lankan example (+94 77 123 4567). Found in the HR-70 review.",
+		"Fathir: use a Saudi example (+966 5x xxx xxxx) in www/job-application.html and send a pull request to develop.", "www/job-application.html"),
 	("HR-74", "Documentation", "Installation and Setup Guide and User Guide (PDF)", D23, DONE, "Abdul Hakeem", "High",
 		"Two PDF guides in docs/guides: Installation and Setup Guide (21 pages: install, update, checks, first-time setup, leave year, sick leave, Jameah setup, Ministry agent account, staff data sheets, testing, troubleshooting, commands) and User Guide (30 pages: Employee Portal and the leave flow, every request, HR Portal, leave approvals and returns, recruitment, Ministry data, Academic Presence, Jameah pages, approvers, how to test and report bugs, Q&A). 31 screenshots from the test site with QA test data only. Sources (HTML) and build.py kept in docs/guides/src so the guides can be rebuilt after changes. Writing them found two bugs (B-54, B-55). Re-tested: 95/95 browser checks, 42 unit tests (0 failures), 0 file and 0 site problems, 29 server methods x 3 roles, no Error Log entries.",
 		"HR, managers and the testing team read the User Guide; the server admin the Installation Guide (Checklist CL-37). Rebuild after changes: python docs/guides/src/build.py.", "docs/guides"),
@@ -186,8 +195,9 @@ TASKS = [
 	("HR-47", "Infrastructure", "System e-mail account password cannot be decrypted", P, DATA, "Server admin", "High",
 		"Error Log: 'Failed to decrypt key Email Account.Notifications.password' 10 times (13–20 Oct); 3 e-mails stuck. Every system e-mail fails while this is broken.",
 		"On the live server: open Email Account 'Notifications', re-enter the password, save, send a test e-mail. Check the Error Log there for the same error.", "Error Log; Email Queue"),
-	("HR-48", "Integration", "Instructor form: linking an Employee fails on save", P, DEV, "Abdul Hakeem", "Medium",
-		"Instructor copies gender/department from Employee into its own lists, which reject Ministry codes. Recruitment works around it.", "Fix it from Medical HRMS: give the Instructor form the matching value when it copies gender / department from the Employee.", "Instructor form; medical_hrms"),
+	("HR-48", "Integration", "Instructor form: linking an Employee fails on save", D27, DONE_UAT, "Abdul Hakeem", "Medium",
+		"Round 2 (27 Oct), fixed from Medical HRMS without touching the education app: the copy of gender / department from the Employee is switched off on Instructor and Academic Advisor (Property Setters) and the matching Gender Edu / Department Edu value is filled in instead, on the form and on save. The Academic Advisor form had the same problem (B-56). Tested: unit tests and browser REC-11.",
+		"Testing team: TC-EMP-13, TC-EMP-14.", "staff_links.py; public/js/staff_employee_link.js"),
 	("HR-49", "Registration", "Report: Employees Missing Ministry Data", D21, DONE, "Abdul Hakeem", "Medium",
 		"Report (HR Portal > Ministry (Jameah)) listing each employee the Ministry views send with every Ministry-mandatory value still empty, named as the Employee form field (e.g. 'First Name (Arabic)', 'Academic Qualification (1 row): Academic qualification'). Read from the views themselves, so it shows exactly what the Ministry would receive.",
 		"HR to use it to complete the data (HR-50 sheet).", "report/employees_missing_ministry_data"),
@@ -310,7 +320,9 @@ BUGS = [
 	("B-55", D23, "Permission Request", "Duration (Hours) always showed 0, and a To Time before the From Time was accepted", "Read-only field that nothing calculated; no time check", "Hours counted on save; To Time must be after From Time; a patch fills in the requests already saved", "HR-74", "Fixed", "Unit tests; E2E ESS-04"),
 	("B-28", D21, "Navigation", "Employees clicking the 'Medical HRMS' breadcrumb got 'Not permitted - No permission for Page'", "Frappe chooses the breadcrumb workspace without a permission check", "Keep only workspaces the user can open", "HR-59", "Fixed", "E2E NAV-01/02"),
 	("B-25", D21, "E-mail", "System e-mails fail: password cannot be decrypted", "Email Account 'Notifications' password encrypted with another key", "Re-enter the password on the server", "HR-47", "Open", "Error Log"),
-	("B-26", D21, "Instructor form", "Linking an Employee in the Instructor form fails", "The form copies Ministry codes into lists that expect other values", "Fix from Medical HRMS (HR-48)", "HR-48", "Open", "Reproduced 21 Oct"),
+	("B-26", D21, "Instructor form", "Linking an Employee in the Instructor form fails", "The form copies Ministry codes into lists that expect other values", "Fixed 27 Oct from Medical HRMS: the copy is switched off and the matching Gender Edu / Department Edu is filled in (HR-48)", "HR-48", "Fixed", "Reproduced 21 Oct; unit test; E2E REC-11"),
+	("B-56", D27, "Academic Advisor form", "Linking an Employee fails on save (same cause as B-26: Gender copied from the Employee)", "Gender Edu list expects 'Male', the Employee holds 'Gender::1'", "Same fix as B-26 (HR-48)", "HR-48", "Fixed", "Unit test"),
+	("B-57", D27, "Portals: notification bell", "The time under each notification showed HTML code (<span class=frappe-timestamp ...>) instead of '1 minute ago'", "The time was built as HTML and then escaped", "Plain-text time (hr_portal.js)", "HR-25", "Fixed", "Round 2 screenshots"),
 	("B-27", D21, "Website", "Logo file missing (/files/rchs-logo.png)", "File not on this copy", "Check on the live server", "HR-54", "Open – check server", "Error sweep"),
 ]
 
@@ -330,5 +342,6 @@ DECISIONS = [
 	("DEC-13", "Ministry codes for Faculty Status 'Active' (11 on the job, or 12 on the job + external consultant) and Contract Type 'Full Time' (1 official position, or 2 contractor)", "Academic Affairs / HR", "Pick in Jameah Code Map; until then these are sent empty.", "JM-14"),
 	("DEC-14", "Sick leave stages as built: 30 days full pay, 60 days 75% pay, 30 days unpaid, within one sick year from the first sick day", "HR + Finance", "Matches Saudi Labour Law Article 117; Finance to confirm the 75% pay on salary slips.", "HR-20, HR-30"),
 	("DEC-15", "Students on Campus: keep one-hour slots (as built, 7:00-22:00) or count by the college's own teaching periods? The client's request says 'during each period'.", "HR (client)", "Review at the progress meeting; periods would need their start and end times.", "HR-38"),
+	("DEC-16", "Who is told about new employee requests: every HR User and HR Manager login (as built), or a smaller group (for example only the HR Manager, or one person per request type)?", "HR", "Built: every enabled HR User / HR Manager login. Changing it is small.", "HR-25"),
 	("DEC-11", "Ministry credit hours: Registered = hours registered this term; Passed = earned + bridged plan hours (so Passed + Remaining = Required, as on the student dashboard). The transcript also shows a lifetime 'registered' total and bridging calc-hours.", "Academic Affairs", "Recommended as built; confirm with the Ministry definitions.", "JM-18"),
 ]

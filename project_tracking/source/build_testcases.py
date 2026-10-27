@@ -10,7 +10,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from changelog import CHANGELOG
 from row_dates import CASES as CASE_DATES
-from testcases_data import CASES
+from testcases_data import CASES, ROUNDS, round_of
 from colours import PRIORITY, TESTER_BUG_STATUS, TEST_RESULT, badge, colour_column
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "Medical_HRMS_Jameah_Test_Cases.xlsx")
@@ -90,7 +90,8 @@ rows = [
 	("p", "1. Use the test site (not live data) and the accounts in 'Test Accounts'."),
 	("p", "2. Work through 'Test Cases' top to bottom. Fill the yellow columns: Result, Tested By, Test Date, Actual Result / Notes, Bug ID."),
 	("p", "3. Every Fail or error pop-up gets a row in 'Bug Report' — with the exact date and time, the page address and the exact message. The client sees an error at unknown times, so the time and page are the most important facts."),
-	("p", "4. 'Summary' counts results by module automatically."),
+	("p", "4. 'Summary' counts results by module and by round automatically."),
+	("p", "Round: the testing round a case belongs to. To test only what is new, filter the Round column (for example Round 2); that round's document in docs/guides lists the same cases."),
 	("p", "5. What is left to check or decide outside the test cases (live server, decisions, HR data) is in Medical_HRMS_Jameah_Checklist.xlsx in the same folder."),
 	("p", "Every change to a case updates its 'Last updated' date and gets a line in 'Change Log' (developers: project_tracking/source, then build_all.py)."),
 	("", ""),
@@ -129,24 +130,27 @@ for kind, v in rows:
 
 # ---------------------------------------------------------------- Test Cases
 wt = wb.create_sheet("Test Cases")
-cols = ["TC ID", "Module", "Scenario", "Login / role", "Preconditions", "Steps", "Test data", "Expected result", "Priority", "Type",
+cols = ["TC ID", "Round", "Module", "Scenario", "Login / role", "Preconditions", "Steps", "Test data", "Expected result", "Priority", "Type",
 	"Automated test", "Last automated run", "Result", "Tested by", "Test date", "Actual result / notes", "Bug ID", "Added on", "Last updated"]
-header(wt, 1, cols, [11, 18, 32, 16, 26, 46, 16, 44, 9, 11, 13, 13, 11, 13, 12, 34, 9, 12, 12])
+COL = {name: get_column_letter(i) for i, name in enumerate(cols, 1)}  # column letters by name (Result, Priority ...)
+WRAP = {cols.index(n) + 1 for n in ("Scenario", "Preconditions", "Steps", "Test data", "Expected result", "Actual result / notes")}
+INPUTS = {cols.index(n) + 1 for n in ("Result", "Tested by", "Test date", "Actual result / notes", "Bug ID")}
+header(wt, 1, cols, [11, 9, 18, 32, 16, 26, 46, 16, 44, 9, 11, 13, 13, 11, 13, 12, 34, 9, 12, 12])
 for i, c in enumerate(CASES, 2):
 	tid, module, scenario, role, pre, steps, data, expected, prio, typ, ref = c
 	added, updated = CASE_DATES[tid]
-	values = [tid, module, scenario, role, pre, steps, data, expected, prio, typ, ref, automated_result(ref), "Not run", "", "", "", "", added, updated]
+	values = [tid, round_of(tid), module, scenario, role, pre, steps, data, expected, prio, typ, ref, automated_result(ref), "Not run", "", "", "", "", added, updated]
 	for j, v in enumerate(values, 1):
-		cell(wt, i, j, v, wrap=j in (3, 5, 6, 7, 8, 16), bold=j == 1, fill=INPUT_FILL if 13 <= j <= 17 else None)
+		cell(wt, i, j, v, wrap=j in WRAP, bold=j == 1, fill=INPUT_FILL if j in INPUTS else None)
 last = len(CASES) + 1
-wt.freeze_panes = "D2"
+wt.freeze_panes = "E2"
 wt.auto_filter.ref = f"A1:{get_column_letter(len(cols))}{last}"
 dv = DataValidation(type="list", formula1='"' + ",".join(RESULTS_VALUES) + '"', allow_blank=True)
 wt.add_data_validation(dv)
-dv.add(f"M2:M{last + 200}")
-colour_column(wt, "M", 2, last + 200, TEST_RESULT)  # Result (testers)
-colour_column(wt, "L", 2, last + 200, TEST_RESULT)  # Last automated run
-colour_column(wt, "I", 2, last + 200, PRIORITY)
+dv.add(f"{COL['Result']}2:{COL['Result']}{last + 200}")
+colour_column(wt, COL["Result"], 2, last + 200, TEST_RESULT)  # Result (testers)
+colour_column(wt, COL["Last automated run"], 2, last + 200, TEST_RESULT)
+colour_column(wt, COL["Priority"], 2, last + 200, PRIORITY)
 
 # ---------------------------------------------------------------- Bug Report (for testers)
 wbg = wb.create_sheet("Bug Report")
@@ -202,7 +206,8 @@ wsum["A2"].font = Font(name=F, size=10, color=MUTED)
 modules = list(dict.fromkeys(c[1] for c in CASES))
 sum_cols = ["Module", "Cases"] + RESULTS_VALUES + ["% passed (of run)", "Critical not passed"]
 header(wsum, 4, sum_cols, [32, 8, 9, 8, 8, 9, 8, 15, 15])
-MR, RR, PR = f"'Test Cases'!$B$2:$B${last + 200}", f"'Test Cases'!$M$2:$M${last + 200}", f"'Test Cases'!$I$2:$I${last + 200}"
+rng = lambda name: f"'Test Cases'!${COL[name]}$2:${COL[name]}${last + 200}"
+MR, RR, PR, RD = rng("Module"), rng("Result"), rng("Priority"), rng("Round")
 row = 4
 for m in modules + ["All modules"]:
 	row += 1
@@ -215,11 +220,23 @@ for m in modules + ["All modules"]:
 	# % passed of the cases actually run (Pass + Fail + Blocked)
 	cell(wsum, row, 8, f'=IFERROR(D{row}/(D{row}+E{row}+F{row}),"-")', bold=is_all).number_format = "0%"
 	cell(wsum, row, 9, f'=COUNTIFS({MR},$A{row},{PR},"Critical")-COUNTIFS({MR},$A{row},{PR},"Critical",{RR},"Pass")' if not is_all else f"=SUM(I5:I{row - 1})", bold=is_all)
+# the same counts per testing round
+row += 2
+header(wsum, row, ["Round", "Cases"] + RESULTS_VALUES + ["% passed (of run)"])
+first = row + 1
+for name in ["Round 1"] + list(ROUNDS):
+	row += 1
+	cell(wsum, row, 1, name)
+	cell(wsum, row, 2, f'=COUNTIF({RD},$A{row})')
+	for j, v in enumerate(RESULTS_VALUES, 3):
+		cell(wsum, row, j, f'=COUNTIFS({RD},$A{row},{RR},{get_column_letter(j)}${first - 1})')
+	cell(wsum, row, 8, f'=IFERROR(D{row}/(D{row}+E{row}+F{row}),"-")').number_format = "0%"
+LR = rng("Last automated run")
 row += 2
 cell(wsum, row, 1, "Last automated run (developer)", bold=True)
-cell(wsum, row + 1, 1, "Pass"); cell(wsum, row + 1, 2, f"=COUNTIF('Test Cases'!$L$2:$L${last + 200},\"Pass\")")
-cell(wsum, row + 2, 1, "Fail"); cell(wsum, row + 2, 2, f"=COUNTIF('Test Cases'!$L$2:$L${last + 200},\"Fail\")")
-cell(wsum, row + 3, 1, "Manual only / unit test"); cell(wsum, row + 3, 2, f"=COUNTA('Test Cases'!$L$2:$L${last})-B{row + 1}-B{row + 2}")
+cell(wsum, row + 1, 1, "Pass"); cell(wsum, row + 1, 2, f"=COUNTIF({LR},\"Pass\")")
+cell(wsum, row + 2, 1, "Fail"); cell(wsum, row + 2, 2, f"=COUNTIF({LR},\"Fail\")")
+cell(wsum, row + 3, 1, "Manual only / unit test"); cell(wsum, row + 3, 2, f"=COUNTA('Test Cases'!${COL['Last automated run']}$2:${COL['Last automated run']}${last})-B{row + 1}-B{row + 2}")
 
 wb.calculation.fullCalcOnLoad = True
 wb.save(OUT)

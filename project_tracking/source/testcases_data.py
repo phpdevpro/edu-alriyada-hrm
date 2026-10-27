@@ -2,6 +2,18 @@
 
 HR, HRU, EMP, EMP2, INS, ADM, GUEST, ACAD = ("HR Manager", "HR User", "Employee", "Second employee", "Instructor", "Administrator", "Applicant (not logged in)", "Academic Affairs / Education Manager")
 
+# Testing round of each case: Round 1 = the first UAT round (handed over 27 Oct 2026); a later round lists its new and
+# changed cases here, and the round's feature document (docs/guides) names the same cases.
+ROUNDS = {
+	"Round 2": ("TC-ESS-17", "TC-ESS-18", "TC-ESS-19", "TC-ESS-20", "TC-ESS-21", "TC-ESS-22", "TC-ESS-23", "TC-APR-02", "TC-APR-09", "TC-APR-10",
+		"TC-APR-11", "TC-APR-12", "TC-APR-13", "TC-EMP-13", "TC-EMP-14", "TC-LV-18"),
+}
+
+
+def round_of(tid):
+	return next((name for name, ids in ROUNDS.items() if tid in ids), "Round 1")
+
+
 # (ID, Module, Scenario, Role, Preconditions, Steps, Test data, Expected result, Priority, Type, Automated test)
 CASES = [
 	# ------------------------------------------------------------ login
@@ -80,6 +92,24 @@ CASES = [
 	("TC-ESS-14", "Employee self-service", "My Profile", EMP, "—", "Click 'My Employee Profile'.", "—", "Pop-up with own name, designation, department, company.", "Low", "Functional", "ESS-17"),
 	("TC-ESS-15", "Employee self-service", "Dashboard on a phone", EMP, "Phone or narrow browser window.", "Open the Employee Dashboard and send one request.", "—",
 		"Layout fits the screen; dialogs usable; no sideways scrolling.", "Medium", "Usability", "—"),
+	("TC-ESS-17", "Employee self-service", "Change a draft and send it", EMP, "A Salary Certificate saved as a draft (TC-ESS-11).",
+		"1. Click 'N request(s)' on the Salary Certificate card.\n2. Click the draft, then Edit Draft.\n3. Change the addressee.\n4. Click Send Request.", "New addressee",
+		"The form opens with what you saved. After sending: the same request number, status Pending Manager, the new addressee. Edit Draft and Delete Draft are no longer offered.", "High", "Functional", "ESS-18"),
+	("TC-ESS-18", "Employee self-service", "Delete a draft", EMP, "A request saved as a draft.", "1. Open the draft (My Requests -> the request).\n2. Click Delete Draft, then Yes.", "—",
+		"'Draft deleted'; the request is gone from My Requests and from the counters.", "Medium", "Functional", "ESS-19"),
+	("TC-ESS-19", "Employee self-service", "See why a request was rejected", EMP, "HR rejected one of your requests with a reason (TC-APR-02).",
+		"Open the rejected request (Recent Requests -> View details, or the bell).", "—",
+		"Status Rejected; the box 'Rejection reason' shows HR's text; History lists each step with who and when (for example Pending Manager, Rejected).", "High", "Functional", "APR-11"),
+	("TC-ESS-20", "Employee self-service", "Send a rejected request again", EMP, "TC-ESS-19.", "1. In the rejected request click Send Again.\n2. Change what HR asked for.\n3. Click Send Request.", "—",
+		"A new request number with status Pending; its details say 'Sent again in place of <old number>'. The rejected one now says 'Sent again as <new number>' and no longer offers Send Again.", "High", "Functional", "APR-11"),
+	("TC-ESS-21", "Employee self-service", "A rejected request is sent again only once", EMP, "TC-ESS-20 done.", "Open the rejected request again.", "—",
+		"No Send Again button: it was already sent again.", "Low", "Negative", "APR-11"),
+	("TC-ESS-22", "Employee self-service", "Notifications in the bell", EMP, "HR moved one of your requests to another step, approved or rejected it.",
+		"1. Open the Employee Portal.\n2. Click the bell at the top.\n3. Click the notification.", "—",
+		"A red dot on the bell; the notification reads 'Your <request> <number> is now <status>'. Clicking it opens that request on the portal (with the reason if rejected).", "High", "Functional", "APR-10"),
+	("TC-ESS-23", "Employee self-service", "Notification e-mail", EMP, "Live server with a working outgoing e-mail account (Checklist CL-41). Not possible on the test copy.",
+		"HR rejects one of your requests with a reason.", "—",
+		"An e-mail 'Your <request> <number> is now Rejected' with the reason and a link that opens the request.", "Medium", "Functional", "—"),
 	# ------------------------------------------------------------ leave
 	("TC-LV-01", "Leave", "Apply for annual leave", EMP, "Employee has an Annual Leave allocation and a leave approver.",
 		"1. Leave Application -> New Request.\n2. Leave Type 'Annual Leave (N days left)', 2 days, reason.\n3. Send.", "2 days", "Leave Application with status Open; approver set automatically.", "Critical", "Functional", "ESS-14"),
@@ -114,9 +144,13 @@ CASES = [
 		"Both refused with a message; HR can set it to Completed.", "Medium", "Negative", "LV-05; unit tests"),
 	("TC-LV-17", "Leave", "Sick leave types in pay order", HR, "After migrate.", "Open /app/leave-type.", "—",
 		"Sick Leave 1 - Full Pay, Sick Leave 2 - 75% Pay, Sick Leave 3 - Unpaid; employees' sick balances kept.", "Low", "Regression", "LV-07"),
+	("TC-LV-18", "Leave", "Apply again after a rejected leave", EMP, "The leave approver rejected a Leave Application with a reason.",
+		"1. Open the rejected application (My Leave Applications, or the bell).\n2. Click Apply Again, change the dates, Send Request.", "—",
+		"The reason is shown. The leave form opens filled in; the new application says 'Sent again in place of <old number>'.", "Medium", "Functional", "—"),
 	# ------------------------------------------------------------ approvals
 	("TC-APR-01", "HR approvals", "Approve a Permission Request", HR, "A Pending request.", "Open it, Status = Approved, Save.", "—", "Saved; the employee sees Approved.", "High", "Functional", "APR-01"),
-	("TC-APR-02", "HR approvals", "Reject a Training Request", HR, "A Pending request.", "Status = Rejected, Save.", "—", "Saved as Rejected.", "High", "Functional", "APR-02"),
+	("TC-APR-02", "HR approvals", "Reject a Training Request with a reason", HR, "A Pending request.", "1. Status = Rejected.\n2. Click Save without a reason.\n3. Fill Rejection Reason and Save.", "Reason text",
+		"Step 2: 'Missing Fields: Rejection Reason'; nothing is saved. Step 3: saved as Rejected with the reason; the employee sees the reason.", "High", "Functional", "APR-02"),
 	("TC-APR-03", "HR approvals", "Issue a Salary Certificate", HR, "A Pending request.", "Status = Issued, Save.", "—", "Saved as Issued.", "Medium", "Functional", "APR-03"),
 	("TC-APR-04", "HR approvals", "HR User sees all employees' requests", HRU, "Requests from two employees.", "Open each request list.", "—", "Requests of all employees are listed, including Leave Return Request.", "High", "Functional", "APR-07"),
 	("TC-APR-05", "HR approvals", "Finance step on money requests", "Finance Manager", "A Training / Car / Allowance request at the finance step.", "Open and approve.", "—",
@@ -126,6 +160,17 @@ CASES = [
 		"Form opens with the cost center filled; NO 'You do not have Read or Select Permissions for Cost Center' pop-up.", "High", "Regression", "SWP-01/02"),
 	("TC-APR-08", "HR approvals", "HR User opens the Holiday List", HRU, "HR User account.", "1. Open /app/holiday-list.\n2. Open a holiday list.", "—",
 		"List and record open read-only; no 'Not permitted'.", "Medium", "Regression", "SWP-02"),
+	("TC-APR-09", "HR approvals", "Rejection reason on every request type and on leave", HR, "Pending requests of other types; an Open Leave Application (log in as its leave approver).",
+		"1. Reject a Remote Work, an Overtime and a Salary Certificate request: Save without a reason, then with one.\n2. Leave Application: Status = Rejected, Save without a reason, then with one, then Submit.", "Reason text",
+		"Without a reason each one is refused ('Rejection Reason'); with a reason it saves. The employee sees the reason.", "High", "Negative", "unit tests"),
+	("TC-APR-10", "HR approvals", "HR is told about a new request", HR, "An employee sends a request (not a draft).", "1. Open the HR Portal.\n2. Click the bell at the top.\n3. Click the notification.", "—",
+		"'New <request> from <employee> (<number>)'; clicking it opens the request. A request saved as a draft sends nothing.", "High", "Functional", "APR-09"),
+	("TC-APR-11", "HR approvals", "Set a rejected request back to a pending step", HR, "A Rejected request.", "Status = a Pending step -> Save.", "—",
+		"Saved; the Rejection Reason is cleared (it no longer applies); the employee is told about the new step.", "Low", "Functional", "unit tests"),
+	("TC-APR-12", "HR approvals", "A request sent again shows the rejected one", HR, "TC-ESS-20 done.", "Open the new request.", "—",
+		"'Sent Again From' shows the rejected request; clicking it opens that request with its rejection reason.", "Medium", "Functional", "APR-11"),
+	("TC-APR-13", "HR approvals", "Amount limits are in SAR", HR, "A Training Request above 10,000 at Pending Manager.", "Status = Approved -> Save.", "Estimated cost 12,000",
+		"Refused with 'Training programs exceeding SAR 10,000 require Department Head approval.' (SAR, not AED).", "Low", "Regression", "—"),
 	# ------------------------------------------------------------ security
 	("TC-SEC-01", "Security & privacy", "Employees see only their own requests", EMP, "Two employees each sent a request.", "Employee 1 opens each request list.", "—", "Only their own requests appear.", "Critical", "Security", "SEC-01"),
 	("TC-SEC-02", "Security & privacy", "Another employee's request URL", EMP, "URL of employee 2's request.", "Employee 1 opens that URL.", "Employee 2 request link",
@@ -173,6 +218,11 @@ CASES = [
 		"High", "Functional", "unit test"),
 	("TC-EMP-12", "Employee master & Ministry fields", "Only an HR Manager can import the data sheet", HRU, "HR User account.", "Open the Employees Missing Ministry Data report.", "—",
 		"The report opens; there are no Download Data Sheet / Check / Import buttons.", "Medium", "Security", "RPT-02"),
+	("TC-EMP-13", "Employee master & Ministry fields", "Link an Employee on the Instructor form", ACAD, "A login that can edit Instructors and see Employees; an Instructor without an Employee and that person's Employee record.",
+		"1. Open the Instructor.\n2. Pick the Employee.\n3. Save.", "—",
+		"Department fills in when it is in the academic list; Gender fills in (or, for a login that cannot open the Gender list, on save). The Instructor saves with Gender set. Before the fix: 'Could not find Gender: Gender::1'.", "High", "Regression", "REC-11"),
+	("TC-EMP-14", "Employee master & Ministry fields", "Link an Employee on the Academic Advisor form", ACAD, "As TC-EMP-13, for an Academic Advisor.", "1. Open the Academic Advisor.\n2. Pick the Employee.\n3. Save.", "—",
+		"The record saves with Gender set from the Employee.", "Medium", "Regression", "unit tests"),
 	# ------------------------------------------------------------ licences
 	("TC-LIC-01", "Medical licences", "HR creates a licence", HR, "—", "New Employee Medical License: employee, type, number, expiry; Save.", "—", "Saved.", "Medium", "Functional", "LIC-01"),
 	("TC-LIC-02", "Medical licences", "Employees see only their own licence", EMP, "Licences for two employees.", "Each employee opens the licence list.", "—", "Only their own licence.", "High", "Security", "LIC-02"),

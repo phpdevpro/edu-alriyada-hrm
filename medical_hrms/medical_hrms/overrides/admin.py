@@ -14,10 +14,10 @@ def validate_travel_request(doc, method):
 
     if cost > 50000:
         if not has_any_role(*FINANCE_APPROVER_ROLES):
-            frappe.throw(_("Trips over AED 50,000 require Finance approval."))
+            frappe.throw(_("Trips over SAR 50,000 require Finance approval."))
     elif cost > 15000:
         if not has_any_role("Department Head"):
-            frappe.throw(_("Trips over AED 15,000 require Department Head approval."))
+            frappe.throw(_("Trips over SAR 15,000 require Department Head approval."))
 
 
 def validate_company_car(doc, method):
