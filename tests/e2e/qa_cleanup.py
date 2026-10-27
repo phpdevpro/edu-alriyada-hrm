@@ -54,13 +54,14 @@ def drop(doctype, docnames):
 
 def forget_notifications(doctype, name):
 	"""Bell entries about a removed QA record (also those sent to non-QA HR logins), and their e-mails that were
-	never sent (this copy cannot send e-mail, B-25)."""
+	never sent (this copy cannot send e-mail, B-25). The e-mails are stopped, not deleted: the e-mail job may be
+	sending them at this moment and would log 'Email Queue ... not found'."""
 	for log in frappe.get_all("Notification Log", filters={"document_type": doctype, "document_name": name}, pluck="name"):
 		frappe.delete_doc("Notification Log", log, force=True, ignore_permissions=True, delete_permanently=True)
 		removed["Notification Log"] = removed.get("Notification Log", 0) + 1
-	for mail in frappe.db.sql_list("""select name from `tabEmail Queue` where status in ('Not Sent', 'Error') and message like %s""", f"%{name}%"):
-		frappe.delete_doc("Email Queue", mail, force=True, ignore_permissions=True, delete_permanently=True)
-		removed["Email Queue"] = removed.get("Email Queue", 0) + 1
+	for mail in frappe.db.sql_list("""select name from `tabEmail Queue` where status = 'Not Sent' and message like %s""", f"%{name}%"):
+		frappe.db.set_value("Email Queue", mail, {"status": "Error", "error": "Not sent: its QA test record was removed (qa_cleanup.py)."}, update_modified=False)
+		removed["Email Queue (stopped)"] = removed.get("Email Queue (stopped)", 0) + 1
 
 
 qa_users = [u for u in frappe.get_all("User", filters={"name": ["like", f"%@{DOM}"]}, pluck="name") if u not in KEEP]
