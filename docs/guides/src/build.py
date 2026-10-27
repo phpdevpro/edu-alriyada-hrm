@@ -17,6 +17,7 @@ GUIDES = [
 	("user.html", "Medical_HRMS_Jameah_User_Guide.pdf", "User Guide"),
 	# one short document per testing round: only that round's changes and its test cases
 	("round2.html", "Medical_HRMS_Round_2_Whats_New.pdf", "Round 2: What's New"),
+	("round3.html", "Medical_HRMS_Round_3_Whats_New.pdf", "Round 3: What's New"),
 ]
 FOOTER = """<div style="width:100%; padding:0 15mm; font-family:'Ubuntu Sans','DejaVu Sans',sans-serif; font-size:7.5pt; color:#5d6b66;
 	display:flex; justify-content:space-between;"><span>Medical HRMS &amp; Jameah · {title} · 27 Oct 2026</span>

@@ -1,0 +1,103 @@
+/* My HR card on the staff dashboards (staff_hr_card.js, Round 3 HR-11).
+   It sits inside the education portals, so it takes their colours: the shells set --primary, --surface, --border,
+   --text-primary ... (education portal_tokens.css), in light and dark mode. Outside a shell Frappe's own colours apply.
+   Logical properties (margin-inline, inset-inline) keep it right in Arabic. */
+
+.mhs-card {
+	--mhs-primary: var(--primary, var(--primary-color, #0f766e));
+	--mhs-fill: var(--edu-brand, var(--mhs-primary));
+	--mhs-surface: var(--surface, var(--card-bg, #fff));
+	--mhs-sunk: var(--surface-light, var(--subtle-fg, #f4f7f6));
+	--mhs-border: var(--border, var(--border-color, #dde5e3));
+	--mhs-text: var(--text-primary, var(--text-color, #1f2a28));
+	--mhs-muted: var(--text-tertiary, var(--text-muted, #6b7b78));
+	--mhs-soft: color-mix(in srgb, var(--mhs-primary) 12%, transparent);
+	--mhs-amber: #b45309; --mhs-teal: #0f766e; --mhs-rose: #be123c; --mhs-sky: #0369a1; --mhs-violet: #6d28d9;
+	margin-block: 20px;
+	padding: 18px 20px;
+	border: 1px solid var(--mhs-border);
+	border-radius: 18px;
+	background: var(--mhs-surface);
+	color: var(--mhs-text);
+	box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / .06));
+	font-size: 14px;
+}
+[data-theme="dark"] .mhs-card { --mhs-amber: #fbbf24; --mhs-teal: #5eead4; --mhs-rose: #fda4af; --mhs-sky: #7dd3fc; --mhs-violet: #c4b5fd; }
+
+.mhs-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.mhs-icon {
+	width: 44px; height: 44px; flex: none; border-radius: 13px;
+	display: inline-flex; align-items: center; justify-content: center; font-size: 18px;
+	background: var(--mhs-soft); color: var(--mhs-primary);
+}
+.mhs-titles { flex: 1 1 200px; min-width: 0; }
+.mhs-titles h3 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.3; color: var(--mhs-text); }
+.mhs-titles p { margin: 2px 0 0; font-size: 13px; color: var(--mhs-muted); }
+.mhs-id { white-space: nowrap; }
+.mhs-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.mhs-btn {
+	display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 14px;
+	border: 1px solid var(--mhs-border); border-radius: 10px; background: var(--mhs-surface);
+	color: var(--mhs-text) !important; font-size: 13px; font-weight: 600; line-height: 1; cursor: pointer;
+	text-decoration: none !important; white-space: nowrap;
+}
+.mhs-btn:hover { border-color: var(--mhs-primary); color: var(--mhs-primary) !important; }
+.mhs-btn:focus-visible, .mhs-link:focus-visible, .mhs-service:focus-visible { outline: 2px solid var(--mhs-primary); outline-offset: 2px; }
+.mhs-btn.primary { background: var(--mhs-fill); border-color: transparent; color: #fff !important; }
+.mhs-btn.primary:hover { filter: brightness(1.07); color: #fff !important; }
+.mhs-btn.ghost { border-color: transparent; background: transparent; color: var(--mhs-primary) !important; }
+.mhs-btn.sm { min-height: 30px; padding: 0 11px; font-size: 12.5px; border-radius: 9px; }
+.mhs-caret { font-size: 10px; opacity: .7; }
+[dir="rtl"] .mhs-flip { transform: scaleX(-1); }
+
+.mhs-services { max-height: 360px; overflow-y: auto; padding: 6px; border-radius: 12px; min-width: 230px; }
+.mhs-service { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 0; border-radius: 8px; background: none; text-align: start; font-size: 13px; }
+.mhs-service i { width: 16px; text-align: center; color: var(--mhs-primary); }
+
+.mhs-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+.mhs-panel { min-width: 0; padding: 14px 16px; border-radius: 14px; background: var(--mhs-sunk); }
+.mhs-panel h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--mhs-text); }
+.mhs-muted { margin: 0; font-size: 13px; color: var(--mhs-muted); }
+
+.mhs-balances { display: flex; gap: 10px; flex-wrap: wrap; }
+.mhs-balance { flex: 1 1 110px; max-width: 190px; min-width: 0; padding: 10px 12px; border: 1px solid var(--mhs-border); border-radius: 12px; background: var(--mhs-surface); }
+.mhs-balance b { display: block; font-size: 24px; line-height: 1.1; color: var(--mhs-primary); }
+.mhs-balance span { display: block; margin-top: 4px; font-size: 12.5px; font-weight: 600; overflow-wrap: anywhere; }
+.mhs-balance small { color: var(--mhs-muted); font-size: 12px; }
+
+/* minmax(0, 1fr): a grid column otherwise never gets narrower than its longest no-wrap line (phone width) */
+.mhs-steps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 12px; }
+.mhs-step { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mhs-step-text { flex: 1; min-width: 0; font-size: 13px; }
+.mhs-dot { width: 30px; height: 30px; flex: none; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; background: var(--mhs-soft); color: var(--mhs-primary); }
+.mhs-dot.amber { background: color-mix(in srgb, var(--mhs-amber) 16%, transparent); color: var(--mhs-amber); }
+.mhs-dot.teal { background: color-mix(in srgb, var(--mhs-teal) 14%, transparent); color: var(--mhs-teal); }
+.mhs-dot.sky { background: color-mix(in srgb, var(--mhs-sky) 14%, transparent); color: var(--mhs-sky); }
+
+.mhs-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+.mhs-row { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 7px 0; border-bottom: 1px solid var(--mhs-border); }
+.mhs-row:last-child { border-bottom: 0; }
+.mhs-row-main { flex: 1; min-width: 0; }
+.mhs-row-main b { display: block; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mhs-row-main small { display: block; font-size: 12px; color: var(--mhs-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mhs-pill { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; background: color-mix(in srgb, var(--mhs-muted) 14%, transparent); color: var(--mhs-muted); }
+.mhs-pill.amber { background: color-mix(in srgb, var(--mhs-amber) 16%, transparent); color: var(--mhs-amber); }
+.mhs-pill.teal { background: color-mix(in srgb, var(--mhs-teal) 14%, transparent); color: var(--mhs-teal); }
+.mhs-pill.rose { background: color-mix(in srgb, var(--mhs-rose) 13%, transparent); color: var(--mhs-rose); }
+.mhs-link { padding: 0; border: 0; background: none; color: var(--mhs-primary); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.mhs-link:hover { text-decoration: underline; }
+
+@media (max-width: 900px) {
+	.mhs-body { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+	.mhs-card { padding: 16px; }
+	.mhs-actions { width: 100%; }
+	.mhs-actions .mhs-btn.primary, .mhs-menu { flex: 1 1 auto; }
+	.mhs-menu .mhs-btn { width: 100%; justify-content: center; }
+	.mhs-actions .mhs-btn.primary { justify-content: center; }
+	/* the request's name gets the whole line; its status and View go under it */
+	.mhs-row { flex-wrap: wrap; row-gap: 4px; }
+	.mhs-row-main { flex-basis: 100%; }
+}

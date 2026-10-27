@@ -20,6 +20,11 @@ USERS = {
 	f"qa.outsider@{DOM}": ("QA Outsider", ["Academics User"] if frappe.db.exists("Role", "Academics User") else []),
 	# edits Instructor records and reads Employees: links an Employee on the Instructor form (B-26)
 	f"qa.academic.admin@{DOM}": ("QA Academic Admin", ["Education Manager", "HR User"]),
+	# Round 3 (HR-11), the My HR card on the staff dashboards: a head of department and a dean with an Employee record,
+	# and an instructor login without one (no card)
+	f"qa.hod@{DOM}": ("QA Head Nursing", ["Head of Nursing Department", "Instructor", "Employee"]),
+	f"qa.dean@{DOM}": ("QA Dean", ["Dean", "Employee"]),
+	f"qa.staff.nolink@{DOM}": ("QA Staff Nolink", ["Instructor"]),
 }
 for email, (full, roles) in USERS.items():
 	if not frappe.db.exists("User", email):
@@ -38,7 +43,7 @@ for email, (full, roles) in USERS.items():
 
 C = lambda cat, code: f"{cat}::{code}"
 out = {}
-for key, last, idno in (("emp1", "One", "1099000001"), ("emp2", "Two", "1099000002")):
+for key, last, idno in (("emp1", "One", "1099000001"), ("emp2", "Two", "1099000002"), ("hod", "Head", "1099000004"), ("dean", "Dean", "1099000005")):
 	email = f"qa.{key}@{DOM}"
 	name = frappe.db.get_value("Employee", {"user_id": email})
 	if not name:

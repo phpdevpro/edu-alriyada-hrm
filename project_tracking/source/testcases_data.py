@@ -7,6 +7,7 @@ HR, HRU, EMP, EMP2, INS, ADM, GUEST, ACAD = ("HR Manager", "HR User", "Employee"
 ROUNDS = {
 	"Round 2": ("TC-ESS-17", "TC-ESS-18", "TC-ESS-19", "TC-ESS-20", "TC-ESS-21", "TC-ESS-22", "TC-ESS-23", "TC-APR-02", "TC-APR-09", "TC-APR-10",
 		"TC-APR-11", "TC-APR-12", "TC-APR-13", "TC-EMP-13", "TC-EMP-14", "TC-LV-18", "TC-LV-19"),
+	"Round 3": tuple(f"TC-STF-{n:02d}" for n in range(1, 11)),
 }
 
 
@@ -174,6 +175,34 @@ CASES = [
 		"'Sent Again From' shows the rejected request; clicking it opens that request with its rejection reason.", "Medium", "Functional", "APR-11"),
 	("TC-APR-13", "HR approvals", "Amount limits are in SAR", HR, "A Training Request above 10,000 at Pending Manager.", "Status = Approved -> Save.", "Estimated cost 12,000",
 		"Refused with 'Training programs exceeding SAR 10,000 require Department Head approval.' (SAR, not AED).", "Low", "Regression", "—"),
+	# ------------------------------------------------------------ staff dashboards (Round 3, HR-11)
+	("TC-STF-01", "Staff dashboards (My HR)", "My HR on the Instructor dashboard", INS, "Instructor login linked to an Employee record (HR links them: HR-55).",
+		"1. Log in as the instructor.\n2. Look under the four figures (Active Class, Total Students ...).", "—",
+		"A 'My HR' card with the Employee ID, the leave balances and the latest requests, and the buttons Apply for Leave, New Request and Employee Portal. The rest of the Instructor dashboard is unchanged.", "High", "Functional", "SHR-01"),
+	("TC-STF-02", "Staff dashboards (My HR)", "My HR on the Department Head dashboard", "Head of department", "A head of department with an Employee record and annual leave.",
+		"1. Open the Department Head dashboard.\n2. Look under the coloured figures.", "—",
+		"The My HR card, in the dashboard's own colours, shows the annual leave left (e.g. 21 of 21 days).", "High", "Functional", "SHR-02"),
+	("TC-STF-03", "Staff dashboards (My HR)", "Send a request from the card", INS, "TC-STF-01.",
+		"1. New Request > Salary Certificate.\n2. Fill Purpose and Addressee.\n3. Send Request.", "Bank Loan, QA Bank",
+		"'Request sent for review'. The card lists the request as Pending with '1 waiting'; HR sees it (bell, TC-APR-10).", "High", "Functional", "SHR-03"),
+	("TC-STF-04", "Staff dashboards (My HR)", "Open a request from the card", INS, "TC-STF-03.", "Click View next to the request.", "—",
+		"The same window as on the Employee Portal: status, details, and after a rejection the reason, the history and Send Again.", "Medium", "Functional", "SHR-04"),
+	("TC-STF-05", "Staff dashboards (My HR)", "Apply for leave from the card", "Head of department", "TC-STF-02.",
+		"1. Apply for Leave.\n2. Pick the leave type, two working days next month, a reason.\n3. Send Request.", "Two working days",
+		"Only the leave the person holds is offered, with the days left. After sending, the card shows 'Waiting for your manager's approval' for those dates.", "High", "Functional", "SHR-05"),
+	("TC-STF-06", "Staff dashboards (My HR)", "Same requests on the Employee Portal", INS, "TC-STF-03.", "Click Employee Portal on the card.", "—",
+		"The Employee Portal opens and lists the request sent from the card.", "Medium", "Functional", "SHR-06"),
+	("TC-STF-07", "Staff dashboards (My HR)", "The other staff dashboards", "Dean, vice deans, IT, Academic Operations, Student Affairs, Admission, Finance, Clinical, Advisor",
+		"Each of these logins linked to an Employee record.", "Open each dashboard.", "—",
+		"The card appears after the dashboard's first row of figures (Advisor: under the heading) and the dashboard works as before.", "Medium", "Functional", "SHR-09"),
+	("TC-STF-08", "Staff dashboards (My HR)", "Staff without an Employee record", INS, "An instructor login not linked to an Employee record.", "Open the Instructor dashboard.", "—",
+		"No My HR card and no error: the dashboard is exactly as before.", "High", "Negative", "SHR-10"),
+	("TC-STF-09", "Staff dashboards (My HR)", "Phone, dark mode and Arabic", INS, "TC-STF-01.",
+		"1. Open the dashboard on a phone (or a narrow window).\n2. Switch to dark mode.\n3. Switch to AR, then back to EN.", "—",
+		"The card fits the screen with no sideways scrolling; it is readable in dark mode; in Arabic it reads 'شؤوني الوظيفية', right to left.", "Medium", "Functional", "SHR-07, SHR-08"),
+	("TC-STF-10", "Staff dashboards (My HR)", "Employee Portal unchanged", EMP, "Employee login.",
+		"Repeat TC-ESS-17 (Edit Draft), TC-ESS-19 (rejection reason and history) and TC-ESS-20 (Send Again) on the Employee Portal.", "—",
+		"All work as in Round 2 (the request windows are now shared with the card).", "High", "Regression", "ESS-01..19"),
 	# ------------------------------------------------------------ security
 	("TC-SEC-01", "Security & privacy", "Employees see only their own requests", EMP, "Two employees each sent a request.", "Employee 1 opens each request list.", "—", "Only their own requests appear.", "Critical", "Security", "SEC-01"),
 	("TC-SEC-02", "Security & privacy", "Another employee's request URL", EMP, "URL of employee 2's request.", "Employee 1 opens that URL.", "Employee 2 request link",

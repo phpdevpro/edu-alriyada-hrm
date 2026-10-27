@@ -17,7 +17,7 @@ PW = STATE["password"]
 EMP1, EMP2 = STATE["emp1"], STATE["emp2"]
 DOM = "rchs-qa.test"
 COLLEGE = "alriyada.edu.sa"  # education requires Instructor e-mails on this domain
-U = {k: f"qa.{k}@{DOM}" for k in ("hr.manager", "hr.user", "emp1", "emp2", "unlinked", "outsider", "academic.admin")}
+U = {k: f"qa.{k}@{DOM}" for k in ("hr.manager", "hr.user", "emp1", "emp2", "unlinked", "outsider", "academic.admin", "hod", "dean", "staff.nolink")}
 INSTRUCTOR = ("qa.instructor@rchs-qa.test", "QaInstructor#2026")
 ONLY = set(sys.argv[1:])
 now = lambda: datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -1363,6 +1363,129 @@ def portal_shell(b):
 	h.close()
 
 
+def staff_hr(b):
+	"""Round 3 (HR-11): the My HR card on the education staff dashboards (staff_hr_card.js)."""
+	def card_after(s, route, spot):
+		s.goto(route)
+		s.page.wait_for_selector(".mhs-card:visible", timeout=60000)
+		s.close_dialogs()
+		before = s.page.evaluate("""() => { const c = [...document.querySelectorAll('.mhs-card')].find(e => e.getClientRects().length);
+			const p = c && c.previousElementSibling; return p ? (p.id + ' ' + p.className) : '' }""")
+		assert spot in before, f"card placed after '{before}', expected after {spot}"
+		return s.page.inner_text(".mhs-card:visible")
+
+	i = Session(b, label="staff:instructor"); ip = i.page
+
+	@check("SHR-01", "My HR card", "Instructor dashboard: My HR after the figures, with the Employee ID; the dashboard itself unchanged", ip)
+	def _():
+		i.login(*INSTRUCTOR)
+		text = card_after(i, "/app/instructor-dashboard", "stats-grid")
+		assert "My HR" in text and re.search(r"HR-EMP-\d+", text), text[:200]
+		assert ip.locator("#stats-grid .stat-card:visible").count() == 4 and ip.is_visible("#instructor-insights")
+		return text.splitlines()[1] if len(text.splitlines()) > 1 else text
+	i.close()
+
+	h = Session(b, label="staff:hod"); hp = h.page
+	card = lambda: hp.locator(".mhs-card:visible")
+
+	@check("SHR-02", "My HR card", "Department Head dashboard: My HR after the figures shows 21 days of Annual Leave", hp)
+	def _():
+		h.login(U["hod"])
+		card_after(h, "/app/department-dashboard", "dhd-stats")
+		balances = card().locator(".mhs-balances").inner_text()
+		assert "21" in balances and "Annual Leave" in balances, balances
+
+	@check("SHR-03", "My HR card", "New Request > Salary Certificate from the card: sent; the card lists it as pending", hp)
+	def _():
+		card().locator(".mhs-new").click()
+		card().locator(".mhs-service", has_text="Salary Certificate").click()
+		hp.wait_for_selector(".modal.show .modal-title"); hp.wait_for_timeout(900)
+		hp.evaluate("() => cur_dialog.set_values({purpose: 'Bank Loan', addressee: 'QA Bank (Round 3)'})"); hp.wait_for_timeout(400)
+		with hp.expect_response(lambda r: "self_service.save_request" in r.url, timeout=30000) as info:
+			hp.click(".modal.show .btn-modal-primary")
+		assert info.value.status == 200, h.dialog_text()[:300]
+		name = CTX["card_request"] = info.value.json()["message"]["name"]
+		hp.wait_for_function("n => [...document.querySelectorAll('.mhs-card')].some(c => c.getClientRects().length && c.innerText.includes(n))", arg=name, timeout=30000)
+		text = card().locator(".mhs-requests").inner_text()
+		assert "1 waiting" in text and "Pending" in text, text
+		return name
+
+	@check("SHR-04", "My HR card", "View opens the request (status, details) - the same dialog as on the Employee Portal", hp)
+	def _():
+		card().locator(".mhs-view").first.click()
+		hp.wait_for_selector(".modal.show .emd-detail-status")
+		text = h.dialog_text(); h.close_dialogs()
+		assert CTX["card_request"] in text and "Pending" in text, text[:300]
+
+	@check("SHR-05", "My HR card", "Apply for Leave from the card: only held leave offered; then the card shows it waiting for the manager", hp)
+	def _():
+		card().locator(".mhs-apply").click()
+		hp.wait_for_selector(".modal.show .modal-title"); hp.wait_for_timeout(1200)
+		# what the person holds, with the days left, and Leave Without Pay (to agree with HR); no other leave type
+		types = hp.evaluate("() => cur_dialog.fields_dict.leave_type.df.options.map(o => typeof o === 'string' ? o : o.label).filter(Boolean)")
+		assert types[0] == "Annual Leave (21 days left)" and all(t.startswith(("Annual Leave", "Leave Without Pay")) for t in types), types
+		start = date.today() + timedelta(days=28)
+		start += timedelta(days=-start.weekday())  # a Monday: working days on the QA holiday list
+		hp.evaluate("v => cur_dialog.set_values(v)", {"leave_type": "Annual Leave", "from_date": str(start), "to_date": str(start + timedelta(days=1)),
+			"description": "QA Round 3: leave from the My HR card"})
+		hp.wait_for_timeout(500)
+		with hp.expect_response(lambda r: "self_service.save_request" in r.url, timeout=30000) as info:
+			hp.click(".modal.show .btn-modal-primary")
+		assert info.value.status == 200, h.dialog_text()[:300]
+		hp.wait_for_function("() => [...document.querySelectorAll('.mhs-card')].some(c => c.getClientRects().length && /Waiting for your manager/.test(c.innerText))", timeout=30000)
+		return info.value.json()["message"]["name"]
+
+	@check("SHR-06", "My HR card", "The request sent from the card is on the Employee Portal too", hp)
+	def _():
+		h.goto("/app/employee-dashboard"); hp.wait_for_selector("#emd-recent .emd-recent-row", timeout=60000)
+		assert CTX["card_request"] in hp.inner_text("#emd-recent")
+
+	@check("SHR-07", "My HR card", "Phone width (390 px): the card fits the screen, nothing scrolls sideways inside it", hp)
+	def _():
+		hp.set_viewport_size({"width": 390, "height": 844})
+		try:
+			card_after(h, "/app/department-dashboard", "dhd-stats")
+			fit = hp.evaluate("""() => { const c = [...document.querySelectorAll('.mhs-card')].find(e => e.getClientRects().length); const r = c.getBoundingClientRect();
+				return {left: Math.round(r.left), right: Math.round(r.right), width: innerWidth, overflow: c.scrollWidth - c.clientWidth} }""")
+			assert fit["left"] >= 0 and fit["right"] <= fit["width"] and fit["overflow"] <= 1, fit
+			return fit
+		finally:
+			hp.set_viewport_size({"width": 1366, "height": 900})
+
+	@check("SHR-08", "My HR card", "Arabic from the top bar: the card reads right to left in Arabic, and back to English", hp)
+	def _():
+		card_after(h, "/app/department-dashboard", "dhd-stats")
+		with hp.expect_navigation(timeout=90000):
+			hp.click('.topbar-lang-btn[data-lang="ar"]:visible')
+		hp.wait_for_selector(".mhs-card:visible", timeout=90000)
+		title, rtl = card().locator("h3").inner_text(), hp.evaluate("document.documentElement.dir")
+		with hp.expect_navigation(timeout=90000):
+			hp.click('.topbar-lang-btn[data-lang="en"]:visible')
+		hp.wait_for_function("() => window.frappe && frappe.boot && frappe.boot.lang === 'en'", timeout=90000)
+		assert title == "شؤوني الوظيفية" and rtl == "rtl", (title, rtl)
+		return f"{title} ({rtl})"
+	h.close()
+
+	d = Session(b, label="staff:dean")
+
+	@check("SHR-09", "My HR card", "Dean dashboard: My HR after the first row of figures", d.page)
+	def _():
+		d.login(U["dean"])
+		assert "My HR" in card_after(d, "/app/dean-dashboard", "exs-row")
+	d.close()
+
+	n = Session(b, label="staff:nolink"); np_ = n.page
+	calls = []
+	np_.on("request", lambda r: calls.append(r.url) if "get_dashboard_data" in r.url else None)
+
+	@check("SHR-10", "My HR card", "Instructor login without an Employee record: no card and no HR call", np_)
+	def _():
+		n.login(U["staff.nolink"])
+		n.goto("/app/instructor-dashboard"); np_.wait_for_selector("#stats-grid", timeout=60000); np_.wait_for_timeout(3000)
+		assert not np_.locator(".mhs-card").count() and not calls, calls
+	n.close()
+
+
 def error_sweep(b):
 	slug = lambda dt: dt.lower().replace(" ", "-")
 	hr_routes = ["/app/hr-dashboard", "/app/medical-hrms", "/app/jameah-data-check", "/app/jameah-settings", "/app/hr-academic-presence/faculty",
@@ -1391,7 +1514,7 @@ def main():
 		b = pw.chromium.launch()
 		try:
 			for step in (login_landing, employee_self_service, employee_isolation, hr_dashboard, hr_approvals, leave_flow, employee_master,
-					recruitment, presence, jameah_pages, ministry_report, portal_shell, error_sweep):
+					recruitment, presence, jameah_pages, ministry_report, portal_shell, staff_hr, error_sweep):
 				if want(step.__name__) or step in (employee_self_service, hr_dashboard) and (want("hr_approvals") or want("employee_isolation")):
 					try:
 						step(b)

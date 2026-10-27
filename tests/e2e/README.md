@@ -48,3 +48,7 @@ Unit tests and the Ministry view check run separately:
   it cannot read the Gender Edu list, so the server fills Gender on save.
 - The application form is a step-by-step wizard: `walk_to_review()` clicks Next through the steps and ticks
   the consent, like an applicant. English names must be letters only.
+- `staff_hr` (Round 3, HR-11) checks the My HR card on the education dashboards with `qa.instructor` (kept),
+  `qa.hod` (Head of Nursing Department + Instructor, with an Employee record and annual leave), `qa.dean` (Dean)
+  and `qa.staff.nolink` (Instructor without an Employee record: no card). SHR-08 switches the language to Arabic
+  from the dashboard's top bar and back to English.

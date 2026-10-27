@@ -322,6 +322,7 @@ bench --site &lt;site&gt; execute medical_hrms.instructor_data_sheet.import_shee
 		<tr><td class="k">Logo missing on every page</td><td>Upload <code>rchs-logo.png</code> again (Website Settings / File).</td></tr>
 		<tr><td class="k">No notification in the bell after a request is sent</td><td>Notifications are made by a background worker (short queue) just after the save: check the workers with <code>bench doctor</code>, and that the user is enabled and has notifications on (My Settings → Notifications). With a single worker for every queue (a development copy), they wait while the hourly Jameah refresh runs (up to about 15 minutes); production keeps separate short, default and long workers.</td></tr>
 		<tr><td class="k">"Please set default template for Leave Status Notification"</td><td>HR Settings has no leave e-mail templates: run the migrate again, or choose the two <i>(Medical HRMS)</i> templates there (section 6.2).</td></tr>
+		<tr><td class="k">An instructor or head of department sees no My HR card on their dashboard</td><td>Their login is not linked to an Employee record (the link also gives the Employee role): link it on the Employee (User ID) or with the Instructor data sheet. If it is linked, run <code>bench build --app medical_hrms</code> and <code>clear-cache</code>, then reload the page. The card is on the Instructor, Department Head, Dean, Vice Dean, IT, Academic Operations, Student Affairs, Admission, Finance, Clinical and Advisor dashboards.</td></tr>
 	</tbody>
 </table>
 
