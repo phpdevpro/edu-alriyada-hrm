@@ -9,7 +9,7 @@ from unittest.mock import patch
 import frappe
 
 from medical_hrms import self_service
-from medical_hrms.request_flow import REASON, RESENT_FROM, validate
+from medical_hrms.request_flow import LEAVE_EMAILS, REASON, RESENT_FROM, setup_leave_emails, validate
 from medical_hrms.staff_links import FIELDS, matching_values
 
 C = lambda category, code: f"{category}::{code}"
@@ -142,6 +142,30 @@ class TestRequestFlow(unittest.TestCase):
 		self.assertTrue(meta.has_field(REASON) and meta.has_field(RESENT_FROM) and meta.track_changes)
 		doc = frappe.get_doc({"doctype": "Leave Application", "employee": self.employee, "status": "Rejected"})
 		self.assertRaises(frappe.ValidationError, validate, doc)
+
+	def test_leave_emails_carry_the_reason_and_open_the_portal(self):
+		for field in LEAVE_EMAILS:
+			frappe.db.set_single_value("HR Settings", field, None)
+		setup_leave_emails()
+		self.assertEqual({field: frappe.db.get_single_value("HR Settings", field) for field in LEAVE_EMAILS},
+			{field: template for field, (template, _file, _subject) in LEAVE_EMAILS.items()})
+		frappe.db.set_single_value("HR Settings", "leave_status_notification_template", "Leave Status Notification")
+		setup_leave_emails()  # a template HR chose is kept
+		self.assertEqual(frappe.db.get_single_value("HR Settings", "leave_status_notification_template"), "Leave Status Notification")
+
+		leave = frappe._dict(name="HR-LAP-QA-0001", employee=self.employee, employee_name="Request Flow", leave_type="Casual Leave",
+			from_date="2026-11-02", to_date="2026-11-03", total_leave_days=2.0, description="Family <visit>", status="Rejected",
+			rejection_reason="Exam week <b>")
+		status, approval = (frappe.get_doc("Email Template", LEAVE_EMAILS[field][0])
+			for field in ("leave_status_notification_template", "leave_approval_notification_template"))
+		self.assertEqual(frappe.render_template(status.subject, leave), "Your Leave Application HR-LAP-QA-0001 is now Rejected")
+		body = frappe.render_template(status.response_, leave)
+		self.assertIn("Rejection reason: Exam week &lt;b&gt;", body)
+		self.assertIn("/app/employee-dashboard?request=Leave+Application&name=HR-LAP-QA-0001", body)
+		self.assertEqual(frappe.render_template(approval.subject, leave), "New Leave Application from Request Flow (HR-LAP-QA-0001)")
+		body = frappe.render_template(approval.response_, leave)
+		self.assertIn("Family &lt;visit&gt;", body)
+		self.assertIn("2</td>", body)
 
 
 class TestInstructorEmployeeLink(unittest.TestCase):

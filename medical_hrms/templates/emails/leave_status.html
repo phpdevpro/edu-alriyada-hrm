@@ -1,0 +1,14 @@
+{#- Email Template "Leave Status Notification (Medical HRMS)": HRMS sends it to the employee when the application is
+    approved, rejected or cancelled (HR Settings > Leave Status Notification Template). Created once by
+    request_flow.setup_leave_emails; HR can edit the template afterwards. The context is the Leave Application. -#}
+<p>{{ _("Your {0} {1} is now {2}").format(_("Leave Application"), name, _(status)) }}</p>
+{%- if status == "Rejected" and rejection_reason %}
+<p><b>{{ _("Rejection reason: {0}").format(rejection_reason | e) }}</b></p>
+{%- endif %}
+<table class="table table-bordered small" style="max-width: 500px;">
+	<tr><td>{{ _("Leave Type") }}</td><td>{{ leave_type }}</td></tr>
+	<tr><td>{{ _("From Date") }}</td><td>{{ frappe.utils.formatdate(from_date) }}</td></tr>
+	<tr><td>{{ _("To Date") }}</td><td>{{ frappe.utils.formatdate(to_date) }}</td></tr>
+	<tr><td>{{ _("Total Leave Days") }}</td><td>{{ "%g" | format(total_leave_days or 0) }}</td></tr>
+</table>
+<p><a class="btn btn-primary" href="{{ frappe.utils.get_url('/app/employee-dashboard?request=Leave+Application&name=' ~ name) }}">{{ _("Open Now") }}</a></p>

@@ -41,6 +41,7 @@ Unit tests and the Ministry view check run separately:
 - Notifications (Round 2) are made by a background worker after each save; the tests poll for them. The QA
   logins have e-mail notifications switched off, but non-QA HR logins on a copy still get e-mails queued; a copy
   that cannot send e-mail (B-25) logs "Failed to decrypt key Email Account.Notifications.password" for each.
+  Leave applications also queue HRMS's leave e-mails (to the QA leave approver and employee), with the same error.
   `qa_cleanup.py` removes the QA records' notifications and stops their unsent e-mails (status Error, not deleted:
   the e-mail job may be sending them at that moment).
 - `qa.academic.admin` (Education Manager + HR User) links an Employee on the Instructor form (REC-11, B-26);
