@@ -97,7 +97,7 @@ wsum["A2"] = "Counts are formulas over the Checklist sheet; they update as Statu
 wsum["A2"].font = Font(name=F, size=10, color=MUTED)
 groups = list(dict.fromkeys(r[1] for r in CHECKLIST))
 head = ["Group", "Items"] + STATUSES
-for i, (h, w) in enumerate(zip(head, [32, 8, 9, 9, 9, 11]), 1):
+for i, (h, w) in enumerate(zip(head, [32, 8] + [11] * len(STATUSES)), 1):
 	c = wsum.cell(row=4, column=i, value=h)
 	c.font = Font(name=F, bold=True, color="FFFFFF", size=10)
 	c.fill = HEAD_FILL

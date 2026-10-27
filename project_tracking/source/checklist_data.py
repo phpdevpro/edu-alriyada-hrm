@@ -4,8 +4,8 @@ Rule: when an item changes, update its Status / Done on / Last updated here (wit
 line to changelog.py, then run build_all.py.
 """
 
-D21, D22, D23 = "21 Oct 2026", "22 Oct 2026", "23 Oct 2026"
-STATUSES = ["Open", "Done", "Blocked", "Not needed"]
+D21, D22, D23, D27 = "21 Oct 2026", "22 Oct 2026", "23 Oct 2026", "27 Oct 2026"
+STATUSES = ["Open", "In progress", "Done", "Blocked", "Not needed"]
 SRV, DEV, OWNER, HR, ACAD, MIN, TEST = "Server admin", "Developer (Abdul Hakeem)", "Project owner", "HR", "Academic Affairs", "Ministry contact (Ms. Najah)", "Testing team"
 
 # (ID, group, item, how / where, owner, needed by, ref, status, done on, added on, last updated)
@@ -43,7 +43,7 @@ CHECKLIST = [
 	("CL-32", "4. HR data", "Sick Leave policy", "Review and submit 'Medical HRMS - Sick Leave (3 Pay Stages, Separate Sick Year)'; Finance checks the 75% pay on a salary slip.", "HR + Finance", "Before UAT", "HR-20, DEC-14", "Open", "", D22, D22),
 	("CL-22", "4. HR data", "Attendance devices", "Connect the devices so Faculty After 4 PM uses real check-out times.", "HR + IT", "Later", "HR-56", "Open", "", D21, D21),
 	# ------------------------------------------------------------ reviews and testing
-	("CL-23", "5. Reviews and testing", "Run the test cases", "Testing team works through Medical_HRMS_Jameah_Test_Cases.xlsx and records results and bugs there.", TEST, "UAT", "HR-46", "Open", "", D21, D21),
+	("CL-23", "5. Reviews and testing", "Run the test cases", "Testing team works through Medical_HRMS_Jameah_Test_Cases.xlsx and records results and bugs there. Started 27 Oct with the test cases and both guides.", TEST, "UAT", "HR-46, HR-75", "In progress", "", D21, D27),
 	("CL-24", "5. Reviews and testing", "Arabic labels", "An Arabic speaker reads the HR / Employee Portal pages in Arabic and lists wording to change, including the 114 new leave texts (22 Oct).", OWNER, "UAT", "HR-66, HR-68", "Open", "", D21, D22),
 	("CL-25", "5. Reviews and testing", "Portal design approval", "Client confirms the new HR Portal / Employee Portal look.", OWNER, "UAT", "HR-66", "Open", "", D21, D21),
 	("CL-33", "5. Reviews and testing", "Leave flow UAT", "An employee and their manager go through TC-LV-09 - TC-LV-17: plan, apply now, approve, return (also after sick leave).", TEST, "UAT", "HR-68", "Open", "", D22, D22),
@@ -53,5 +53,5 @@ CHECKLIST = [
 	("CL-34", "6. Team and repository", "Delete the merged branches on GitHub", "After UAT: feature/uat-2026-10-22, feature/hr-portal-design, feature/jameah-ministry-views, fix/hrm-e2e-approval-permission-bugs, ministry-lookup, employee-applicant (all merged into develop; their history stays in develop).", OWNER, "After UAT", "HR-71", "Open", "", D23, D23),
 	("CL-35", "6. Team and repository", "Assign the open tasks", "Task Tracker, Tasks sheet: pick who each open task is given to in the Assigned to column (dropdown; e.g. HR-73, HR-16, HR-17, HR-25, JM-15, JM-19).", OWNER, "Now", "HR-73", "Open", "", D23, D23),
 	("CL-36", "6. Team and repository", "Checks before every release", "python3 tests/checks/files.py; fx.py tests/checks/site.py; python3 tests/checks/api_methods.py; then the browser suite (tests/e2e/README.md). All must pass.", DEV, "Every release", "HR-72", "Open", "", D23, D23),
-	("CL-37", "5. Reviews and testing", "Share the guides", "Give HR, managers and the testing team docs/guides/Medical_HRMS_Jameah_User_Guide.pdf, and the server admin docs/guides/Medical_HRMS_Jameah_Installation_Guide.pdf; collect their questions.", OWNER, "UAT", "HR-74", "Open", "", D23, D23),
+	("CL-37", "5. Reviews and testing", "Share the guides", "Give HR, managers and the testing team docs/guides/Medical_HRMS_Jameah_User_Guide.pdf, and the server admin docs/guides/Medical_HRMS_Jameah_Installation_Guide.pdf; collect their questions. 27 Oct: given to the testing team; still to give to HR, managers and the server admin.", OWNER, "UAT", "HR-74, HR-75", "In progress", "", D23, D27),
 ]

@@ -1,8 +1,8 @@
-"""Task, bug and decision data for the Medical HRMS + Jameah tracker (as of 23 Oct 2026)."""
+"""Task, bug and decision data for the Medical HRMS + Jameah tracker (as of 27 Oct 2026)."""
 
-AS_OF = "23 Oct 2026"
+AS_OF = "27 Oct 2026"
 E = "Earlier (May – 5 Oct 2026)"
-D19, D20, D21, D22, D23 = "19 Oct 2026", "20 Oct 2026", "21 Oct 2026", "22 Oct 2026", "23 Oct 2026"
+D19, D20, D21, D22, D23, D27 = "19 Oct 2026", "20 Oct 2026", "21 Oct 2026", "22 Oct 2026", "23 Oct 2026", "27 Oct 2026"
 P = "—"
 
 # Status vocabulary
@@ -26,8 +26,9 @@ ASSIGNED_TO = {
 	"HR-06": "Dinesh",
 	"HR-70": "Fathir",
 	"HR-73": "To assign",
+	"HR-75": "Testing team",
 }
-TEAM = ["Abdul Hakeem", "Fathir", "Dinesh", "To assign"]
+TEAM = ["Abdul Hakeem", "Fathir", "Dinesh", "Testing team", "To assign"]
 
 # (ID, Workstream, Task, When done, Status, Owner, Priority, Done / evidence, Pending / next step, Reference)
 TASKS = [
@@ -168,6 +169,9 @@ TASKS = [
 	("HR-73", "Repository", "Review the 39 one-off setup scripts that nothing calls", P, PLANNED, "Abdul Hakeem", "Medium",
 		"Found 23 Oct: 39 of the 79 scripts in medical_hrms/ are not used by hooks, patches or other code (run by hand in the past): add_fields, apply_hr_workspace_layout, check_hrm_readiness, check_local_leave_flows, cleanup_duplicate_employee_ministry_fields, configure_hr_workspace_access, configure_hrm_request_governance, configure_instructor_handoff_permissions, create_company_car, create_education_allowance, create_medical_license, create_overtime_request, create_permission_request, create_remaining_doctypes, create_remote_work, create_return_from_leave, create_salary_cert, create_training_request, create_workspace, ensure_notification_settings, fill_jameah_arabic_fallback, fix_assessment_group_doctype, fix_child_table_column_widths, fix_return_from_leave_list_view, fix_swapped_ministry_code_rows, grant_hr_login_access, grant_hr_module_permissions, migrate_jameah_dummy_data, normalize_jameah_ministry_codes, quick_grant_hr_permissions, rebuild_workspace, rename_children_medical_allowance_doctype, rename_employee_jameah_labels, report_hr_permissions, run_hrm_demo_verification, translate_jameah_ministry_names_to_arabic, unify_workspace, update_workspace_db (+ a duplicate removed, B-45). Some are risky to run again (configure_hrm_request_governance replaces the request doctypes' permissions; create_* and rename_* recreate or rename doctypes).",
 		"Keep the useful tools (check_hrm_readiness, report_hr_permissions, run_hrm_demo_verification) in a tools/ folder; delete the one-offs already applied; never run configure_hrm_request_governance.", "medical_hrms/*.py"),
+	("HR-75", "Testing", "Testing team UAT round: test cases and guides", D27, PROGRESS, "Abdul Hakeem", "High",
+		"27 Oct: Abdul Hakeem gave the testing team the Test Cases workbook (130 cases, 12 modules) and both PDF guides (User Guide, Installation and Setup Guide); testing started. They record each result and any bug in the Test Cases workbook.",
+		"Collect their results and bug reports; fix the bugs, retest and mark them in the Bugs sheet (Checklist CL-23).", "Test Cases workbook; docs/guides"),
 	("HR-74", "Documentation", "Installation and Setup Guide and User Guide (PDF)", D23, DONE, "Abdul Hakeem", "High",
 		"Two PDF guides in docs/guides: Installation and Setup Guide (21 pages: install, update, checks, first-time setup, leave year, sick leave, Jameah setup, Ministry agent account, staff data sheets, testing, troubleshooting, commands) and User Guide (30 pages: Employee Portal and the leave flow, every request, HR Portal, leave approvals and returns, recruitment, Ministry data, Academic Presence, Jameah pages, approvers, how to test and report bugs, Q&A). 31 screenshots from the test site with QA test data only. Sources (HTML) and build.py kept in docs/guides/src so the guides can be rebuilt after changes. Writing them found two bugs (B-54, B-55). Re-tested: 95/95 browser checks, 42 unit tests (0 failures), 0 file and 0 site problems, 29 server methods x 3 roles, no Error Log entries.",
 		"HR, managers and the testing team read the User Guide; the server admin the Installation Guide (Checklist CL-37). Rebuild after changes: python docs/guides/src/build.py.", "docs/guides"),

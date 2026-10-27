@@ -29,6 +29,7 @@ BUG_STATUS = {
 }
 CHECKLIST_STATUS = {
 	"Open": (ORANGE, WHITE),
+	"In progress": (BLUE, WHITE),
 	"Done": (GREEN, WHITE),
 	"Blocked": (RED, WHITE),
 	"Not needed": (LIGHT_GREY, INK),

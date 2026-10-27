@@ -6,6 +6,8 @@ in tracker_data.py, testcases_data.py and checklist_data.py. Then run build_all.
 
 # (date, area, items, what changed, by)
 CHANGELOG = [
+	("27 Oct 2026", "Testing", "HR-75, CL-23, CL-37",
+		"Test Cases workbook and both PDF guides given to the testing team; their UAT round has started (HR-75 In progress). Checklist: new status 'In progress' (blue); CL-23 Run the test cases and CL-37 Share the guides are In progress (the guides still go to HR, managers and the server admin). Testing team added to the Assigned to list.", "Abdul Hakeem"),
 	("23 Oct 2026", "Documentation", "HR-37, HR-38, DEC-15, CL-38",
 		"Academic Presence (HR requirements 1-4) checked against the client's request: all four are on the HR Dashboard and tested. The guides now say where each tab's data comes from, that Proctor Schedules stays empty until exam committees are entered (new Checklist CL-38), that Students on Campus counts by hour, and that after-4 PM times come from the timetable and class attendance until devices are connected. New decision DEC-15: hour slots or the college's own periods.", "Abdul Hakeem"),
 	("23 Oct 2026", "Documentation", "HR-74, B-54, B-55, TC-ESS-02, TC-ESS-04, TC-ESS-16, CL-37",
