@@ -571,3 +571,43 @@ your work experience,خبراتك العملية
 Use digits only (up to 6).,أرقام فقط (حتى 6 أرقام).
 To Time must be after From Time.,يجب أن يكون وقت النهاية بعد وقت البداية.
 To Date cannot be before From Date.,لا يمكن أن يسبق تاريخ النهاية تاريخ البداية.
+Rejection Reason,سبب الرفض
+Sent Again From,أُعيد إرساله بدلًا من
+Required when you reject. The employee sees it on the Employee Portal.,مطلوب عند الرفض. يراه الموظف في بوابة الموظف.
+The rejected request this one replaces.,الطلب المرفوض الذي يحل هذا الطلب محله.
+The rejected application this one replaces.,الطلب المرفوض الذي يحل هذا الطلب محله.
+Give the reason for the rejection in Rejection Reason. The employee sees it.,اكتب سبب الرفض في حقل سبب الرفض. سيراه الموظف.
+Rejection Reason Missing,سبب الرفض غير مذكور
+Only a rejected request of the same employee can be sent again.,لا يمكن إعادة إرسال إلا طلب مرفوض للموظف نفسه.
+{0} was already sent again as {1}.,سبق أن أُعيد إرسال {0} بالطلب {1}.
+New {0} from {1} ({2}),{0} جديد من {1} ({2})
+{0} sent a {1}. Open it to review the next step.,أرسل {0} {1}. افتحه لمراجعة الخطوة التالية.
+Your {0} {1} is now {2},حالة {0} رقم {1} الآن: {2}
+Rejection reason: {0},سبب الرفض: {0}
+This request is not available to you.,هذا الطلب غير متاح لك.
+This request cannot be sent again.,لا يمكن إعادة إرسال هذا الطلب.
+Leave applications have no drafts.,لا توجد مسودات لطلبات الإجازة.
+Only a draft can be changed. This request was already sent.,يمكن تعديل المسودة فقط. هذا الطلب أُرسل بالفعل.
+Only a draft can be deleted. This request was already sent.,يمكن حذف المسودة فقط. هذا الطلب أُرسل بالفعل.
+Not available for {0}.,غير متاح لـ {0}.
+You are changing your draft {0}. Save Draft keeps it for later; Send Request sends it for review.,أنت تعدّل مسودتك {0}. «حفظ كمسودة» يحفظها لوقت لاحق، و«إرسال الطلب» يرسلها للمراجعة.
+"A new request in place of {0}, which was rejected. Change what is needed and send it; HR sees the rejected one with it.",طلب جديد بدلًا من {0} الذي رُفض. عدّل ما يلزم ثم أرسله؛ وسترى الموارد البشرية الطلب المرفوض معه.
+Edit Draft: {0},تعديل المسودة: {0}
+Send Again: {0},إعادة الإرسال: {0}
+Rejection reason,سبب الرفض
+"Sent again in place of {0}, which was rejected.",أُرسل بدلًا من {0} الذي رُفض.
+Sent again as {0}.,أُعيد إرساله بالطلب {0}.
+History,السجل
+Edit Draft,تعديل المسودة
+Delete Draft,حذف المسودة
+Send Again,إعادة الإرسال
+Apply Again,التقديم مرة أخرى
+Delete the draft {0}? This cannot be undone.,حذف المسودة {0}؟ لا يمكن التراجع عن ذلك.
+Draft deleted,تم حذف المسودة
+"Trips over SAR 50,000 require Finance approval.","الرحلات التي تزيد على 50,000 ريال تتطلب موافقة المالية."
+"Trips over SAR 15,000 require Department Head approval.","الرحلات التي تزيد على 15,000 ريال تتطلب موافقة رئيس القسم."
+"Claims above SAR 20,000 require Finance approval.","المطالبات التي تزيد على 20,000 ريال تتطلب موافقة المالية."
+"Claims above SAR 5,000 require Department Head approval.","المطالبات التي تزيد على 5,000 ريال تتطلب موافقة رئيس القسم."
+"Training programs exceeding SAR 50,000 require Finance approval.","برامج التدريب التي تتجاوز 50,000 ريال تتطلب موافقة المالية."
+"Training programs exceeding SAR 30,000 require HR Manager approval.","برامج التدريب التي تتجاوز 30,000 ريال تتطلب موافقة مدير الموارد البشرية."
+"Training programs exceeding SAR 10,000 require Department Head approval.","برامج التدريب التي تتجاوز 10,000 ريال تتطلب موافقة رئيس القسم."

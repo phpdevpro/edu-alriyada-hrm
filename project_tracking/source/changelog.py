@@ -6,6 +6,8 @@ in tracker_data.py, testcases_data.py and checklist_data.py. Then run build_all.
 
 # (date, area, items, what changed, by)
 CHANGELOG = [
+	("27 Oct 2026", "Round 2", "HR-16, HR-24, HR-25, HR-48, HR-76, HR-77, B-26, B-56, B-57, DEC-16, CL-39 - CL-41, TC-APR-02, TC-APR-09 - TC-APR-13, TC-ESS-17 - TC-ESS-23, TC-EMP-13, TC-EMP-14, TC-LV-18",
+		"Round 2: employees change, send or delete their drafts and send a rejected request again; rejecting needs a reason, which the employee reads with the request's history; notifications in the bell (and e-mail where the mail account works) for HR on new requests and for the employee at every later step; the Instructor and Academic Advisor forms save after an Employee is picked (B-26, B-56); amounts say SAR; the bell shows the time as text (B-57). New: Round column in the Test Cases workbook, the Round 2 document for the testers, User Guide and Installation Guide updated. Re-tested: 101/101 browser checks, 52 unit tests (0 failures), 0 file and 0 site problems, 31 server methods x 3 roles; Error Log: only the known e-mail password error B-25 (notification e-mails this copy cannot send).", "Abdul Hakeem"),
 	("27 Oct 2026", "Testing", "HR-75, CL-23, CL-37",
 		"Test Cases workbook and both PDF guides given to the testing team; their UAT round has started (HR-75 In progress). Checklist: new status 'In progress' (blue); CL-23 Run the test cases and CL-37 Share the guides are In progress (the guides still go to HR, managers and the server admin). Testing team added to the Assigned to list.", "Abdul Hakeem"),
 	("23 Oct 2026", "Documentation", "HR-37, HR-38, DEC-15, CL-38",

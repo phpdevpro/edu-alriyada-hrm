@@ -24,6 +24,7 @@ HR_ONLY = {
  "medical_hrms.recruitment.job_application.create_employee_from_applicant": {"job_applicant": "APP-NONE"},
  "medical_leave.activate_year": {"employee": "HR-EMP-NONE", "first_sick_date": "2026-10-01"},
  "medical_hrms.doctype.job_application_link.job_application_link.get_hireable_roles": {},
+ "staff_links.values_from_employee": {"doctype": "Instructor", "employee": "HR-EMP-NONE"},
 }
 EMPLOYEE = {
  "medical_hrms.page.employee_dashboard.employee_dashboard.get_dashboard_data": {},
@@ -32,6 +33,7 @@ EMPLOYEE = {
  "self_service.leave_return_context": {"leave_application": "HR-LAP-NONE"},
  "self_service.save_request": {"doctype": "Salary Certificate Request", "values": json.dumps({"purpose": "QA api sweep", "addressee": "QA"}), "send": 0},
  "self_service.my_requests": {"doctype": "Permission Request"}, "self_service.request_details": {"doctype": "Permission Request", "name": "NONE"},
+ "self_service.delete_draft": {"doctype": "Salary Certificate Request", "name": "NONE"},
  "ministry_lookup_query.get_ministry_codes": {"doctype": "Jameah Ministry Code", "txt": "", "searchfield": "name", "start": 0, "page_len": 5, "filters": json.dumps({"code_category": "Gender"})},
 }
 GUEST = {"medical_hrms.recruitment.job_application.submit_application": {"data": "{}", "token": "nope"},

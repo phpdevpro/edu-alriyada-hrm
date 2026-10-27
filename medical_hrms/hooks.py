@@ -52,6 +52,8 @@ app_include_js = [
 # include js in doctype views
 doctype_js = {
 	"Employee": "public/js/employee_ministry_lookup.js",
+	"Instructor": "public/js/staff_employee_link.js",
+	"Academic Advisor": "public/js/staff_employee_link.js",
 }
 doctype_list_js = {
 	"Children Medical Allowance Request": "public/js/children_medical_allowance_request_list.js",
@@ -123,6 +125,8 @@ website_route_rules = [
 # both lifecycle paths: fresh installs and subsequent migrations/restores.
 after_install = [
 	"medical_hrms.monthly_leave_policy.setup",
+	"medical_hrms.request_flow.setup",
+	"medical_hrms.staff_links.setup",
 	"medical_hrms.academic_presence_setup.execute",
 	"medical_hrms.hr_core_permissions.execute",
 	"medical_hrms.create_jameah_doctypes.execute",
@@ -139,6 +143,8 @@ after_install = [
 ]
 after_migrate = [
 	"medical_hrms.monthly_leave_policy.setup",
+	"medical_hrms.request_flow.setup",
+	"medical_hrms.staff_links.setup",
 	"medical_hrms.academic_presence_setup.execute",
 	"medical_hrms.hr_core_permissions.execute",
 	"medical_hrms.create_jameah_doctypes.execute",
@@ -264,13 +270,23 @@ doc_events = {
 	},
 	"Company Car Request": {
 		"validate": "medical_hrms.medical_hrms.overrides.admin.validate_company_car"
-	}
+	},
+	"Instructor": {"before_validate": "medical_hrms.staff_links.fill_from_employee"},
+	"Academic Advisor": {"before_validate": "medical_hrms.staff_links.fill_from_employee"},
 }
 
 # Scheduled Tasks
 from medical_hrms.employee_permissions import EMPLOYEE_REQUEST_DOCTYPES
 for request_doctype in EMPLOYEE_REQUEST_DOCTYPES:
 	doc_events.setdefault(request_doctype, {})["before_validate"] = "medical_hrms.self_service.validate_employee_request"
+# Round 2: rejection reason and resend checks, notifications (request_flow.py)
+from medical_hrms.request_flow import NOTIFIED, REJECTABLE
+for request_doctype in REJECTABLE:
+	events = doc_events.setdefault(request_doctype, {})
+	validate = events.get("validate") or []
+	events["validate"] = (validate if isinstance(validate, list) else [validate]) + ["medical_hrms.request_flow.validate"]
+for request_doctype in NOTIFIED:
+	doc_events.setdefault(request_doctype, {})["on_update"] = "medical_hrms.request_flow.notify"
 
 # ---------------
 

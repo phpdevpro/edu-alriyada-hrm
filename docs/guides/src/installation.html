@@ -14,7 +14,7 @@
 	<div class="meta">
 		<b>For</b><span>The server administrator who installs and updates the system, and the system owner who sets it up (HR Manager / System Manager).</span>
 		<b>Covers</b><span>Medical HRMS app (<code>medical_hrms</code>) including the Jameah views, branch <code>develop</code>.</span>
-		<b>Version</b><span>23 October 2026</span>
+		<b>Version</b><span>27 October 2026 (Round 2)</span>
 		<b>Built by</b><span>Abdul Hakeem (Medical HRMS and Jameah lead)</span>
 		<b>See also</b><span>User Guide (how HR, managers, employees and testers use the system).</span>
 	</div>
@@ -90,6 +90,8 @@ bench restart</pre>
 		<tr><td class="k">Employee Self Service</td><td>Creates the employees' workspace.</td></tr>
 		<tr><td class="k">Leave starter records</td><td>Creates the leave types (annual, Sick Leave 1 / 2 / 3, unpaid) and draft policies if they are missing. Existing records and HR's changes are kept.</td></tr>
 		<tr><td class="k">Monthly limits, presence</td><td>Adds the HR Settings fields for monthly half-day / work-from-home limits and for academic presence.</td></tr>
+		<tr><td class="k">Requests</td><td>Leave Application gets the <i>Rejection Reason</i> and <i>Sent Again From</i> fields (the other requests have them built in), and its status changes are kept so employees see the history.</td></tr>
+		<tr><td class="k">Instructor / Academic Advisor</td><td>Stops these forms copying the Employee's gender and department into their own lists (which hold different values); the matching values are filled in instead.</td></tr>
 		<tr><td class="k">Patches</td><td>One-time data changes listed in <code>patches.txt</code> (for example the sick-leave renaming).</td></tr>
 	</tbody>
 </table>
@@ -126,6 +128,7 @@ bench restart</pre></li>
 		<tr><td class="k">HR login</td><td>Log in as an HR Manager.</td><td>The HR Portal opens.</td></tr>
 		<tr><td class="k">Employee login</td><td>Log in as an employee whose user is linked to an Employee record.</td><td>The Employee Portal opens with their name.</td></tr>
 		<tr><td class="k">System e-mail</td><td>Email Account <i>Notifications</i> → send a test e-mail.</td><td>The e-mail arrives.</td></tr>
+		<tr><td class="k">Notifications</td><td>As an employee, send a request. As an HR user, click the bell on the HR Portal.</td><td>"New &lt;request&gt; from &lt;employee&gt;" within a few seconds (made by a background worker).</td></tr>
 		<tr><td class="k">Logo</td><td>Open <code>/files/rchs-logo.png</code>.</td><td>The college logo shows.</td></tr>
 	</tbody>
 </table>
@@ -167,6 +170,8 @@ bench restart</pre></li>
 	<li>Check the <b>Company</b> record of the college (Al Riyada College): default holiday list (section 6.3) and the company e-mail domain.</li>
 	<li>Academic hires must use their official college e-mail (<code>@alriyada.edu.sa</code>) as Company Email; the Create Employee dialog asks for it.</li>
 	<li>Open Email Account <b>Notifications</b>, enter its password again and save, then send a test e-mail. Until this works the system cannot send e-mails.</li>
+	<li>Request notifications (new requests to HR, each later step to the employee) appear in the bell and are e-mailed through this account. Each user can switch the e-mails off in My Settings → Notifications.</li>
+	<li>Leave e-mails: HR Settings → <b>Leave Approval Notification Template</b> = <i>Leave Approval Notification</i> and <b>Leave Status Notification Template</b> = <i>Leave Status Notification</i> (both come with HRMS). Without them the leave approver and the employee get no leave e-mails.</li>
 </ul>
 
 <h2>6.3 Leave, in this order</h2>
@@ -315,6 +320,8 @@ bench --site &lt;site&gt; execute medical_hrms.instructor_data_sheet.import_shee
 		<tr><td class="k">Academic hire refused with "College E-mail Needed"</td><td>Enter the official <code>@alriyada.edu.sa</code> address as Company Email in the Create Employee dialog.</td></tr>
 		<tr><td class="k">A Ministry column is empty</td><td>Jameah Data Check: a setting not filled, a Code Map row not verified, or data missing on the record (report / data sheet).</td></tr>
 		<tr><td class="k">Logo missing on every page</td><td>Upload <code>rchs-logo.png</code> again (Website Settings / File).</td></tr>
+		<tr><td class="k">No notification in the bell after a request is sent</td><td>Notifications are made by a background worker (short queue) just after the save: check the workers with <code>bench doctor</code>, and that the user is enabled and has notifications on (My Settings → Notifications). With a single worker for every queue (a development copy), they wait while the hourly Jameah refresh runs (up to about 15 minutes); production keeps separate short, default and long workers.</td></tr>
+		<tr><td class="k">"Please set default template for Leave Status Notification"</td><td>Set the two leave e-mail templates in HR Settings (section 6.2).</td></tr>
 	</tbody>
 </table>
 

@@ -6,6 +6,7 @@ if _os.environ.get("QA_TEST_SITE") != frappe.local.site:
 
 import json
 import os
+from frappe.desk.doctype.notification_settings.notification_settings import create_notification_settings
 from frappe.utils.password import update_password
 
 PW = "QaTest#2026!"
@@ -17,6 +18,8 @@ USERS = {
 	f"qa.emp2@{DOM}": ("QA Employee Two", ["Employee"]),
 	f"qa.unlinked@{DOM}": ("QA Unlinked", ["Employee"]),
 	f"qa.outsider@{DOM}": ("QA Outsider", ["Academics User"] if frappe.db.exists("Role", "Academics User") else []),
+	# edits Instructor records and reads Employees: links an Employee on the Instructor form (B-26)
+	f"qa.academic.admin@{DOM}": ("QA Academic Admin", ["Education Manager", "HR User"]),
 }
 for email, (full, roles) in USERS.items():
 	if not frappe.db.exists("User", email):
@@ -29,6 +32,9 @@ for email, (full, roles) in USERS.items():
 		u.append("roles", {"role": r})
 	u.save(ignore_permissions=True)
 	update_password(email, PW)
+	# Notifications show in the bell only: this copy cannot send e-mail (B-25), so do not queue any for test logins.
+	create_notification_settings(email)
+	frappe.db.set_value("Notification Settings", email, "enable_email_notifications", 0)
 
 C = lambda cat, code: f"{cat}::{code}"
 out = {}

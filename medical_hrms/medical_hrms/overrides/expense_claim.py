@@ -11,9 +11,9 @@ def validate_expense_claim(doc, method):
         pass
 
     # Basic rules based on HR Workflow Design Document:
-    # Total < AED 5,000 -> Direct Manager
-    # Total > AED 5,000 -> Department Head
-    # Total > AED 20,000 -> Finance Manager
+    # Total < SAR 5,000 -> Direct Manager
+    # Total > SAR 5,000 -> Department Head
+    # Total > SAR 20,000 -> Finance Manager
 
     # Since Frappe's Expense Claim uses the standard `approval_status`,
     # we can add a check on submission or approval.
@@ -24,10 +24,10 @@ def validate_expense_claim(doc, method):
     if doc.approval_status == "Approved":
         if total_claimed > 20000:
             if not has_any_role(*FINANCE_APPROVER_ROLES):
-                frappe.throw(_("Claims above AED 20,000 require Finance approval."))
+                frappe.throw(_("Claims above SAR 20,000 require Finance approval."))
         elif total_claimed > 5000:
             if not has_any_role("Department Head", *FINANCE_APPROVER_ROLES):
-                frappe.throw(_("Claims above AED 5,000 require Department Head approval."))
+                frappe.throw(_("Claims above SAR 5,000 require Department Head approval."))
         else:
             # Direct manager can approve (assuming Leave Approver or equivalent)
             pass

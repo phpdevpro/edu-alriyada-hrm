@@ -1,6 +1,6 @@
 {
- "run_on": "23 Oct 2026 11:15 AST",
- "summary": "95/95 browser checks passed",
+ "run_on": "27 Oct 2026 09:11 AST",
+ "summary": "101/101 browser checks passed",
  "results": {
   "APR-01": "Pass",
   "APR-02": "Pass",
@@ -10,6 +10,9 @@
   "APR-06": "Pass",
   "APR-07": "Pass",
   "APR-08": "Pass",
+  "APR-09": "Pass",
+  "APR-10": "Pass",
+  "APR-11": "Pass",
   "EMP-01": "Pass",
   "EMP-02": "Pass",
   "EMP-03": "Pass",
@@ -35,6 +38,8 @@
   "ESS-15": "Pass",
   "ESS-16": "Pass",
   "ESS-17": "Pass",
+  "ESS-18": "Pass",
+  "ESS-19": "Pass",
   "HRD-01": "Pass",
   "HRD-02": "Pass",
   "HRD-03": "Pass",
@@ -74,6 +79,7 @@
   "REC-08": "Pass",
   "REC-09": "Pass",
   "REC-10": "Pass",
+  "REC-11": "Pass",
   "RPT-01": "Pass",
   "RPT-02": "Pass",
   "SEC-01": "Pass",
@@ -101,15 +107,15 @@
  "checks": {
   "tests/checks/files.py": {
    "result": "Pass",
-   "run_on": "23 Oct 2026 11:03 AST"
+   "run_on": "27 Oct 2026 09:34 AST"
   },
   "tests/checks/site.py": {
    "result": "Pass",
-   "run_on": "23 Oct 2026 11:03 AST"
+   "run_on": "27 Oct 2026 09:34 AST"
   },
   "tests/checks/api_methods.py": {
    "result": "Pass",
-   "run_on": "23 Oct 2026 11:44 AST"
+   "run_on": "27 Oct 2026 09:11 AST"
   }
  }
 }

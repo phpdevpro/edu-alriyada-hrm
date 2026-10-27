@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Medical HRMS - Round 2: What's New and How to Test</title>
+<link rel="stylesheet" href="guide.css">
+</head><body class="compact">
+
+<section class="cover">
+	<div class="band">
+		<div class="logo"><img src="../images/rchs-logo.png" alt="RCHS"></div>
+		<div class="kicker">Al-Riyada College for Health Sciences · Medical HRMS</div>
+		<h1>Round 2: What's New and How to Test</h1>
+		<div class="sub">Only what changed in this round: drafts, rejection reasons, the history of each request, notifications, sending a rejected request again, and the Instructor form fix. The full User Guide stays the reference for everything else.</div>
+	</div>
+	<div class="meta">
+		<b>For</b><span>The testing team (and HR, to see what is new).</span>
+		<b>Test cases</b><span>16 cases: in the Test Cases workbook, filter the <b>Round</b> column on <b>Round 2</b>. They are listed in section 5.</span>
+		<b>Version</b><span>27 October 2026 · branch <code>develop</code></span>
+		<b>Built by</b><span>Abdul Hakeem (Medical HRMS and Jameah lead)</span>
+		<b>See also</b><span>User Guide (updated for Round 2) · Installation and Setup Guide</span>
+	</div>
+</section>
+
+
+<!-- ============================================================ 1 -->
+<h1><span class="num">1</span>What is new</h1>
+<table>
+	<thead><tr><th style="width:30%">Change</th><th>Who sees it</th><th style="width:16%">Tracker</th><th style="width:22%">Test cases</th></tr></thead>
+	<tbody>
+		<tr><td class="k">Drafts can be changed, sent or deleted</td><td>Employees, on the Employee Portal</td><td>HR-16</td><td>TC-ESS-17, 18</td></tr>
+		<tr><td class="k">A reason is required to reject</td><td>HR and leave approvers give it; the employee reads it</td><td>HR-25</td><td>TC-APR-02, 09, 11, TC-ESS-19</td></tr>
+		<tr><td class="k">History of each request</td><td>Employees: every step with who and when</td><td>HR-25</td><td>TC-ESS-19</td></tr>
+		<tr><td class="k">Notifications (bell, and e-mail on the live server)</td><td>HR: new requests. Employees: every later step</td><td>HR-25</td><td>TC-APR-10, TC-ESS-22, 23</td></tr>
+		<tr><td class="k">Send a rejected request again</td><td>Employees send it; HR sees which request it replaces</td><td>HR-16</td><td>TC-ESS-20, 21, TC-APR-12, TC-LV-18</td></tr>
+		<tr><td class="k">Instructor and Academic Advisor forms save after picking an Employee</td><td>Academic Affairs, whoever links staff records</td><td>B-26, B-56 (HR-48)</td><td>TC-EMP-13, 14</td></tr>
+		<tr><td class="k">Amount limits say SAR (not AED)</td><td>HR, Finance</td><td>HR-24</td><td>TC-APR-13</td></tr>
+	</tbody>
+</table>
+<p>Nothing else changed: Round 1 test cases keep their results, and only <b>TC-APR-02</b> (rejecting a Training Request) has new steps, because a reason is now required.</p>
+
+<!-- ============================================================ 2 -->
+<h1><span class="num">2</span>Before you start</h1>
+<ol class="steps">
+	<li>Ask the developer to confirm that the test site has the Round 2 update (branch <code>develop</code> of 27 October, with <code>bench migrate</code>). On the HR form of any request, a <b>Rejection Reason</b> field appears when the Status is set to <i>Rejected</i>: that shows the update is in.</li>
+	<li>Logins (sheet <i>Test Accounts</i>): an HR Manager, an employee whose leave approver you can also log in as, and for TC-EMP-13 / 14 a login that can edit Instructors <b>and</b> see Employees (for example Education Manager + HR User, or System Manager).</li>
+	<li>Open <code>Medical_HRMS_Jameah_Test_Cases.xlsx</code>, sheet <i>Test Cases</i>, filter <b>Round = Round 2</b>. Record each result there as in Round 1; bugs go in <i>Bug Report</i> with the date, time, page address and exact message.</li>
+</ol>
+<div class="warn"><b>E-mail on the test copy</b>The test copy cannot send e-mail (bug B-25: the e-mail account password must be entered again on the server). Notifications still appear in the bell. Mark <b>TC-ESS-23</b> (notification e-mail) <i>Blocked</i> unless you test on a server where e-mail works.</div>
+
+<!-- ============================================================ 3 -->
+<h1><span class="num">3</span>How to test each change</h1>
+
+<h2>3.1 Drafts: change, send or delete</h2>
+<p>Until now a draft could only be saved. Now the employee opens it again:</p>
+<ol class="steps">
+	<li>Employee Portal → click <b>N request(s)</b> on the card (for example Salary Certificate) → click the draft.</li>
+	<li><span class="ui">Edit Draft</span> opens the form with what was saved. Change it, then <span class="ui">Save Draft</span> (keep it) or <span class="ui">Send Request</span> (send it for review). The request keeps its number.</li>
+	<li><span class="ui">Delete Draft</span> → <span class="ui">Yes</span> removes it. A request that was already sent cannot be changed or deleted by the employee.</li>
+</ol>
+<div class="two">
+	<figure><img src="../images/50_r2_draft_details.png" alt=""><figcaption><b>Figure 1.</b> A draft: Edit Draft and Delete Draft.</figcaption></figure>
+	<figure><img src="../images/51_r2_edit_draft.png" alt=""><figcaption><b>Figure 2.</b> Edit Draft opens the form filled in.</figcaption></figure>
+</div>
+
+<h2>3.2 Rejecting with a reason (HR)</h2>
+<ol class="steps">
+	<li>Open a pending request (HR Portal → the request card → <span class="ui">Open</span>).</li>
+	<li>Set <b>Status</b> to <i>Rejected</i>. The field <b>Rejection Reason</b> appears and is required.</li>
+	<li>Click <span class="ui">Save</span> without a reason: <i>Missing Fields: Rejection Reason</i>, nothing is saved. Write the reason and save.</li>
+	<li>If a rejected request is set back to a pending step, the reason is cleared (it no longer applies).</li>
+</ol>
+<figure><img src="../images/52_r2_hr_reject.png" alt=""><figcaption><b>Figure 3.</b> The request form with Status <i>Rejected</i> and the required Rejection Reason.</figcaption></figure>
+<p>This applies to every request with a <i>Rejected</i> step: Permission, Remote Work, Leave Plan, Salary Certificate, Overtime, Training, Medical Allowance, Company Car, Contract Renewal, and Leave Application.</p>
+
+<h2>3.3 What the employee sees: reason, history, Send Again</h2>
+<p>The employee opens the request (Recent Requests → <span class="ui">View details</span>, <b>N request(s)</b> on a card, or the notification):</p>
+<ul>
+	<li><b>Rejection reason</b>: HR's text, in a box under the status.</li>
+	<li><b>History</b>: every step with the person and the time (for example <i>Pending Manager</i>, then <i>Rejected</i>).</li>
+	<li><span class="ui">Send Again</span>: opens a new request filled in from the rejected one. After sending, the new request says <i>Sent again in place of …</i> and the rejected one says <i>Sent again as …</i>. A rejected request can be sent again <b>once</b>.</li>
+</ul>
+<div class="two">
+	<figure><img src="../images/53_r2_rejected_details.png" alt=""><figcaption><b>Figure 4.</b> A rejected request: reason, Send Again, history.</figcaption></figure>
+	<figure><img src="../images/54_r2_send_again.png" alt=""><figcaption><b>Figure 5.</b> Send Again: a new request, filled in.</figcaption></figure>
+</div>
+<p>On the HR side, the new request shows <b>Sent Again From</b> with a link to the rejected one and its reason (TC-APR-12).</p>
+
+<h2>3.4 Notifications</h2>
+<table>
+	<thead><tr><th style="width:30%">When</th><th>Who is told</th><th style="width:38%">Text</th></tr></thead>
+	<tbody>
+		<tr><td class="k">An employee sends a request</td><td>Every HR User and HR Manager login</td><td>New &lt;request&gt; from &lt;employee&gt; (&lt;number&gt;)</td></tr>
+		<tr><td class="k">HR moves it to another step, approves, issues or rejects it</td><td>The employee</td><td>Your &lt;request&gt; &lt;number&gt; is now &lt;status&gt; (with the reason when rejected)</td></tr>
+		<tr><td class="k">A draft is saved or changed</td><td>Nobody</td><td>—</td></tr>
+	</tbody>
+</table>
+<p>Notifications appear under the <b>bell</b> at the top of both portals (a red dot shows new ones). Clicking an employee's notification opens that request on the Employee Portal. On a server where e-mail works, the same text is also e-mailed. Leave applications keep their own e-mails to the leave approver and the employee (HR Settings, Checklist CL-40).</p>
+<figure class="half"><img src="../images/55_r2_bell.png" alt=""><figcaption><b>Figure 6.</b> The employee's bell after a rejection.</figcaption></figure>
+
+<h2>3.5 Leave: reason and Apply Again</h2>
+<ul>
+	<li>The leave approver who rejects a Leave Application must fill <b>Rejection Reason</b> before saving and submitting (TC-APR-09).</li>
+	<li>The employee sees the reason in the application's details and can click <span class="ui">Apply Again</span> to send a new application, filled in from the rejected one (TC-LV-18).</li>
+</ul>
+
+<h2>3.6 Instructor and Academic Advisor: linking an Employee</h2>
+<p>Picking the Employee on an Instructor form used to stop the save with <i>Could not find Gender: Gender::1, Department: …</i>, because the form copied the Employee's values into its own lists, which hold different values. Now the matching <b>Gender</b> and <b>Department</b> are filled in instead, and the form saves. The Academic Advisor form had the same problem with Gender and is fixed too.</p>
+<ol class="steps">
+	<li>Open an Instructor that has no Employee yet (or clear the Employee field).</li>
+	<li>Pick the person's Employee record. Department fills in when that department exists in the academic list; Gender fills in too, or, for a login that cannot open the Gender list (only System Managers can), when you save.</li>
+	<li>Save: no error, and Gender is set.</li>
+</ol>
+
+<h2>3.7 Amounts in SAR</h2>
+<p>The messages for the approval limits on training, travel and expense claims now say <b>SAR</b>, for example <i>Training programs exceeding SAR 10,000 require Department Head approval.</i> (TC-APR-13).</p>
+
+<!-- ============================================================ 4 -->
+<h1><span class="num">4</span>Not in this round, and known limits</h1>
+<ul>
+	<li><b>E-mail</b>: works only once the e-mail account is fixed on the server (B-25, HR-47). The bell works everywhere.</li>
+	<li><b>Who gets new-request notifications</b>: every HR User and HR Manager login, as built. If HR wants a smaller group, that is a decision (DEC-16).</li>
+	<li><b>Update My Data</b> and <b>Leave Return</b> have no <i>Rejected</i> step, so they have no rejection reason or Send Again (unchanged). Applying an approved data correction to the Employee record is HR-17, planned for a later round.</li>
+	<li><b>Who approves each step</b> (manager, department head, Finance) is still recorded by HR in the Status; automatic routing waits for the approver list (DEC-09, HR-24).</li>
+	<li>The phone example on the public application form (+94 …) is being changed to a Saudi number by Fathir (HR-77); it is not part of this round's tests.</li>
+</ul>
+
+<!-- ============================================================ 5 -->
+<h1><span class="num">5</span>Round 2 test cases</h1>
+<p>Full steps and expected results are in the Test Cases workbook (filter <b>Round = Round 2</b>).</p>
+<div class="note"><b>Already checked by the developer</b>The automated browser tests ran the same steps for the cases marked with an automated test in the workbook (column <i>Last automated run</i>). Please test them anyway: they can pass there and still fail for you.</div>
+<table>
+	<thead><tr><th style="width:15%">ID</th><th>Scenario</th><th style="width:20%">Login</th><th style="width:12%">Priority</th></tr></thead>
+	<tbody>
+		<tr><td class="k">TC-ESS-17</td><td>Change a draft and send it</td><td>Employee</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-ESS-18</td><td>Delete a draft</td><td>Employee</td><td>Medium</td></tr>
+		<tr><td class="k">TC-APR-02</td><td>Reject a Training Request with a reason (changed)</td><td>HR Manager</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-APR-09</td><td>Rejection reason on every request type and on leave</td><td>HR Manager, leave approver</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-APR-11</td><td>Set a rejected request back to a pending step</td><td>HR Manager</td><td>Low</td></tr>
+		<tr><td class="k">TC-ESS-19</td><td>See why a request was rejected (reason, history)</td><td>Employee</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-ESS-20</td><td>Send a rejected request again</td><td>Employee</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-ESS-21</td><td>A rejected request is sent again only once</td><td>Employee</td><td>Low</td></tr>
+		<tr><td class="k">TC-APR-12</td><td>A request sent again shows the rejected one</td><td>HR Manager</td><td>Medium</td></tr>
+		<tr><td class="k">TC-LV-18</td><td>Apply again after a rejected leave</td><td>Employee</td><td>Medium</td></tr>
+		<tr><td class="k">TC-APR-10</td><td>HR is told about a new request (bell)</td><td>HR Manager</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-ESS-22</td><td>Notifications in the bell</td><td>Employee</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-ESS-23</td><td>Notification e-mail (live server only)</td><td>Employee</td><td>Medium</td></tr>
+		<tr><td class="k">TC-EMP-13</td><td>Link an Employee on the Instructor form</td><td>Education Manager + HR User</td><td><span class="chip c-pending">High</span></td></tr>
+		<tr><td class="k">TC-EMP-14</td><td>Link an Employee on the Academic Advisor form</td><td>Education Manager + HR User</td><td>Medium</td></tr>
+		<tr><td class="k">TC-APR-13</td><td>Amount limits are in SAR</td><td>HR Manager</td><td>Low</td></tr>
+	</tbody>
+</table>
+
+</body></html>

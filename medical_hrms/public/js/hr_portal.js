@@ -283,7 +283,7 @@
 					return;
 				}
 				$list.html(logs.map((n) => `<a class="mhp-notif${n.read ? "" : " unread"}" href="${esc(notifRoute(n))}" data-name="${esc(n.name)}">
-					${esc($("<div>").html(n.subject || "").text())}<small>${esc(frappe.datetime.comment_when(n.creation))}</small></a>`).join(""));
+					${esc($("<div>").html(n.subject || "").text())}<small>${esc(frappe.datetime.prettyDate(n.creation))}</small></a>`).join(""));
 			},
 		});
 	}

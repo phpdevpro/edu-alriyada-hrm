@@ -38,5 +38,11 @@ Unit tests and the Ministry view check run separately:
 - `qa_cleanup.py` runs the follow-up jobs of its deletions at once (shares, versions, linked Contacts).
   Left to the background worker they ran a few seconds later and changed the QA users that
   `qa_fixtures.py` had just created again.
+- Notifications (Round 2) are made by a background worker after each save; the tests poll for them. The QA
+  logins have e-mail notifications switched off, but non-QA HR logins on a copy still get e-mails queued; a copy
+  that cannot send e-mail (B-25) logs "Failed to decrypt key Email Account.Notifications.password" for each.
+  `qa_cleanup.py` removes the QA records' notifications and their unsent e-mails.
+- `qa.academic.admin` (Education Manager + HR User) links an Employee on the Instructor form (REC-11, B-26);
+  it cannot read the Gender Edu list, so the server fills Gender on save.
 - The application form is a step-by-step wizard: `walk_to_review()` clicks Next through the steps and ticks
   the consent, like an applicant. English names must be letters only.
